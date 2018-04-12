@@ -1,0 +1,38 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">On Time</string>
+    <string name="new_alarm">Create new alarm</string>
+    <string name="hint_click_add">Click the \"Add\" button below to create new alarm</string>
+    <string name="action_save">Save</string>
+    <string name="action_discard">Discard</string>
+    <string name="action_delete">Delete</string>
+    <string name="title_new_alarm">New Alarm</string>
+    <string name="title_edit_alarm">Edit Alarm</string>
+    <string name="hint_alarm_title">Alarm title</string>
+
+    <string name="msg_alarm_will_go_off">Alarm will go off in %1$s</string>
+
+    <string-array name="time_distance">
+        <item>less than 1 minute</item>
+        <item><xliff:g id="minute">%3$s</xliff:g></item>
+        <item><xliff:g id="hour">%2$s</xliff:g></item>
+        <item><xliff:g id="hour">%2$s</xliff:g> and <xliff:g id="minute">%3$s</xliff:g></item>
+        <item><xliff:g id="day">%1$s</xliff:g></item>
+        <item><xliff:g id="day">%1$s</xliff:g> and <xliff:g id="minute">%3$s</xliff:g></item>
+        <item><xliff:g id="day">%1$s</xliff:g> and <xliff:g id="hour">%2$s</xliff:g></item>
+        <item><xliff:g id="day">%1$s</xliff:g>, <xliff:g id="hour">%2$s</xliff:g>, and <xliff:g id="minute">%3$s</xliff:g></item>
+    </string-array>
+    
+    <plurals name="days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+
+</resources>

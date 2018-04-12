@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/miSaveAlarm"
+        android:icon="@drawable/ic_done_white_24dp"
+        android:title="@string/action_save"
+        app:showAsAction="ifRoom" />
+    <group android:id="@+id/menuGroupEdit">
+        <item
+            android:id="@+id/miDelete"
+            android:title="@string/action_delete"
+            app:showAsAction="never" />
+    </group>
+</menu>
