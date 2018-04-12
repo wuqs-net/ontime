@@ -14,8 +14,9 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.WindowManager.LayoutParams
 import kotlinx.android.synthetic.main.activity_alarm.*
+import net.wuqs.ontime.alarm.ALARM_ID
 import net.wuqs.ontime.alarm.ALARM_INSTANCE
-import net.wuqs.ontime.alarm.Alarm
+import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
 
 class AlarmActivity : AppCompatActivity() {
@@ -43,6 +44,7 @@ class AlarmActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    @Suppress("DEPRECATION")
     fun startAlarm() {
         alarmRingtone = RingtoneManager.getRingtone(this, alarm.ringtoneUri)
         if (isLOrLater()) {
@@ -54,7 +56,6 @@ class AlarmActivity : AppCompatActivity() {
         } else {
             alarmRingtone.streamType = RingtoneManager.TYPE_ALARM
         }
-
         alarmRingtone.play()
         textView2.text = "闹钟标题: ${alarm.title}\n正在播放: ${alarmRingtone.getTitle(this)}\n按返回键关闭闹钟"
 
@@ -83,16 +84,16 @@ class AlarmActivity : AppCompatActivity() {
         window.addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD)
     }
 
-    private inner class GetAlarmTask : AsyncTask<Unit, Unit, Unit>() {
-        override fun doInBackground(vararg params: Unit?) {
-            val db = AppDatabase.getInstance(this@AlarmActivity)
-            val alarmId = intent.getIntExtra(Alarm.ALARM_ID, -1)
-            Log.i("AlarmActivity", "Alarm id: " + alarmId.toString())
-            alarm = Alarm(db.alarmDAO().loadAlarm(alarmId))
-        }
-
-        override fun onPostExecute(result: Unit?) {
-            startAlarm()
-        }
-    }
+//    private inner class GetAlarmTask : AsyncTask<Unit, Unit, Unit>() {
+//        override fun doInBackground(vararg params: Unit?) {
+//            val db = AppDatabase.getInstance(this@AlarmActivity)
+//            val alarmId = intent.getIntExtra(ALARM_ID, -1)
+//            Log.i("AlarmActivity", "Alarm id: " + alarmId.toString())
+//            alarm = db.alarmDAO().loadAlarm(alarmId)
+//        }
+//
+//        override fun onPostExecute(result: Unit?) {
+//            startAlarm()
+//        }
+//    }
 }

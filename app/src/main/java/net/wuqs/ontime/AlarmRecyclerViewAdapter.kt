@@ -1,19 +1,15 @@
 package net.wuqs.ontime
 
+
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-
-
-import net.wuqs.ontime.AlarmFragment.OnListFragmentInteractionListener
-import net.wuqs.ontime.dummy.DummyContent.DummyItem
-
 import kotlinx.android.synthetic.main.fragment_alarm.view.*
-import net.wuqs.ontime.alarm.Alarm
+import net.wuqs.ontime.AlarmFragment.OnListFragmentInteractionListener
 import net.wuqs.ontime.alarm.getTimeString
-import net.wuqs.ontime.db.AlarmModel
+import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.dummy.DummyContent.DummyItem
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
@@ -56,11 +52,9 @@ class AlarmRecyclerViewAdapter// Notify the active callbacks interface (the acti
 
     override fun getItemCount(): Int = data.size
 
-    fun setAlarms(models: List<AlarmModel>) {
+    fun setAlarms(models: List<Alarm>) {
         data.clear()
-        for (model in models) {
-            data.add(Alarm(model))
-        }
+        data.addAll(models)
         notifyDataSetChanged()
     }
 

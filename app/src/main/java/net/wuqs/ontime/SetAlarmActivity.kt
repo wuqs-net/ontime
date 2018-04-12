@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_set_alarm.*
 import net.wuqs.ontime.alarm.*
+import net.wuqs.ontime.db.Alarm
 
 class SetAlarmActivity : AppCompatActivity() {
 

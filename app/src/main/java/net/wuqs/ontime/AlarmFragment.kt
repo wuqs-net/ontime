@@ -1,10 +1,8 @@
 package net.wuqs.ontime
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -14,10 +12,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import net.wuqs.ontime.alarm.Alarm
 import net.wuqs.ontime.db.AlarmDataModel
-import net.wuqs.ontime.db.AppDatabase
-import net.wuqs.ontime.db.DatabaseUtil
+import net.wuqs.ontime.db.Alarm
 
 /**
  * A fragment representing a list of Items.

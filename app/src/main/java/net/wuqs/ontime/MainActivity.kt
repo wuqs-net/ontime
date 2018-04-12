@@ -12,8 +12,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
-import net.wuqs.ontime.alarm.Alarm
-import net.wuqs.ontime.alarm.getTimeDistanceString
+import net.wuqs.ontime.alarm.*
+import net.wuqs.ontime.db.Alarm
 import java.util.*
 
 
@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity(), AlarmFragment.OnListFragmentInteractio
     override fun onListFragmentInteraction(item: Alarm?) {
         Toast.makeText(this, item?.toString(), Toast.LENGTH_SHORT).show()
         val intent = Intent(this, SetAlarmActivity::class.java).apply {
-            putExtra(Alarm.ALARM_ID, item?.id)
-            putExtra(Alarm.ALARM_INSTANCE, item)
+            putExtra(ALARM_ID, item?.id)
+            putExtra(ALARM_INSTANCE, item)
         }
         startActivityForResult(intent, CREATE_ALARM_REQUEST)
     }
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), AlarmFragment.OnListFragmentInteractio
         when (requestCode) {
             CREATE_ALARM_REQUEST ->
                 if (resultCode == Activity.RESULT_OK) {
-                    val delta = data!!.getLongExtra(Alarm.NEW_CREATED_ALARM, 0)
+                    val delta = data!!.getLongExtra(NEW_CREATED_ALARM, 0)
                     val msg = getString(R.string.msg_alarm_will_go_off, getTimeDistanceString(this, delta))
 //                    (fragment as AlarmFragment).updateRecyclerView()
                     Snackbar.make(fabCreateAlarm, msg, Snackbar.LENGTH_SHORT).show()
@@ -62,10 +62,10 @@ class MainActivity : AppCompatActivity(), AlarmFragment.OnListFragmentInteractio
         val onTimeSetListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
             val intentSetAlarmActivity = Intent(this, SetAlarmActivity::class.java)
                     .apply {
-                        putExtra(Alarm.IS_NEW_ALARM, true)
-                        putExtra(Alarm.ALARM_ID, -1)
-                        putExtra(Alarm.NEW_ALARM_HOUR, hourOfDay)
-                        putExtra(Alarm.NEW_ALARM_MINUTE, minute)
+                        putExtra(IS_NEW_ALARM, true)
+                        putExtra(ALARM_ID, -1)
+                        putExtra(NEW_ALARM_HOUR, hourOfDay)
+                        putExtra(NEW_ALARM_MINUTE, minute)
                     }
             startActivityForResult(intentSetAlarmActivity, CREATE_ALARM_REQUEST)
         }

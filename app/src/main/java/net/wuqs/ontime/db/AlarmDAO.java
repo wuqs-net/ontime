@@ -11,27 +11,44 @@ import java.util.List;
 
 @Dao
 public interface AlarmDAO {
-    @Query("SELECT * FROM alarms")
-    LiveData<List<AlarmModel>> getAll();
 
+    /**
+     * Gets all alarms from database
+     *
+     * @return a {@link LiveData} contains a {@link List} of {@link Alarm}s
+     */
+    @Query("SELECT * FROM alarms")
+    LiveData<List<Alarm>> getAll();
+
+    /**
+     * Counts the number of alarms stored in database.
+     *
+     * @return an integer count of {@link Alarm}s stored in database
+     */
     @Query("SELECT COUNT(*) FROM alarms")
     int count();
 
-    @Query("SELECT * FROM alarms WHERE id IN (:alarmIds)")
-    LiveData<List<AlarmModel>> loadAllByIds(int[] alarmIds);
+    @Query("SELECT * FROM alarms WHERE id IN (:ids)")
+    LiveData<List<Alarm>> loadAllByIds(int[] ids);
 
-    @Query("SELECT * FROM alarms WHERE id = :alarmId")
-    AlarmModel loadAlarm(int alarmId);
+    /**
+     * Gets an {@link Alarm} from database by id.
+     *
+     * @param id id of the {@link Alarm}
+     * @return an {@link Alarm} from database for a given id
+     */
+    @Query("SELECT * FROM alarms WHERE id = :id LIMIT 1")
+    Alarm loadAlarm(int id);
 
-    @Query("SELECT * FROM alarms WHERE id = :alarmId")
-    LiveData<AlarmModel> getAlarm(int alarmId);
+    @Query("SELECT * FROM alarms WHERE id = :id LIMIT 1")
+    LiveData<Alarm> getAlarm(int id);
 
     @Insert
-    long[] insertAll(AlarmModel... alarms);
+    long[] insertAll(Alarm... alarms);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insert(AlarmModel alarm);
+    long insert(Alarm alarm);
 
     @Delete
-    void delete(AlarmModel alarm);
+    void delete(Alarm alarm);
 }
