@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "e636244eec0f440509e76efed8afef84",
+    "version": 3,
+    "identityHash": "23a2166076f6f9a49cc8115157083a99",
     "entities": [
       {
         "tableName": "alarms",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `hour` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `title` TEXT, `ringtone_uri` TEXT, `enabled` INTEGER NOT NULL, `repeat_type` INTEGER NOT NULL, `repeat_cycle` INTEGER NOT NULL, `repeat_index` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `hour` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `title` TEXT, `ringtone_uri` TEXT, `enabled` INTEGER NOT NULL, `repeat_type` INTEGER NOT NULL, `repeat_cycle` INTEGER NOT NULL, `repeat_index` INTEGER NOT NULL, `activate_date` INTEGER, `next_occurrence` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -61,6 +61,18 @@
             "columnName": "repeat_index",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "activateDate",
+            "columnName": "activate_date",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nextOccurrence",
+            "columnName": "next_occurrence",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -75,7 +87,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e636244eec0f440509e76efed8afef84\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"23a2166076f6f9a49cc8115157083a99\")"
     ]
   }
 }

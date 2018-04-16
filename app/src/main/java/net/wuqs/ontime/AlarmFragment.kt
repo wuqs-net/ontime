@@ -8,10 +8,13 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SwitchCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
+import android.widget.Switch
 import net.wuqs.ontime.db.AlarmDataModel
 import net.wuqs.ontime.db.Alarm
 
@@ -27,6 +30,8 @@ class AlarmFragment : Fragment() {
 
     private var listener: OnListFragmentInteractionListener? = null
 
+    private var recyclerView: RecyclerView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -41,6 +46,7 @@ class AlarmFragment : Fragment() {
 
         // Set the adapter
         if (view is RecyclerView) {
+            recyclerView = view
             with(view) {
                 layoutManager = when {
                     columnCount <= 1 -> LinearLayoutManager(context)
@@ -52,7 +58,6 @@ class AlarmFragment : Fragment() {
             dataModel.alarms.observe(this, Observer {
                 mAdapter.setAlarms(it!!)
                 listener?.onRecyclerViewUpdate(view)
-                Log.v("AlarmFragment", "LiveData updated")
             })
         }
         return view
@@ -72,6 +77,11 @@ class AlarmFragment : Fragment() {
         listener = null
     }
 
+//    override fun onResume() {
+//        super.onResume()
+//        recyclerView?.adapter?.notifyDataSetChanged()
+//    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -85,7 +95,8 @@ class AlarmFragment : Fragment() {
      */
     interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: Alarm?)
+        fun onListItemClick(item: Alarm?)
+        fun onAlarmSwitchClick(switch: SwitchCompat, alarm: Alarm)
         fun onRecyclerViewUpdate(recyclerView: RecyclerView)
     }
 

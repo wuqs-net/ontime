@@ -5,11 +5,17 @@
     <string name="action_save">Save</string>
     <string name="action_discard">Discard</string>
     <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
     <string name="title_new_alarm">New Alarm</string>
     <string name="title_edit_alarm">Edit Alarm</string>
     <string name="hint_alarm_title">Alarm title</string>
 
     <string name="msg_alarm_will_go_off">Alarm will go off in %1$s</string>
+
+    <string name="prompt_delete_alarm">Delete alarm?</string>
+
+    <string name="every">Every</string>
+    <string name="starts_from">Starts from</string>
 
     <string-array name="time_distance">
         <item>less than 1 minute</item>
@@ -21,16 +27,76 @@
         <item><xliff:g id="day">%1$s</xliff:g> and <xliff:g id="hour">%2$s</xliff:g></item>
         <item><xliff:g id="day">%1$s</xliff:g>, <xliff:g id="hour">%2$s</xliff:g>, and <xliff:g id="minute">%3$s</xliff:g></item>
     </string-array>
-    
+
+    <string-array name="repeat_types">
+        <item>Does not repeat</item>
+        <item>Repeats daily</item>
+        <!--<item>Repeats weekly</item>-->
+        <!--<item>Repeats monthly</item>-->
+        <!--<item>Repeats yearly</item>-->
+    </string-array>
+
+    <!--
+    Every x days
+    -->
+    <string-array name="repeat_patterns">
+        <item>Does not repeat</item>
+        <item>%1$s</item>
+        <item>%1$s on %2$s</item>
+        <item>%1$s on %2$s</item>
+    </string-array>
+
+    <plurals name="years">
+        <item quantity="one">year</item>
+        <item quantity="other">years</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="one">month</item>
+        <item quantity="other">months</item>
+    </plurals>
+    <plurals name="weeks">
+        <item quantity="one">week</item>
+        <item quantity="other">weeks</item>
+    </plurals>
     <plurals name="days">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">hour</item>
+        <item quantity="other">hours</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">minute</item>
+        <item quantity="other">minutes</item>
+    </plurals>
+
+    <plurals name="years_for_repeat">
+        <item quantity="one">Yearly</item>
+        <item quantity="other">Every %1$d years</item>
+    </plurals>
+    <plurals name="months_for_repeat">
+        <item quantity="one">Monthly</item>
+        <item quantity="other">Every %1$d months</item>
+    </plurals>
+    <plurals name="weeks_for_repeat">
+        <item quantity="one">Weekly</item>
+        <item quantity="other">Every %1$d weeks</item>
+    </plurals>
+    <plurals name="days_for_repeat">
+        <item quantity="one">Daily</item>
+        <item quantity="other">Every %1$d days</item>
+    </plurals>
+
+    <plurals name="days_with_quan">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>
-    <plurals name="hours">
+    <plurals name="hours_with_quan">
         <item quantity="one">%d hour</item>
         <item quantity="other">%d hours</item>
     </plurals>
-    <plurals name="minutes">
+    <plurals name="minutes_with_quan">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>

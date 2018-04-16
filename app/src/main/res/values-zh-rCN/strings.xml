@@ -4,13 +4,19 @@
     <string name="new_alarm">新建闹钟</string>
     <string name="hint_click_add">要新建闹钟，请点击下方的“添加”按钮</string>
     <string name="action_save">保存</string>
-    <string name="action_discard">取消</string>
+    <string name="action_discard">放弃更改</string>
     <string name="action_delete">删除</string>
+    <string name="action_cancel">取消</string>
     <string name="title_new_alarm">新建闹钟</string>
     <string name="title_edit_alarm">修改闹钟</string>
     <string name="hint_alarm_title">闹钟标题</string>
 
     <string name="msg_alarm_will_go_off">闹钟将在 %1$s 后响起</string>
+
+    <string name="prompt_delete_alarm">删除闹钟？</string>
+
+    <string name="every">每</string>
+    <string name="starts_from">起始日期</string>
 
     <string-array name="time_distance">
         <item>不到 1 分钟</item>
@@ -23,13 +29,70 @@
         <item><xliff:g id="day">%1$s</xliff:g> <xliff:g id="hour">%2$s</xliff:g> <xliff:g id="minute">%3$s</xliff:g></item>
     </string-array>
 
+    <string-array name="repeat_types">
+        <item>单次</item>
+        <item>按天重复</item>
+        <!--<item>按周重复</item>-->
+        <!--<item>按月重复</item>-->
+        <!--<item>按年重复</item>-->
+    </string-array>
+
+    <!--
+    Every x days
+    -->
+    <string-array name="repeat_patterns">
+        <item>单次</item>
+        <item>%3$s起 %1$s</item>
+        <item>%1$s %2$s</item>
+    </string-array>
+
+    <string-array name="repeat_indexes">
+        <item>%1$s</item>
+    </string-array>
+
+    <plurals name="years">
+        <item quantity="other">年</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="other">月</item>
+    </plurals>
+    <plurals name="weeks">
+        <item quantity="other">周</item>
+    </plurals>
     <plurals name="days">
-        <item quantity="other">%d 天</item>
+        <item quantity="other">天</item>
     </plurals>
     <plurals name="hours">
-        <item quantity="other">%d 小时</item>
+        <item quantity="other">小时</item>
     </plurals>
     <plurals name="minutes">
+        <item quantity="other">分钟</item>
+    </plurals>
+
+    <plurals name="years_for_repeat">
+        <item quantity="one">每年</item>
+        <item quantity="other">每 %d 年</item>
+    </plurals>
+    <plurals name="months_for_repeat">
+        <item quantity="one">每月</item>
+        <item quantity="other">每 %d 个月</item>
+    </plurals>
+    <plurals name="weeks_for_repeat">
+        <item quantity="one">每周</item>
+        <item quantity="other">每 %d 周</item>
+    </plurals>
+    <plurals name="days_for_repeat">
+        <item quantity="one">每天</item>
+        <item quantity="other">每 %d 天</item>
+    </plurals>
+
+    <plurals name="days_with_quan">
+        <item quantity="other">%d 天</item>
+    </plurals>
+    <plurals name="hours_with_quan">
+        <item quantity="other">%d 小时</item>
+    </plurals>
+    <plurals name="minutes_with_quan">
         <item quantity="other">%d 分钟</item>
     </plurals>
 

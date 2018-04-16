@@ -3,6 +3,8 @@ package net.wuqs.ontime.db;
 import android.arch.persistence.room.TypeConverter;
 import android.net.Uri;
 
+import java.util.Calendar;
+
 public class DataTypeConverter {
 
     @TypeConverter
@@ -13,5 +15,28 @@ public class DataTypeConverter {
     @TypeConverter
     public static Uri toUri(String string) {
         return Uri.parse(string);
+    }
+
+    @TypeConverter
+    public static int toInt(boolean b) {
+        return b ? 1 : 0;
+    }
+
+    @TypeConverter
+    public static boolean toBoolean(int n) {
+        return n != 0;
+    }
+
+    @TypeConverter
+    public static Long calendarToLong(Calendar calendar) {
+        return calendar.getTimeInMillis();
+    }
+
+    @TypeConverter
+    public static Calendar toCalendar(Long timeInMillis) {
+        Calendar calendar = Calendar.getInstance();
+        if (timeInMillis == null) timeInMillis = 0L;
+        calendar.setTimeInMillis(timeInMillis);
+        return calendar;
     }
 }

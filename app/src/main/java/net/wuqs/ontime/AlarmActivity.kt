@@ -3,26 +3,23 @@ package net.wuqs.ontime
 import android.annotation.TargetApi
 import android.app.KeyguardManager
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.AudioManager
-import android.media.Ringtone
-import android.media.RingtoneManager
-import android.os.AsyncTask
+import android.media.*
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.WindowManager.LayoutParams
 import kotlinx.android.synthetic.main.activity_alarm.*
-import net.wuqs.ontime.alarm.ALARM_ID
 import net.wuqs.ontime.alarm.ALARM_INSTANCE
+import net.wuqs.ontime.alarm.getDateString
+import net.wuqs.ontime.alarm.getNextAlarmOccurrence
+import net.wuqs.ontime.alarm.updateAlarm
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.db.AppDatabase
 
 class AlarmActivity : AppCompatActivity() {
 
     private lateinit var alarm: Alarm
     private lateinit var alarmRingtone: Ringtone
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +54,14 @@ class AlarmActivity : AppCompatActivity() {
             alarmRingtone.streamType = RingtoneManager.TYPE_ALARM
         }
         alarmRingtone.play()
-        textView2.text = "闹钟标题: ${alarm.title}\n正在播放: ${alarmRingtone.getTitle(this)}\n按返回键关闭闹钟"
-
+        if (alarm.repeatType == 0) {
+            alarm.isEnabled = false
+            textView2.text = "闹钟标题: ${alarm.title}\n正在播放: ${alarmRingtone.getTitle(this)}\n按返回键关闭闹钟"
+        } else {
+            alarm.nextOccurrence = getNextAlarmOccurrence(alarm)
+            textView2.text = "闹钟标题: ${alarm.title}\n正在播放: ${alarmRingtone.getTitle(this)}\n按返回键关闭闹钟\n下次响铃${getDateString(this, alarm.nextOccurrence)}"
+        }
+        updateAlarm(this, alarm)
     }
 
     @TargetApi(Build.VERSION_CODES.O_MR1)
