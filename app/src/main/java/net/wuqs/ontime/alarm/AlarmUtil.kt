@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
 import net.wuqs.ontime.R
-import net.wuqs.ontime.SetAlarmActivity
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
 import net.wuqs.ontime.db.DatabaseUtil
@@ -86,7 +85,7 @@ fun getTimeString(context: Context, alarm: Alarm): String {
     return DateFormat.getTimeFormat(context).format(cal.time)
 }
 
-fun getDateString(context: Context, c: Calendar, showWeek: Boolean = true): String {
+fun getDateString(c: Calendar, showWeek: Boolean = true): String {
     var skeleton =
             if (c[Calendar.YEAR] == Calendar.getInstance()[Calendar.YEAR]) "MMMd"
             else "yyyyMMMd"
@@ -127,7 +126,7 @@ fun getRepeatString(context: Context, alarm: Alarm): String {
     val cycles = listOf(0, R.plurals.days_for_repeat, R.plurals.weeks_for_repeat,
             R.plurals.months_for_repeat, R.plurals.years_for_repeat)
 
-    val startFromStr = getDateString(context, alarm.activateDate, false)
+    val startFromStr = getDateString(alarm.activateDate, false)
 
     val cycleStr = context.resources.getQuantityString(cycles[alarm.repeatType and 0xF],
             alarm.repeatCycle, alarm.repeatCycle)
@@ -151,7 +150,7 @@ fun getRepeatString(context: Context, alarm: Alarm): String {
 fun updateAlarm(context: Context, alarm: Alarm) {
     object : AsyncTask<Unit, Unit, Unit>() {
         override fun doInBackground(vararg params: Unit?) {
-            if (alarm.id == 0) DatabaseUtil.addAlarm(AppDatabase.getInstance(context), alarm)
+            if (alarm.id == 0L) DatabaseUtil.addAlarm(AppDatabase.getInstance(context), alarm)
             else DatabaseUtil.updateAlarm(AppDatabase.getInstance(context), alarm)
         }
 
@@ -169,7 +168,7 @@ fun registerAlarm(context: Context, alarm: Alarm) {
             .setAction(ALARM_START_ACTION)
             .putExtra(ALARM_ID, alarm.id)
             .putExtra(ALARM_INSTANCE, bundle)
-    val pIntent = PendingIntent.getBroadcast(context, alarm.id, intent,
+    val pIntent = PendingIntent.getBroadcast(context, alarm.id.toInt(), intent,
             PendingIntent.FLAG_UPDATE_CURRENT)
     val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     am.setExact(AlarmManager.RTC_WAKEUP, alarm.nextOccurrence.timeInMillis, pIntent)
@@ -179,7 +178,7 @@ fun registerAlarm(context: Context, alarm: Alarm) {
 fun cancelAlarm(context: Context, alarm: Alarm) {
     val intent = Intent(context, MyAlarmReceiver::class.java)
             .setAction(ALARM_START_ACTION)
-    PendingIntent.getBroadcast(context, alarm.id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    PendingIntent.getBroadcast(context, alarm.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
             .cancel()
     Log.d("AlarmUtil", "Alarm cancelled: $alarm")
 }

@@ -17,6 +17,10 @@ public class DataTypeConverter {
         return Uri.parse(string);
     }
 
+    public static byte toByte(boolean b) {
+        return (byte) toInt(b);
+    }
+
     @TypeConverter
     public static int toInt(boolean b) {
         return b ? 1 : 0;
@@ -28,7 +32,7 @@ public class DataTypeConverter {
     }
 
     @TypeConverter
-    public static Long calendarToLong(Calendar calendar) {
+    public static Long toLong(Calendar calendar) {
         return calendar.getTimeInMillis();
     }
 

@@ -1,9 +1,11 @@
 package net.wuqs.ontime.db;
 
+import android.annotation.SuppressLint;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -15,7 +17,7 @@ import java.util.Calendar;
 public class Alarm implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
 
     @ColumnInfo(name = "hour")
     private int hour;
@@ -32,18 +34,6 @@ public class Alarm implements Parcelable {
     @ColumnInfo(name = "enabled")
     private boolean enabled = true;
 
-    /**
-     * Repeat type of the alarm
-     * <ul>
-     * <li>0x00: non-repeat</li>
-     * <li>0x11: every d days</li>
-     * <li>0x22: dow every w weeks</li>
-     * <li>0x43: dom every m months</li>
-     * <li>0x83: a of bth week of every m months</li>
-     * <li>0x144: date of every y years</li>
-     * <li>0x184: a of bth week of mth month of every y years</li>
-     * </ul>
-     */
     @ColumnInfo(name = "repeat_type")
     private int repeatType = 0;
 
@@ -59,43 +49,39 @@ public class Alarm implements Parcelable {
     @ColumnInfo(name = "next_occurrence")
     private Calendar nextOccurrence;
 
-
-    public static final Parcelable.Creator<Alarm> CREATOR = new Parcelable.Creator<Alarm>() {
-        @Override
-        public Alarm createFromParcel(Parcel source) {
-            return new Alarm(source);
-        }
-
-        @Override
-        public Alarm[] newArray(int size) {
-            return new Alarm[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
+    /**
+     * Checks if another {@link Alarm} has the same display summary as this {@link Alarm}.
+     *
+     * @param alarm the {@link Alarm} to check.
+     * @return whether the two {@link Alarm}s have the same display summary.
+     */
+    public boolean sameDisplaySummaryAs(Alarm alarm) {
+        return this.id == alarm.id
+                && this.hour == alarm.hour
+                && this.minute == alarm.minute
+                && this.title.equals(alarm.title)
+                && this.enabled == alarm.enabled
+                && this.repeatType == alarm.repeatType
+                && this.repeatCycle == alarm.repeatCycle
+                && this.repeatIndex == alarm.repeatIndex
+                && this.activateDate.getTimeInMillis() == alarm.activateDate.getTimeInMillis()
+                && this.nextOccurrence.getTimeInMillis() == alarm.nextOccurrence.getTimeInMillis();
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeInt(hour);
-        dest.writeInt(minute);
-        dest.writeString(title);
-        dest.writeString(ringtoneUri.toString());
-        dest.writeByte((byte) (enabled ? 1 : 0));
-        dest.writeInt(repeatType);
-        dest.writeInt(repeatCycle);
-        dest.writeInt(repeatIndex);
-        dest.writeLong(activateDate.getTimeInMillis());
-        dest.writeLong(nextOccurrence.getTimeInMillis());
+    /**
+     * Adds the {@link Alarm} to database.
+     *
+     * @param context the {@link Context} used to get the {@link AppDatabase} instance.
+     * @return the {@link Alarm} added to database, with its id updated.
+     */
+    public Alarm addToDatabase(Context context) {
+        this.id = AppDatabase.getInstance(context.getApplicationContext()).alarmDAO()
+                .insert(this);
+        return this;
     }
 
     public Alarm() {
-        Calendar cal = Calendar.getInstance();
-        this.hour = cal.get(Calendar.HOUR_OF_DAY);
-        this.minute = cal.get(Calendar.MINUTE);
+        this.activateDate = Calendar.getInstance();
     }
 
     @Ignore
@@ -108,26 +94,42 @@ public class Alarm implements Parcelable {
 
     @Ignore
     public Alarm(Parcel in) {
-        this.id = in.readInt();
+        this.id = in.readLong();
         this.hour = in.readInt();
         this.minute = in.readInt();
         this.title = in.readString();
-        this.ringtoneUri = Uri.parse(in.readString());
-        this.enabled = in.readByte() != 0;
+        this.ringtoneUri = DataTypeConverter.toUri(in.readString());
+        this.enabled = DataTypeConverter.toBoolean(in.readByte());
         this.repeatType = in.readInt();
         this.repeatCycle = in.readInt();
         this.repeatIndex = in.readInt();
-        this.activateDate = Calendar.getInstance();
-        this.activateDate.setTimeInMillis(in.readLong());
-        this.nextOccurrence = Calendar.getInstance();
-        this.nextOccurrence.setTimeInMillis(in.readLong());
+        this.activateDate = DataTypeConverter.toCalendar(in.readLong());
+        this.nextOccurrence = DataTypeConverter.toCalendar(in.readLong());
     }
 
-    public int getId() {
+    public Alarm(Alarm another) {
+        copyFrom(another);
+    }
+
+    public void copyFrom(Alarm another) {
+        this.id = another.id;
+        this.hour = another.hour;
+        this.minute = another.minute;
+        this.title = another.title;
+        this.ringtoneUri = Uri.parse(another.ringtoneUri.toString());
+        this.enabled = another.enabled;
+        this.repeatType = another.repeatType;
+        this.repeatCycle = another.repeatCycle;
+        this.repeatIndex = another.repeatIndex;
+        this.activateDate = (Calendar) another.activateDate.clone();
+        this.nextOccurrence = (Calendar) another.nextOccurrence.clone();
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -195,12 +197,6 @@ public class Alarm implements Parcelable {
         this.repeatIndex = repeatIndex;
     }
 
-    @Override
-    public String toString() {
-        return String.format("{id=%d, %02d:%02d, title=%s, ringtone=%s, enabled=%b, repeatType=%d, repeatCycle=%d, repeatIndex=%d, activateDate=%s, nextOccurrence=%s}",
-                id, hour, minute, title, ringtoneUri.toString(), enabled, repeatType, repeatCycle, repeatIndex, activateDate.getTime().toString(), nextOccurrence.getTime().toString());
-    }
-
     public Calendar getActivateDate() {
         return activateDate;
     }
@@ -217,16 +213,46 @@ public class Alarm implements Parcelable {
         this.nextOccurrence = nextOccurrence;
     }
 
-    public boolean sameSummary(Alarm alarm) {
-        return this.id == alarm.id
-                && this.hour == alarm.hour
-                && this.minute == alarm.minute
-                && this.title.equals(alarm.title)
-                && this.enabled == alarm.enabled
-                && this.repeatType == alarm.repeatType
-                && this.repeatCycle == alarm.repeatCycle
-                && this.repeatIndex == alarm.repeatIndex
-                && this.activateDate.getTimeInMillis() == alarm.activateDate.getTimeInMillis()
-                && this.nextOccurrence.getTimeInMillis() == alarm.nextOccurrence.getTimeInMillis();
+    public static final Parcelable.Creator<Alarm> CREATOR = new Parcelable.Creator<Alarm>() {
+        @Override
+        public Alarm createFromParcel(Parcel source) {
+            return new Alarm(source);
+        }
+
+        @Override
+        public Alarm[] newArray(int size) {
+            return new Alarm[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeInt(hour);
+        dest.writeInt(minute);
+        dest.writeString(title);
+        dest.writeString(DataTypeConverter.toString(ringtoneUri));
+        dest.writeByte(DataTypeConverter.toByte(enabled));
+        dest.writeInt(repeatType);
+        dest.writeInt(repeatCycle);
+        dest.writeInt(repeatIndex);
+        dest.writeLong(DataTypeConverter.toLong(activateDate));
+        dest.writeLong(DataTypeConverter.toLong(nextOccurrence));
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public String toString() {
+        return String.format("{id=%d, %02d:%02d, title=%s, enabled=%b, " +
+                        "repeatType=%d, repeatCycle=%d, repeatIndex=%d, " +
+                        "activateDate=%s, next=%s}",
+                id, hour, minute, title, enabled,
+                repeatType, repeatCycle, repeatIndex,
+                activateDate.getTime().toString(), nextOccurrence.getTime().toString());
     }
 }

@@ -29,8 +29,8 @@ class AlarmActivity : AppCompatActivity() {
 //        GetAlarmTask().execute()
 
         // Wake up phone when this activity is shown
-        if (isOMR1OrLater()) turnScreenOnOMR1() else turnScreenOnPreOMR1()
-        if (isOOrLater()) dismissKeyguardO() else dismissKeyguardPreO()
+        if (ApiUtil.isOMR1OrLater()) turnScreenOnOMR1() else turnScreenOnPreOMR1()
+        if (ApiUtil.isOOrLater()) dismissKeyguardO() else dismissKeyguardPreO()
 
         alarm = intent.getParcelableExtra(ALARM_INSTANCE)
         startAlarm()
@@ -44,7 +44,7 @@ class AlarmActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     fun startAlarm() {
         alarmRingtone = RingtoneManager.getRingtone(this, alarm.ringtoneUri)
-        if (isLOrLater()) {
+        if (ApiUtil.isLOrLater()) {
             val audioAttributes = AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                     .setUsage(AudioAttributes.USAGE_ALARM)
@@ -59,7 +59,7 @@ class AlarmActivity : AppCompatActivity() {
             textView2.text = "闹钟标题: ${alarm.title}\n正在播放: ${alarmRingtone.getTitle(this)}\n按返回键关闭闹钟"
         } else {
             alarm.nextOccurrence = getNextAlarmOccurrence(alarm)
-            textView2.text = "闹钟标题: ${alarm.title}\n正在播放: ${alarmRingtone.getTitle(this)}\n按返回键关闭闹钟\n下次响铃${getDateString(this, alarm.nextOccurrence)}"
+            textView2.text = "闹钟标题: ${alarm.title}\n正在播放: ${alarmRingtone.getTitle(this)}\n按返回键关闭闹钟\n下次响铃${getDateString(alarm.nextOccurrence)}"
         }
         updateAlarm(this, alarm)
     }
@@ -87,16 +87,4 @@ class AlarmActivity : AppCompatActivity() {
         window.addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD)
     }
 
-//    private inner class GetAlarmTask : AsyncTask<Unit, Unit, Unit>() {
-//        override fun doInBackground(vararg params: Unit?) {
-//            val db = AppDatabase.getInstance(this@AlarmActivity)
-//            val alarmId = intent.getIntExtra(ALARM_ID, -1)
-//            Log.i("AlarmActivity", "Alarm id: " + alarmId.toString())
-//            alarm = db.alarmDAO().loadAlarm(alarmId)
-//        }
-//
-//        override fun onPostExecute(result: Unit?) {
-//            startAlarm()
-//        }
-//    }
 }
