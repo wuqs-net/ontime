@@ -1,40 +1,69 @@
 package net.wuqs.ontime
 
-import android.app.Activity
 import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.dialog.TimePickerFragment
+import net.wuqs.ontime.alarm.AlarmStateManager
+import net.wuqs.ontime.utils.LogUtils
+import net.wuqs.ontime.utils.shortToast
 import java.util.*
 
 
-class MainActivity
-    : AppCompatActivity(),
-        AlarmListFragment.OnListFragmentInteractionListener,
-        TimePickerFragment.OnTimeSetListener {
+class MainActivity : AppCompatActivity(),
+        AlarmListFragment.OnListFragmentActionListener,
+        TimePickerFragment.TimeSetListener {
+
+    private lateinit var mAlarmUpdateHandler: AlarmUpdateHandler
+
+//    val mReceiver = object : BroadcastReceiver() {
+//        override fun onReceive(context: Context?, intent: Intent?) {
+//            when (intent!!.action) {
+//                OnTimeApplication.SHOW_MISSED_ALARMS_ACTION -> {
+//                    val missedAlarms = intent.getParcelableArrayExtra(OnTimeApplication.EXTRA_MISSED_ALARMS)
+//
+//                    Toast.makeText(this@MainActivity, missedAlarms.toString(), Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//        }
+//
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        mAlarmUpdateHandler = AlarmUpdateHandler(this, fabCreateAlarm)
+
+//        val filter = IntentFilter().apply {
+//            addAction(OnTimeApplication.SHOW_MISSED_ALARMS_ACTION)
+//        }
+//        registerReceiver(mReceiver, filter)
+
         volumeControlStream = AudioManager.STREAM_ALARM
         fabCreateAlarm.setOnClickListener { onFabCreateAlarmClick() }
+        sendBroadcast(AlarmStateManager.createScheduleAllAlarmsIntent(this))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             CREATE_ALARM_REQUEST, EDIT_ALARM_REQUEST -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val delta = data!!.getLongExtra(DELTA_NEXT_OCCURRENCE, 0)
-                    val msg = getString(R.string.msg_alarm_will_go_off, getTimeDistanceString(this, delta))
-                    Snackbar.make(fabCreateAlarm, msg, Snackbar.LENGTH_SHORT).show()
+                if (resultCode == RESULT_SAVE) {
+                    val alarm = data!!.getParcelableExtra<Alarm>(ALARM_INSTANCE)
+                    if (alarm.id == Alarm.INVALID_ID) {
+                        mAlarmUpdateHandler.asyncAddAlarm(alarm, true)
+                    } else {
+                        mAlarmUpdateHandler.asyncUpdateAlarm(alarm, true)
+                    }
+                } else if (resultCode == RESULT_DELETE) {
+                    val alarm = data!!.getParcelableExtra<Alarm>(ALARM_INSTANCE)
+                    mAlarmUpdateHandler.asyncDeleteAlarm(alarm)
                 }
             }
         }
@@ -42,48 +71,50 @@ class MainActivity
 
     override fun onTimeSet(tag: String?, hourOfDay: Int, minute: Int) {
         if (tag == TimePickerFragment.NEW_ALARM) {
-            val intentSetAlarmActivity = Intent(this, SetAlarmActivity::class.java)
-            intentSetAlarmActivity.apply {
-                putExtra(IS_NEW_ALARM, true)
-                putExtra(ALARM_ID, 0)
-                putExtra(NEW_ALARM_HOUR, hourOfDay)
-                putExtra(NEW_ALARM_MINUTE, minute)
-            }
-            startActivityForResult(intentSetAlarmActivity, CREATE_ALARM_REQUEST)
+            val editAlarmIntent = EditAlarmActivity.createIntent(this)
+                    .putExtra(ALARM_INSTANCE, Alarm(hourOfDay, minute))
+            startActivityForResult(editAlarmIntent, CREATE_ALARM_REQUEST)
         }
     }
 
     override fun onListItemClick(item: Alarm) {
         Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show()
-        Log.v("MainActivity", item.toString())
-        val intent = Intent(this, SetAlarmActivity::class.java)
-        intent.apply {
-            putExtra(ALARM_ID, item.id)
-            putExtra(ALARM_INSTANCE, item)
-        }
-        startActivityForResult(intent, EDIT_ALARM_REQUEST)
+        LOGGER.v("onListItemClick: $item")
+        val editAlarmIntent = EditAlarmActivity.createIntent(this)
+                .putExtra(ALARM_INSTANCE, item)
+        startActivityForResult(editAlarmIntent, EDIT_ALARM_REQUEST)
     }
 
     override fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean) {
-        item.isEnabled = isChecked
-        if (item.isEnabled) {
-            // If next occurrence is before now, update the next occurrence
-            if (item.nextOccurrence.before(Calendar.getInstance()))
-                item.nextOccurrence = getNextAlarmOccurrence(item)
-            val delta = getTimeDeltaFromNow(item)
-            val msg = getString(R.string.msg_alarm_will_go_off, getTimeDistanceString(this, delta))
-            Snackbar.make(fabCreateAlarm, msg, Snackbar.LENGTH_SHORT).show()
+
+        if (item.getNextOccurrence() != null) {
+            item.isEnabled = isChecked
+            mAlarmUpdateHandler.asyncUpdateAlarm(item, true)
+        } else {
+            shortToast(R.string.msg_cannot_set_past_time)
         }
-        updateAlarm(this, item)
     }
 
     override fun onRecyclerViewUpdate(itemCount: Int) {
         tvNoAlarm.visibility = if (itemCount == 0) View.VISIBLE else View.GONE
-        Log.d("MainActivity", "RecyclerView updated")
+        LOGGER.d("RecyclerView updated, item count: $itemCount")
     }
 
     private fun onFabCreateAlarmClick() {
-        val dialogFragment = TimePickerFragment.newInstance(this)
-        dialogFragment.show(supportFragmentManager, TimePickerFragment.NEW_ALARM)
+        val now = Calendar.getInstance()
+        TimePickerFragment.newInstance(now[Calendar.HOUR_OF_DAY], now[Calendar.MINUTE])
+                .show(supportFragmentManager, TimePickerFragment.NEW_ALARM)
     }
+
+//    override fun onDestroy() {
+//        unregisterReceiver(mReceiver)
+//        super.onDestroy()
+//    }
+
+    companion object {
+        const val RESULT_SAVE = 1
+        const val RESULT_DELETE = 2
+    }
+
+    private val LOGGER = LogUtils.Logger("MainActivity")
 }

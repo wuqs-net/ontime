@@ -12,9 +12,9 @@ object LogUtils {
         fun w(message: String) = Log.w(logTag, message)
         fun e(message: String) = Log.e(logTag, message)
         fun e(message: String, tr: Throwable) = Log.e(logTag, message, tr)
+        fun wtf(message: String) = Log.wtf(logTag, message)
+        fun wtf(message: String, tr: Throwable) = Log.wtf(logTag, message, tr)
     }
-
-    val DEFAULT_LOGGER = Logger("OnTime")
 
     fun v(message: String) = DEFAULT_LOGGER.v(message)
     fun d(message: String) = DEFAULT_LOGGER.d(message)
@@ -22,4 +22,8 @@ object LogUtils {
     fun w(message: String) = DEFAULT_LOGGER.w(message)
     fun e(message: String) = DEFAULT_LOGGER.e(message)
     fun e(message: String, tr: Throwable) = DEFAULT_LOGGER.e(message, tr)
+    fun wtf(message: String) = DEFAULT_LOGGER.wtf(message)
+    fun wtf(message: String, tr: Throwable) = DEFAULT_LOGGER.wtf(message, tr)
+
+    private val DEFAULT_LOGGER = Logger("OnTime")
 }

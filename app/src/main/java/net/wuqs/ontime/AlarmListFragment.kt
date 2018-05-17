@@ -1,9 +1,9 @@
 package net.wuqs.ontime
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -11,41 +11,53 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import net.wuqs.ontime.db.AlarmDataModel
 import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.db.AlarmDataModel
 import net.wuqs.ontime.utils.LogUtils
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [AlarmListFragment.OnListFragmentInteractionListener] interface.
+ * [AlarmListFragment.OnListFragmentActionListener] interface.
  */
 class AlarmListFragment : Fragment() {
 
-    private var listener: OnListFragmentInteractionListener? = null
+    private var listener: OnListFragmentActionListener? = null
 
-    private var recyclerView: RecyclerView? = null
+    private lateinit var recyclerView: RecyclerView
+    private var mAdapter: AlarmRecyclerViewAdapter? = null
+
+    // Data
+    private lateinit var alarmsData: LiveData<List<Alarm>>
+    private lateinit var alarmObserver: Observer<List<Alarm>>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        alarmsData = ViewModelProviders.of(this)[AlarmDataModel::class.java].alarms
+        alarmObserver = Observer { onDataChange(it!!) }
+        alarmsData.observe(this, alarmObserver)
+        LOGGER.v("onCreate")
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_alarm_list, container, false)
-        val mAdapter = AlarmRecyclerViewAdapter(mutableListOf(), listener)
+        mAdapter = AlarmRecyclerViewAdapter(mutableListOf(), listener)
 
-        // Set the adapter
         recyclerView = view as RecyclerView
-        recyclerView!!.apply {
+        // Set the adapter
+        return view.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
         }
-        val alarms = ViewModelProviders.of(this)[AlarmDataModel::class.java].alarms
-        alarms.observe(this, Observer { mAdapter.setAlarms(it!!) })
-        return view
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnListFragmentInteractionListener) listener = context
-        else throw RuntimeException("$context must implement OnListFragmentInteractionListener")
+        listener = when (context) {
+            is OnListFragmentActionListener -> context
+            else -> throw RuntimeException("$context must implement OnListFragmentActionListener")
+        }
     }
 
     override fun onDetach() {
@@ -53,10 +65,9 @@ class AlarmListFragment : Fragment() {
         listener = null
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        recyclerView?.adapter?.notifyDataSetChanged()
-//    }
+    private fun onDataChange(data: List<Alarm>) {
+        mAdapter?.setAlarms(data)
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -64,7 +75,7 @@ class AlarmListFragment : Fragment() {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    interface OnListFragmentInteractionListener {
+    interface OnListFragmentActionListener {
 
         /**
          * Called when an item in the [RecyclerView] is clicked.
@@ -90,5 +101,4 @@ class AlarmListFragment : Fragment() {
     }
 
     private val LOGGER = LogUtils.Logger("AlarmListFragment")
-
 }

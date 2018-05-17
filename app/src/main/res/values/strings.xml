@@ -11,11 +11,14 @@
     <string name="hint_alarm_title">Alarm title</string>
 
     <string name="msg_alarm_will_go_off">Alarm will go off in %1$s</string>
+    <string name="msg_cannot_set_past_time">Can\'t set alarm in the past</string>
 
     <string name="prompt_delete_alarm">Delete alarm?</string>
 
     <string name="every">Every</string>
     <string name="starts_from">Starts from</string>
+
+    <string name="msg_next_time">Next time: %1$s</string>
 
     <string-array name="time_distance">
         <item>less than 1 minute</item>
@@ -41,9 +44,9 @@
     -->
     <string-array name="repeat_patterns">
         <item>Does not repeat</item>
-        <item>%1$s</item>
+        <item>%1$s starts from %3$s</item>
         <item>%1$s on %2$s</item>
-        <item>%1$s on %2$s</item>
+        <!--<item>%1$s on %2$s</item>-->
     </string-array>
 
     <plurals name="years">

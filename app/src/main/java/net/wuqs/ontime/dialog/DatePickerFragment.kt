@@ -2,6 +2,7 @@ package net.wuqs.ontime.dialog
 
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.widget.DatePicker
@@ -9,7 +10,7 @@ import java.util.Calendar
 
 class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
 
-    private var mListener: OnDateSetListener? = null
+    private lateinit var mListener: DateSetListener
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val args = arguments!!
@@ -19,11 +20,20 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
         return DatePickerDialog(activity, this, year, month, day)
     }
 
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        mListener!!.onDateSet(tag, year, month, dayOfMonth)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is DateSetListener) {
+            mListener = context
+        } else {
+            throw RuntimeException("$context must implement DateSetListener")
+        }
     }
 
-    interface OnDateSetListener {
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        mListener.onDateSet(tag, year, month, dayOfMonth)
+    }
+
+    interface DateSetListener {
 
         /**
          * Called when user sets a date with the dialog.
@@ -36,14 +46,13 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     companion object {
 
         /**
-         * Create a new instance of [DatePickerFragment] with a specified [OnDateSetListener] and
+         * Create a new instance of [DatePickerFragment] with a specified [DateSetListener] and
          * a default date.
          *
          * @param c the default date of the [DatePickerDialog].
          */
-        fun newInstance(listener: OnDateSetListener, c: Calendar): DatePickerFragment {
+        fun newInstance(c: Calendar): DatePickerFragment {
             val fragment = DatePickerFragment()
-            fragment.mListener = listener
             val args = Bundle()
             args.apply {
                 putInt(ARGS_YEAR, c[Calendar.YEAR])

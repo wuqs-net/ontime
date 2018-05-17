@@ -13,10 +13,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
@@ -26,7 +25,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread"
-        tools:text="下午12:01" />
+        tools:text="下午10:07" />
 
     <TextView
         android:id="@+id/tvRepeatPattern"
@@ -37,7 +36,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         app:layout_constraintBottom_toTopOf="@+id/tvCountdown"
-        app:layout_constraintEnd_toStartOf="@+id/switch1"
+        app:layout_constraintEnd_toStartOf="@+id/onoff"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/tvAlarmTitle"
@@ -53,7 +52,7 @@
         android:layout_marginTop="4dp"
         android:textAppearance="@style/TextAppearance.AppCompat"
         app:layout_constraintBottom_toTopOf="@+id/tvRepeatPattern"
-        app:layout_constraintEnd_toStartOf="@+id/switch1"
+        app:layout_constraintEnd_toStartOf="@+id/onoff"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/guidelineTop"
         tools:text="Alarm title 这是标题" />
@@ -76,11 +75,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/divider"
-        app:layout_constraintGuide_percent="0.20"
+        app:layout_constraintGuide_begin="76dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.SwitchCompat
-        android:id="@+id/switch1"
+        android:id="@+id/onoff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -99,7 +98,7 @@
         android:layout_marginTop="4dp"
         android:textColor="@color/colorAccent"
         app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
-        app:layout_constraintEnd_toStartOf="@+id/switch1"
+        app:layout_constraintEnd_toStartOf="@+id/onoff"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/tvRepeatPattern"

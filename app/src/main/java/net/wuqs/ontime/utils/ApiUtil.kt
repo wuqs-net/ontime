@@ -1,4 +1,4 @@
-package net.wuqs.ontime
+package net.wuqs.ontime.utils
 
 import android.os.Build
 

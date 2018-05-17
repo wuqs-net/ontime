@@ -12,21 +12,24 @@
     <string name="hint_alarm_title">闹钟标题</string>
 
     <string name="msg_alarm_will_go_off">闹钟将在 %1$s 后响起</string>
+    <string name="msg_cannot_set_past_time">不能设为过去的时间</string>
 
     <string name="prompt_delete_alarm">删除闹钟？</string>
 
     <string name="every">每</string>
     <string name="starts_from">起始日期</string>
 
+    <string name="msg_next_time">下次响铃：%1$s</string>
+
     <string-array name="time_distance">
-        <item>不到 1 分钟</item>
+        <item>不到1分钟</item>
         <item><xliff:g id="minute">%3$s</xliff:g></item>
         <item><xliff:g id="hour">%2$s</xliff:g></item>
-        <item><xliff:g id="hour">%2$s</xliff:g> <xliff:g id="minute">%3$s</xliff:g></item>
+        <item><xliff:g id="hour">%2$s</xliff:g><xliff:g id="minute">%3$s</xliff:g></item>
         <item><xliff:g id="day">%1$s</xliff:g></item>
-        <item><xliff:g id="day">%1$s</xliff:g> <xliff:g id="minute">%3$s</xliff:g></item>
-        <item><xliff:g id="day">%1$s</xliff:g> <xliff:g id="hour">%2$s</xliff:g></item>
-        <item><xliff:g id="day">%1$s</xliff:g> <xliff:g id="hour">%2$s</xliff:g> <xliff:g id="minute">%3$s</xliff:g></item>
+        <item><xliff:g id="day">%1$s</xliff:g><xliff:g id="minute">%3$s</xliff:g></item>
+        <item><xliff:g id="day">%1$s</xliff:g><xliff:g id="hour">%2$s</xliff:g></item>
+        <item><xliff:g id="day">%1$s</xliff:g><xliff:g id="hour">%2$s</xliff:g><xliff:g id="minute">%3$s</xliff:g></item>
     </string-array>
 
     <string-array name="repeat_types">
@@ -44,10 +47,6 @@
         <item>单次</item>
         <item>%3$s起 %1$s</item>
         <item>%1$s %2$s</item>
-    </string-array>
-
-    <string-array name="repeat_indexes">
-        <item>%1$s</item>
     </string-array>
 
     <plurals name="years">
@@ -70,30 +69,26 @@
     </plurals>
 
     <plurals name="years_for_repeat">
-        <item quantity="one">每年</item>
-        <item quantity="other">每 %d 年</item>
+        <item quantity="other">每%d年</item>
     </plurals>
     <plurals name="months_for_repeat">
-        <item quantity="one">每月</item>
-        <item quantity="other">每 %d 个月</item>
+        <item quantity="other">每%d个月</item>
     </plurals>
     <plurals name="weeks_for_repeat">
-        <item quantity="one">每周</item>
-        <item quantity="other">每 %d 周</item>
+        <item quantity="other">每%d周</item>
     </plurals>
     <plurals name="days_for_repeat">
-        <item quantity="one">每天</item>
-        <item quantity="other">每 %d 天</item>
+        <item quantity="other">每%d天</item>
     </plurals>
 
     <plurals name="days_with_quan">
-        <item quantity="other">%d 天</item>
+        <item quantity="other">%d天</item>
     </plurals>
     <plurals name="hours_with_quan">
-        <item quantity="other">%d 小时</item>
+        <item quantity="other">%d小时</item>
     </plurals>
     <plurals name="minutes_with_quan">
-        <item quantity="other">%d 分钟</item>
+        <item quantity="other">%d分钟</item>
     </plurals>
 
 </resources>

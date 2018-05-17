@@ -2,15 +2,15 @@ package net.wuqs.ontime.dialog
 
 import android.app.Dialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.text.format.DateFormat
 import android.widget.TimePicker
-import java.util.*
 
 class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
 
-    private var mListener: OnTimeSetListener? = null
+    private lateinit var mListener: TimeSetListener
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val args = arguments!!
@@ -20,11 +20,20 @@ class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener 
                 DateFormat.is24HourFormat(activity))
     }
 
-    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        mListener!!.onTimeSet(tag, hourOfDay, minute)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is TimeSetListener) {
+            mListener = context
+        } else {
+            throw RuntimeException("$context must implement TimeSetListener")
+        }
     }
 
-    interface OnTimeSetListener {
+    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+        mListener.onTimeSet(tag, hourOfDay, minute)
+    }
+
+    interface TimeSetListener {
 
         /**
          * Called when user sets a time with the dialog.
@@ -37,20 +46,17 @@ class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener 
     companion object {
 
         /**
-         * Create a new instance of [TimePickerFragment] with a specified [OnTimeSetListener] and a
+         * Create a new instance of [TimePickerFragment] with a specified [TimeSetListener] and a
          * default time.
          *
          * @param hourOfDay the default hour of the [TimePickerDialog].
          * @param minute the default minute of the [TimePickerDialog].
          */
-        fun newInstance(listener: OnTimeSetListener,
-                        hourOfDay: Int = Calendar.getInstance()[Calendar.HOUR_OF_DAY],
-                        minute: Int = Calendar.getInstance()[Calendar.MINUTE])
-                : TimePickerFragment {
+        fun newInstance(hourOfDay: Int, minute: Int): TimePickerFragment {
             val fragment = TimePickerFragment()
-            fragment.mListener = listener
-            val args = Bundle()
-            args.apply { putInt(ARG_HOUR, hourOfDay); putInt(ARG_MINUTE, minute) }
+            val args = Bundle().apply {
+                putInt(ARG_HOUR, hourOfDay); putInt(ARG_MINUTE, minute)
+            }
             fragment.arguments = args
             return fragment
         }

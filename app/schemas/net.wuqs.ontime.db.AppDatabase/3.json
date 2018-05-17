@@ -39,7 +39,7 @@
             "notNull": false
           },
           {
-            "fieldPath": "enabled",
+            "fieldPath": "isEnabled",
             "columnName": "enabled",
             "affinity": "INTEGER",
             "notNull": true
@@ -69,7 +69,7 @@
             "notNull": false
           },
           {
-            "fieldPath": "nextOccurrence",
+            "fieldPath": "nextTime",
             "columnName": "next_occurrence",
             "affinity": "INTEGER",
             "notNull": false
