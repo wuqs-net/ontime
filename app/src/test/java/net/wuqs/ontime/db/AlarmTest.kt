@@ -9,7 +9,7 @@ class AlarmTest {
     @Test
     fun updateNextOccurrence() {
         val alarm = Alarm()
-        var next = Calendar.getInstance()
+        val next: Calendar
 
 //        alarm.apply {
 //            hour = 9
@@ -100,10 +100,10 @@ class AlarmTest {
             nextTime = getNextOccurrence()
         }
         next = Calendar.getInstance().apply {
-            set(2018, Calendar.MAY, 13, alarm.hour, alarm.minute, 0)
+            set(2018, Calendar.MAY, 19, alarm.hour, alarm.minute, 0)
             set(Calendar.MILLISECOND, 0)
         }
         println("activate: ${alarm.activateDate?.time}, next: ${alarm.nextTime?.time}")
-        assert(next.compareTo(alarm.nextTime!!) == 0)
+        assert(next == alarm.nextTime)
     }
 }

@@ -100,20 +100,22 @@ class Alarm() : Parcelable {
     /**
      * Checks if another [Alarm] has the same display summary as this [Alarm].
      *
-     * @param alarm the [Alarm] to check.
+     * @param other the other [Alarm] to check.
      * @return whether the two [Alarm]s have the same display summary.
      */
-    fun sameDisplaySummaryAs(alarm: Alarm?): Boolean = alarm != null
-            && this.id == alarm.id
-            && this.hour == alarm.hour
-            && this.minute == alarm.minute
-            && this.title == alarm.title
-            && this.isEnabled == alarm.isEnabled
-            && this.repeatType == alarm.repeatType
-            && this.repeatCycle == alarm.repeatCycle
-            && this.repeatIndex == alarm.repeatIndex
-            && this.activateDate?.timeInMillis == alarm.activateDate?.timeInMillis
-            && this.nextTime?.timeInMillis == alarm.nextTime?.timeInMillis
+    fun sameDisplaySummaryAs(other: Alarm?) = when {
+        other == null -> false
+        id != other.id -> false
+        hour != other.hour || minute != minute -> false
+        title != other.title -> false
+        isEnabled != other.isEnabled -> false
+        activateDate != other.activateDate -> false
+        nextTime != other.nextTime -> false
+        repeatType != other.repeatType -> false
+        repeatCycle != other.repeatCycle -> false
+        repeatIndex != other.repeatIndex -> false
+        else -> true
+    }
 
     fun createIntent(context: Context, cls: Class<*>): Intent {
         return Intent(context, cls)
@@ -190,6 +192,27 @@ class Alarm() : Parcelable {
             "title=$title, isEnabled=$isEnabled, " +
             "repeatType=$repeatType, repeatCycle=$repeatCycle, repeatIndex=$repeatIndex, " +
             "activate=${activateDate?.time}, next=${nextTime?.time}}"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Alarm
+
+        if (id != other.id) return false
+        if (hour != other.hour) return false
+        if (minute != other.minute) return false
+        if (title != other.title) return false
+        if (ringtoneUri != other.ringtoneUri) return false
+        if (isEnabled != other.isEnabled) return false
+        if (repeatType != other.repeatType) return false
+        if (repeatCycle != other.repeatCycle) return false
+        if (repeatIndex != other.repeatIndex) return false
+        if (activateDate != other.activateDate) return false
+        if (nextTime != other.nextTime) return false
+
+        return true
+    }
 
     companion object {
 

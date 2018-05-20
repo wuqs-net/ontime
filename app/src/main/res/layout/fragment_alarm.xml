@@ -9,113 +9,118 @@
     tools:layout_editor_absoluteY="81dp">
 
     <TextView
-        android:id="@+id/tvAlarmTime"
+        android:id="@+id/alarm_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:gravity="center"
+        android:textAllCaps="false"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_content"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_top"
         app:layout_constraintVertical_chainStyle="spread"
         tools:text="下午10:07" />
 
-    <TextView
-        android:id="@+id/tvRepeatPattern"
-        android:layout_width="0dp"
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvCountdown"
-        app:layout_constraintEnd_toStartOf="@+id/onoff"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/tvAlarmTitle"
-        tools:text="每2个月的 10日" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/boundary_margin" />
 
     <TextView
-        android:id="@+id/tvAlarmTitle"
+        android:id="@+id/alarm_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingBottom="@dimen/summary_text_padding"
+        android:paddingTop="@dimen/summary_text_padding"
         android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintBottom_toTopOf="@+id/tvRepeatPattern"
-        app:layout_constraintEnd_toStartOf="@+id/onoff"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/guidelineTop"
-        tools:text="Alarm title 这是标题" />
+        app:layout_constraintBottom_toTopOf="@+id/next_date"
+        app:layout_constraintEnd_toStartOf="@+id/alarm_enable"
+        app:layout_constraintStart_toStartOf="@+id/guideline_content"
+        app:layout_constraintTop_toTopOf="@+id/guideline_top"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Alarm title 这是标题长标题特别长的标题" />
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:background="?android:attr/listDivider"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <TextView
+        android:id="@+id/next_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/summary_text_padding"
+        android:paddingTop="@dimen/summary_text_padding"
+        app:layout_constraintBottom_toTopOf="@+id/next_countdown"
+        app:layout_constraintStart_toStartOf="@+id/guideline_content"
+        app:layout_constraintTop_toBottomOf="@+id/alarm_title"
+        tools:text="1月1日周三" />
+
+    <ImageView
+        android:id="@+id/repeat_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="4dp"
+        android:contentDescription="Repeat Indicator"
+        app:layout_constraintBottom_toBottomOf="@+id/next_date"
+        app:layout_constraintStart_toEndOf="@+id/next_date"
+        app:layout_constraintTop_toTopOf="@+id/next_date"
+        app:srcCompat="@drawable/ic_repeat_grey_24dp" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/guideline"
+        android:id="@+id/guideline_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintGuide_begin="76dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.SwitchCompat
-        android:id="@+id/onoff"
+        android:id="@+id/alarm_enable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/boundary_margin"
         android:theme="@style/SwitchThemePrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvCountdown"
+        android:id="@+id/next_countdown"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:paddingBottom="@dimen/summary_text_padding"
+        android:paddingTop="@dimen/summary_text_padding"
         android:textColor="@color/colorAccent"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
-        app:layout_constraintEnd_toStartOf="@+id/onoff"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/alarm_enable"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/tvRepeatPattern"
+        app:layout_constraintStart_toStartOf="@+id/guideline_content"
+        app:layout_constraintTop_toBottomOf="@+id/next_date"
         tools:text="10 小时 58 分钟 后" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/guidelineTop"
+        android:id="@+id/guideline_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="12dp" />
+        app:layout_constraintGuide_end="@dimen/boundary_margin" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guidelineBottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="12dp" />
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

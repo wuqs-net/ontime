@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_alarm.view.*
 import net.wuqs.ontime.AlarmListFragment.OnListFragmentActionListener
-import net.wuqs.ontime.alarm.getRepeatString
+import net.wuqs.ontime.alarm.getDateString
 import net.wuqs.ontime.alarm.getTimeString
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.utils.LogUtils
@@ -45,19 +45,24 @@ class AlarmRecyclerViewAdapter
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         fun bindData(item: Alarm) = with(mView) {
             setOnClickListener { mListener?.onListItemClick(data[adapterPosition]) }
-            onoff.setOnClickListener {
-                mListener?.onAlarmSwitchClick(data[adapterPosition], onoff.isChecked)
+            alarm_enable.setOnClickListener {
+                mListener?.onAlarmSwitchClick(data[adapterPosition], alarm_enable.isChecked)
             }
 
-            tvAlarmTime.text = getTimeString(this.context, item)
-            tvAlarmTitle.visibility = if (!item.title!!.isEmpty()) View.VISIBLE else View.GONE
-            tvAlarmTitle.text = item.title
-            tvRepeatPattern.text = getRepeatString(this.context, item)
-            tvCountdown.visibility = View.GONE
-//            tvCountdown.text = "10 小时 58 分钟 后"
+            alarm_time.text = getTimeString(this.context, item)
+            alarm_title.visibility = if (!item.title!!.isEmpty()) View.VISIBLE else View.GONE
+            alarm_title.text = item.title
+
+            next_date.text = getDateString(item.nextTime)
+            repeat_icon.visibility =
+                    if (item.repeatType == Alarm.NON_REPEAT) View.GONE
+                    else View.VISIBLE
+
+            next_countdown.visibility = View.GONE
+//            tvCountdown.text = "10小时58分钟后"
 //            tvCountdown.visibility = if (position == 0) View.VISIBLE else View.GONE
-            onoff.isChecked = item.isEnabled
-            onoff.isEnabled = item.getNextOccurrence() != null
+            alarm_enable.isChecked = item.isEnabled
+            alarm_enable.isEnabled = item.getNextOccurrence() != null
         }
     }
 
