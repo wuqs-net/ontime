@@ -47,7 +47,6 @@ android {
             ext.alwaysUpdateBuildId = false
         }
         alpha {
-            debuggable true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             versionNameSuffix '-alpha'
