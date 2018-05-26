@@ -260,7 +260,7 @@ class Alarm() : Parcelable {
         /**
          * Updates the [Alarm] in database.
          *
-         * @param context the [Context] used to get the [AppDatabase] instance.
+         * @param db the [AppDatabase] instance.
          * @return the [Alarm] saved to database, with its id updated.
          */
         fun updateAlarm(db: AppDatabase, alarm: Alarm): Int {
@@ -272,7 +272,7 @@ class Alarm() : Parcelable {
         /**
          * Deletes the [Alarm] from database.
          *
-         * @param context the [Context] used to get the [AppDatabase] instance.
+         * @param db the [AppDatabase] instance.
          */
         fun deleteAlarm(db: AppDatabase, alarm: Alarm) {
             db.alarmDAO.delete(alarm)

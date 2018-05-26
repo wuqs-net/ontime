@@ -10,12 +10,16 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.AdapterView
+import android.view.*
+import android.widget.BaseAdapter
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_edit_alarm.*
+import kotlinx.android.synthetic.main.item_day_of_month.view.*
+import kotlinx.android.synthetic.main.layout_edit_cycle_number.*
+import kotlinx.android.synthetic.main.layout_edit_cycle_number.view.*
 import kotlinx.android.synthetic.main.layout_repeat_daily_config.*
+import kotlinx.android.synthetic.main.layout_repeat_daily_config.view.*
+import kotlinx.android.synthetic.main.layout_repeat_monthly_config.view.*
 import net.wuqs.ontime.alarm.ALARM_INSTANCE
 import net.wuqs.ontime.alarm.AlarmUpdateHandler
 import net.wuqs.ontime.alarm.getDateString
@@ -59,36 +63,15 @@ class EditAlarmActivity : AppCompatActivity(),
         }
 
 
-//        spinnerRepeat.onItemSelectedListener = this
-//        spinnerRepeat.setSelection(alarm.repeatType and 0xF)
-        updateRepeatDisplay()
-
+        tvTime.text = getTimeString(this, alarm)
         tvTime.setOnClickListener(this)
+        start_date.text = getDateString(alarm.activateDate!!)
         start_date.setOnClickListener(this)
         repeat_type.setOnClickListener(this)
 
-        tvTime.text = getTimeString(this, alarm)
-        start_date.text = getDateString(alarm.activateDate!!)
-
-        edit_repeat_cycle.addTextChangedListener(this)
-        edit_repeat_cycle.setText(alarm.repeatCycle.toString())
+        updateRepeatDisplay()
     }
 
-    fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        // TODO: Delete this
-        alarm.repeatType = Alarm.REPEAT_TYPES[position]
-        flipperRepeat.displayedChild = alarm.repeatType and 0xF
-        if (position == 0) {
-//            incRepeat.visibility = View.GONE
-            alarm.repeatCycle = 0
-            alarm.repeatIndex = 0
-//            miSaveAlarm.isEnabled = true
-        } else {
-//            incRepeat.visibility = View.VISIBLE
-//            etCycle.setText("1")
-            repeat_cycle.text = getRepeatCycleText(1)
-        }
-    }
 
     override fun onClick(v: View?) {
         when (v) {
@@ -108,13 +91,15 @@ class EditAlarmActivity : AppCompatActivity(),
     }
 
     override fun afterTextChanged(s: Editable?) {
-        if (s!!.isNotEmpty()) {
-            if (s.toString().toInt() < 1) {
-                s.replace(0, s.length, "1")
+        with(flipperRepeat.currentView) {
+            s.toString().toIntOrNull()?.let {
+                if (it < 1) s?.replace(0, s.length, "1")
+                if (alarm.repeatType != Alarm.NON_REPEAT) {
+                    alarm.repeatCycle = it
+                    tv_repeatCycle.text = getRepeatCycleText(alarm.repeatCycle)
+                }
             }
-            if (alarm.repeatType != Alarm.NON_REPEAT) {
-                repeat_cycle.text = getRepeatCycleText(alarm.repeatCycle)
-            }
+            et_repeatCycle.hint = alarm.repeatCycle.toString()
         }
     }
 
@@ -155,6 +140,7 @@ class EditAlarmActivity : AppCompatActivity(),
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.miSaveAlarm -> {
+                // Save alarm
                 if (alarm.repeatType == Alarm.NON_REPEAT && alarm.getNextOccurrence() == null) {
                     // If the user set a non-repeat alarm in the past, don't save it
                     shortToast(R.string.msg_cannot_set_past_time)
@@ -162,11 +148,7 @@ class EditAlarmActivity : AppCompatActivity(),
                 }
                 alarm.title = tilTitle.editText?.text.toString()
                 alarm.isEnabled = true
-                alarm.repeatCycle = if (alarm.repeatType != Alarm.NON_REPEAT) {
-                    edit_repeat_cycle.text.toString().toInt()
-                } else {
-                    0
-                }
+                if (alarm.repeatType == Alarm.NON_REPEAT) alarm.repeatCycle = 0
                 val data = Intent(this, MainActivity::class.java)
                         .putExtra(ALARM_INSTANCE, alarm)
                 setResult(MainActivity.RESULT_SAVE, data)
@@ -206,19 +188,49 @@ class EditAlarmActivity : AppCompatActivity(),
 
     private fun updateRepeatDisplay() {
         flipperRepeat.displayedChild = alarm.repeatType and 0xF
-        repeat_type.text = resources.getStringArray(R.array.repeat_types)[alarm.repeatType and 0xF]
-        if (alarm.repeatType == Alarm.NON_REPEAT) {
-            edit_repeat_cycle.removeTextChangedListener(this)
-            edit_repeat_cycle.setText("0")
-        } else {
-            edit_repeat_cycle.addTextChangedListener(this)
-            repeat_cycle.text = getRepeatCycleText(alarm.repeatCycle)
+        with(flipperRepeat.currentView) {
+            repeat_type.text = resources.getStringArray(R.array.repeat_types)[alarm.repeatType and 0xF]
+            if (alarm.repeatType == Alarm.NON_REPEAT) {
+                et_repeatCycle?.run {
+                    removeTextChangedListener(this@EditAlarmActivity)
+                    setText("0")
+                }
+            } else with(flipperRepeat.currentView) {
+                et_repeatCycle.addTextChangedListener(this@EditAlarmActivity)
+                et_repeatCycle.setText(alarm.repeatCycle.toString())
+                tv_repeatCycle.text = getRepeatCycleText(alarm.repeatCycle)
+            }
+            when (alarm.repeatType) {
+                Alarm.REPEAT_MONTHLY_BY_DAY_OF_MONTH -> {
+                    gv_dayPicker.adapter = CheckboxAdapter(context)
+                }
+            }
         }
     }
 
     private fun getRepeatCycleText(quantity: Int): CharSequence? {
         val cycles = arrayOf(0, R.plurals.days, R.plurals.weeks, R.plurals.months, R.plurals.years)
         return resources.getQuantityText(cycles[alarm.repeatType and 0xF], quantity)
+    }
+
+    private class CheckboxAdapter(private val context: Context) : BaseAdapter() {
+        val days = List(31) {it + 1}
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.item_day_of_month, null)
+            with(view) {
+                cb_day.setText(days[position].toString())
+            }
+            return view
+        }
+
+        override fun getItem(position: Int) = days[position]
+
+        override fun getItemId(position: Int) = days[position].toLong()
+
+        override fun getCount() = days.size
+
     }
 
     companion object {

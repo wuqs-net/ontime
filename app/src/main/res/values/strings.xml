@@ -10,6 +10,9 @@
     <string name="title_edit_alarm">Edit Alarm</string>
     <string name="hint_alarm_title">Alarm title</string>
 
+    <string name="repeat_by_day_of_month">Repeat by day of month</string>
+    <string name="repeat_by_day_of_week">Repeat by day of week</string>
+
     <string name="msg_alarm_will_go_off">Alarm will go off in %1$s</string>
     <string name="msg_cannot_set_past_time">Can\'t set alarm in the past</string>
 
@@ -34,8 +37,8 @@
     <string-array name="repeat_types">
         <item>Does not repeat</item>
         <item>Repeats daily</item>
-        <!--<item>Repeats weekly</item>-->
-        <!--<item>Repeats monthly</item>-->
+        <item>Repeats weekly</item>
+        <item>Repeats monthly</item>
         <!--<item>Repeats yearly</item>-->
     </string-array>
 

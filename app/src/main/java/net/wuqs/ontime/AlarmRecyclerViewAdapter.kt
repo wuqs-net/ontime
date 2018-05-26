@@ -42,7 +42,7 @@ class AlarmRecyclerViewAdapter
         diff.dispatchUpdatesTo(this)
     }
 
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
+    inner class ViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
         fun bindData(item: Alarm) = with(mView) {
             setOnClickListener { mListener?.onListItemClick(data[adapterPosition]) }
             alarm_enable.setOnClickListener {

@@ -68,11 +68,11 @@ class AlarmActivity : AppCompatActivity(), View.OnClickListener {
 
         if (alarm.repeatType == Alarm.NON_REPEAT) {
             alarm.isEnabled = false
-            nextTime.visibility = View.INVISIBLE
+            next_time.visibility = View.INVISIBLE
         } else {
             alarm.nextTime = alarm.getNextOccurrence()
-            nextTime.text = getString(R.string.msg_next_time, getDateString(alarm.nextTime))
-            nextTime.visibility = View.VISIBLE
+            next_time.text = getString(R.string.msg_next_time, getDateString(alarm.nextTime))
+            next_time.visibility = View.VISIBLE
         }
 
         mAlarmUpdateHandler.asyncUpdateAlarm(alarm)

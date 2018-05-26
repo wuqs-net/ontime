@@ -5,40 +5,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tvCaptionEvery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:text="@string/every"
-        app:layout_constraintBaseline_toBaselineOf="@+id/edit_repeat_cycle"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/edit_repeat_cycle"
+    <include
+        android:id="@+id/inc_repeatCycle"
+        layout="@layout/layout_edit_cycle_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="@dimen/content_start_padding"
         android:layout_marginTop="8dp"
-        android:ems="3"
-        android:gravity="center_horizontal"
-        android:inputType="number"
-        android:maxLength="3"
-        android:paddingTop="0dp"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvCaptionEvery"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/repeat_cycle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        tools:text="cycle"
-        app:layout_constraintBaseline_toBaselineOf="@+id/edit_repeat_cycle"
-        app:layout_constraintStart_toEndOf="@+id/edit_repeat_cycle" />
 
 </android.support.constraint.ConstraintLayout>

@@ -11,7 +11,7 @@ class DataTypeConverter {
     fun toString(uri: Uri) = uri.toString()
 
     @TypeConverter
-    fun toUri(string: String) = Uri.parse(string)
+    fun toUri(string: String): Uri? = Uri.parse(string)
 
     fun toByte(b: Boolean) = toInt(b).toByte()
 

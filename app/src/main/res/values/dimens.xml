@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="boundary_margin">16dp</dimen>
+    <dimen name="content_start_padding">72dp</dimen>
     <dimen name="summary_text_padding">2dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>

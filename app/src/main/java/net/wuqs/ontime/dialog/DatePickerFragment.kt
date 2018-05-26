@@ -22,8 +22,8 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is DateSetListener) {
-            mListener = context
+        mListener = if (context is DateSetListener) {
+            context
         } else {
             throw RuntimeException("$context must implement DateSetListener")
         }

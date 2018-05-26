@@ -1,9 +1,7 @@
 package net.wuqs.ontime
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
-import java.util.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).

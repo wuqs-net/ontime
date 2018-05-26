@@ -4,7 +4,7 @@ import android.util.Log
 
 object LogUtils {
 
-    class Logger(val logTag: String) {
+    class Logger(private val logTag: String) {
 
         fun v(message: String) = Log.v(logTag, message)
         fun d(message: String) = Log.d(logTag, message)

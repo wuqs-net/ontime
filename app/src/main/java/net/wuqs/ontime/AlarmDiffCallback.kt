@@ -2,9 +2,9 @@ package net.wuqs.ontime
 
 import android.support.v7.util.DiffUtil
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.utils.LogUtils
 
-class AlarmDiffCallback(val oldAlarms: List<Alarm>, val newAlarms: List<Alarm>) : DiffUtil.Callback() {
+class AlarmDiffCallback(private val oldAlarms: List<Alarm>,
+                        private val newAlarms: List<Alarm>) : DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
             oldAlarms[oldItemPosition].id == newAlarms[newItemPosition].id

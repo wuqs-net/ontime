@@ -11,6 +11,9 @@
     <string name="title_edit_alarm">修改闹钟</string>
     <string name="hint_alarm_title">闹钟标题</string>
 
+    <string name="repeat_by_day_of_month">按日期重复</string>
+    <string name="repeat_by_day_of_week">按星期重复</string>
+
     <string name="msg_alarm_will_go_off">闹钟将在 %1$s 后响起</string>
     <string name="msg_cannot_set_past_time">不能设为过去的时间</string>
 
@@ -35,8 +38,8 @@
     <string-array name="repeat_types">
         <item>单次</item>
         <item>按天重复</item>
-        <!--<item>按周重复</item>-->
-        <!--<item>按月重复</item>-->
+        <item>按周重复</item>
+        <item>按月重复</item>
         <!--<item>按年重复</item>-->
     </string-array>
 
