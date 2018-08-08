@@ -1,4 +1,4 @@
-package net.wuqs.ontime.dialog
+package net.wuqs.ontime.ui.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog

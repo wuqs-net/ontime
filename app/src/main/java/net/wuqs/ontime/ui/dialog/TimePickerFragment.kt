@@ -1,4 +1,4 @@
-package net.wuqs.ontime.dialog
+package net.wuqs.ontime.ui.dialog
 
 import android.app.Dialog
 import android.app.TimePickerDialog
@@ -52,13 +52,11 @@ class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener 
          * @param hourOfDay the default hour of the [TimePickerDialog].
          * @param minute the default minute of the [TimePickerDialog].
          */
-        fun newInstance(hourOfDay: Int, minute: Int): TimePickerFragment {
-            val fragment = TimePickerFragment()
-            val args = Bundle().apply {
-                putInt(ARG_HOUR, hourOfDay); putInt(ARG_MINUTE, minute)
+        fun newInstance(hourOfDay: Int, minute: Int) = TimePickerFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_HOUR, hourOfDay)
+                putInt(ARG_MINUTE, minute)
             }
-            fragment.arguments = args
-            return fragment
         }
 
         const val NEW_ALARM = "NEW_ALARM"

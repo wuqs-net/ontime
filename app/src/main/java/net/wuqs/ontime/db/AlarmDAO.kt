@@ -9,11 +9,11 @@ interface AlarmDAO {
 
     /** All alarms in the database. */
     @get:Query("SELECT * FROM alarms")
-    val alarmsLive: LiveData<List<Alarm>>
+    val allLive: LiveData<List<Alarm>>
 
     /** All alarms in the database. */
     @get:Query("SELECT * FROM alarms")
-    val alarmsSync: List<Alarm>
+    val allSync: List<Alarm>
 
     /** The number of alarms stored in database. */
     @get:Query("SELECT COUNT(*) FROM alarms")

@@ -11,7 +11,9 @@ import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import net.wuqs.ontime.alarm.AlarmStateManager
-import net.wuqs.ontime.utils.LogUtils
+import net.wuqs.ontime.ui.alarmeditscreen.binString
+import net.wuqs.ontime.ui.alarmeditscreen.hexString
+import net.wuqs.ontime.util.LogUtils
 import java.util.*
 
 @Entity(tableName = "alarms")
@@ -50,7 +52,7 @@ class Alarm() : Parcelable {
     }
 
     /**
-     * Updates the [Alarm]'s next occurrence.
+     * Determines the [Alarm]'s next occurrence.
      */
     fun getNextOccurrence(now: Calendar = Calendar.getInstance()): Calendar? {
 
@@ -77,12 +79,51 @@ class Alarm() : Parcelable {
                 with(activateDate!!) {
                     next.set(this[Calendar.YEAR], this[Calendar.MONTH], this[Calendar.DATE])
                 }
-                with(next) {
-                    if (before(now)) {
-                        val c = ((now.timeInMillis + now[Calendar.DST_OFFSET]) -
-                                (timeInMillis + this[Calendar.DST_OFFSET])) /
-                                86400000 / repeatCycle + 1
-                        add(Calendar.DATE, c.toInt() * repeatCycle)
+                if (next.before(now)) {
+                    val c = ((now.timeInMillis + now[Calendar.DST_OFFSET]) -
+                            (next.timeInMillis + next[Calendar.DST_OFFSET])) /
+                            86400000 / repeatCycle + 1
+                    next.add(Calendar.DATE, c.toInt() * repeatCycle)
+                }
+            }
+            REPEAT_MONTHLY_BY_DATE -> {
+                if (repeatIndex == 0) return null
+                with(activateDate!!) {
+                    next.set(this[Calendar.YEAR], this[Calendar.MONTH], this[Calendar.DATE])
+                    if (next.before(now)) {
+                        next[Calendar.DATE] = now[Calendar.DATE]
+                        val c = ((now[Calendar.YEAR] * 12 + now[Calendar.MONTH]) -
+                                (this[Calendar.YEAR] * 12 + this[Calendar.MONTH])) /
+                                repeatCycle
+                        next.add(Calendar.MONTH, c * repeatCycle)
+                    }
+                }
+                for (i in next[Calendar.DATE]..31) {
+                    if (repeatIndex shr (i - 1) and 1 == 1) {
+                        next[Calendar.DATE] = i
+                        if (next.after(now)) {
+                            if (next[Calendar.DATE] == i) {
+                                return next
+                            } else {
+                                next.add(Calendar.MONTH, -1)
+                                break
+                            }
+                        }
+                    }
+                }
+                next.apply {
+                    for (i in 1..31) {
+                        if (repeatIndex shr (i - 1) and 1 == 1) {
+                            do {
+                                add(Calendar.MONTH, repeatCycle)
+                            } while (i > getActualMaximum(Calendar.DATE))
+                            set(Calendar.DATE, i)
+                            if (get(Calendar.DATE) != i) {
+                                add(Calendar.MONTH, -1)
+                                set(Calendar.DATE, getActualMaximum(Calendar.DATE))
+                            }
+                            break
+                        }
                     }
                 }
             }
@@ -147,16 +188,6 @@ class Alarm() : Parcelable {
 
     @Ignore
     constructor(another: Alarm) : this() {
-        copyFrom(another)
-    }
-
-    @Ignore
-    constructor(hour: Int, minute: Int) : this() {
-        this.hour = hour
-        this.minute = minute
-    }
-
-    fun copyFrom(another: Alarm) {
         this.id = another.id
         this.hour = another.hour
         this.minute = another.minute
@@ -168,6 +199,12 @@ class Alarm() : Parcelable {
         this.repeatIndex = another.repeatIndex
         this.activateDate = another.activateDate!!.clone() as Calendar
         this.nextTime = another.nextTime?.clone() as Calendar?
+    }
+
+    @Ignore
+    constructor(hour: Int, minute: Int) : this() {
+        this.hour = hour
+        this.minute = minute
     }
 
     override fun describeContents() = 0
@@ -186,11 +223,10 @@ class Alarm() : Parcelable {
         dest.writeLong(DTC.toLong(nextTime) ?: 0L)
     }
 
-    override fun hashCode() = id.hashCode()
-
     override fun toString() = "{id=$id, $hour:$minute, hashCode=${hashCode()}, " +
             "title=$title, isEnabled=$isEnabled, " +
-            "repeatType=$repeatType, repeatCycle=$repeatCycle, repeatIndex=$repeatIndex, " +
+            "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
+            "repeatIndex=${repeatIndex.binString}, " +
             "activate=${activateDate?.time}, next=${nextTime?.time}}"
 
     override fun equals(other: Any?): Boolean {
@@ -214,6 +250,8 @@ class Alarm() : Parcelable {
         return true
     }
 
+    override fun hashCode() = id.hashCode()
+
     companion object {
 
         const val ALARM_ID = "net.wuqs.ontime.extra.ALARM_ID"
@@ -232,18 +270,12 @@ class Alarm() : Parcelable {
         const val NON_REPEAT = 0x0
         const val REPEAT_DAILY = 0x11
         const val REPEAT_WEEKLY = 0x22
-        const val REPEAT_MONTHLY_BY_DAY_OF_MONTH = 0x43
+        const val REPEAT_MONTHLY_BY_DATE = 0x43
         const val REPEAT_MONTHLY_BY_DAY_OF_WEEK = 0x83
-        const val REPEAT_YEARLY_BY_DAY_OF_MONTH = 0x144
+        const val REPEAT_YEARLY_BY_DATE = 0x144
         const val REPEAT_YEARLY_BY_DAY_OF_WEEK = 0x184
 
-        val REPEAT_TYPES = arrayOf(NON_REPEAT, REPEAT_DAILY, REPEAT_WEEKLY,
-                REPEAT_MONTHLY_BY_DAY_OF_MONTH, REPEAT_YEARLY_BY_DAY_OF_MONTH)
-
         const val INVALID_ID = 0L
-
-        const val INVALID_STATE = 0
-        const val FIRED_STATE = 2
 
         /**
          * Adds the [Alarm] to database.

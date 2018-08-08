@@ -1,4 +1,4 @@
-package net.wuqs.ontime
+package net.wuqs.ontime.ui.mainscreen
 
 
 import android.support.v7.util.DiffUtil
@@ -7,11 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_alarm.view.*
-import net.wuqs.ontime.AlarmListFragment.OnListFragmentActionListener
+import net.wuqs.ontime.ui.mainscreen.AlarmListFragment.OnListFragmentActionListener
+import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.getDateString
 import net.wuqs.ontime.alarm.getTimeString
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.utils.LogUtils
+import net.wuqs.ontime.util.LogUtils
 
 /**
  * [RecyclerView.Adapter] that can display a [Alarm] and makes a call to the
@@ -54,9 +55,12 @@ class AlarmRecyclerViewAdapter
             alarm_title.text = item.title
 
             next_date.text = getDateString(item.nextTime)
-            repeat_icon.visibility =
-                    if (item.repeatType == Alarm.NON_REPEAT) View.GONE
-                    else View.VISIBLE
+//            repeat_icon.visibility = if (item.repeatType == Alarm.NON_REPEAT) {
+//                View.GONE
+//            } else {
+//                View.VISIBLE
+//            }
+            repeat_icon.visibility = View.GONE
 
             next_countdown.visibility = View.GONE
 //            tvCountdown.text = "10小时58分钟后"

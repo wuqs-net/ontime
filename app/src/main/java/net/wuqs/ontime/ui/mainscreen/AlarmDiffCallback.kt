@@ -1,4 +1,4 @@
-package net.wuqs.ontime
+package net.wuqs.ontime.ui.mainscreen
 
 import android.support.v7.util.DiffUtil
 import net.wuqs.ontime.db.Alarm

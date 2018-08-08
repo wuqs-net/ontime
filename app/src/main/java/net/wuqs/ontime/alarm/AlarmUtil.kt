@@ -1,6 +1,7 @@
 package net.wuqs.ontime.alarm
 
 import android.content.Context
+import android.content.res.Resources
 import android.text.format.DateFormat
 import net.wuqs.ontime.R
 import net.wuqs.ontime.db.Alarm
@@ -59,6 +60,21 @@ fun getTimeDistanceString(context: Context, alarmTime: Long): String {
     return formats[index].format(dayStr, hourStr, minuteStr)
 }
 
+fun Alarm.getRepeatTypeText(resources: Resources): CharSequence {
+    val index = when (repeatType) {
+        Alarm.NON_REPEAT -> 0
+        Alarm.REPEAT_DAILY -> 1
+        Alarm.REPEAT_MONTHLY_BY_DATE -> 2
+        else -> throw IllegalArgumentException("Illegal repeat type")
+    }
+    return resources.getStringArray(R.array.repeat_types)[index]
+}
+
+fun Alarm.getRepeatCycleText(resources: Resources): CharSequence {
+    val cycles = arrayOf(0, R.plurals.days, R.plurals.weeks, R.plurals.months, R.plurals.years)
+    return resources.getQuantityText(cycles[repeatType and 0xF], repeatCycle)
+}
+
 fun getRepeatString(context: Context, alarm: Alarm): String {
     val patterns = context.resources.getStringArray(R.array.repeat_patterns)
     if (alarm.repeatType == 0) return getDateString(alarm.activateDate!!, true)
@@ -84,4 +100,16 @@ fun getRepeatString(context: Context, alarm: Alarm): String {
     }
 
     return patterns[alarm.repeatType and 0xF].format(cycleStr, indexStr, startFromStr)
+}
+
+fun Calendar.setMidnight(year: Int, month: Int, date: Int) {
+    set(year, month, date, 0, 0, 0)
+    set(Calendar.MILLISECOND, 0)
+}
+
+fun Calendar.setHms(hour: Int, minute: Int = 0, second: Int = 0) {
+    set(Calendar.HOUR_OF_DAY, hour)
+    set(Calendar.MINUTE, minute)
+    set(Calendar.SECOND, second)
+    set(Calendar.MILLISECOND, 0)
 }

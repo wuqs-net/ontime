@@ -5,13 +5,13 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import net.wuqs.ontime.AlarmActivity
-import net.wuqs.ontime.MainActivity
+import net.wuqs.ontime.ui.alarmscreen.AlarmActivity
+import net.wuqs.ontime.ui.mainscreen.MainActivity
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
-import net.wuqs.ontime.utils.ApiUtil
-import net.wuqs.ontime.utils.AsyncHandler
-import net.wuqs.ontime.utils.LogUtils
+import net.wuqs.ontime.util.ApiUtil
+import net.wuqs.ontime.util.AsyncHandler
+import net.wuqs.ontime.util.LogUtils
 import java.util.*
 
 
@@ -47,7 +47,7 @@ class AlarmStateManager : BroadcastReceiver() {
      */
     private fun scheduleAllAlarms(context: Context) {
         val db = AppDatabase[context]!!
-        val alarms = db.alarmDAO.alarmsSync
+        val alarms = db.alarmDAO.allSync
         val now = Calendar.getInstance()
         val missedAlarms = mutableListOf<Alarm>()
         val needUpdate = alarms.filter { it.isEnabled }

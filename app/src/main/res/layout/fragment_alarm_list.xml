@@ -9,5 +9,5 @@
     android:clipToPadding="false"
     android:paddingBottom="88dp"
     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-    tools:context=".AlarmListFragment"
+    tools:context=".ui.mainscreen.AlarmListFragment"
     tools:listitem="@layout/fragment_alarm" />

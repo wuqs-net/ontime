@@ -1,4 +1,4 @@
-package net.wuqs.ontime
+package net.wuqs.ontime.ui.alarmscreen
 
 import android.annotation.TargetApi
 import android.app.KeyguardManager
@@ -10,9 +10,11 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager.LayoutParams
 import kotlinx.android.synthetic.main.activity_alarm.*
+import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.utils.ApiUtil
+import net.wuqs.ontime.util.ApiUtil
+import net.wuqs.ontime.util.LogUtils
 
 class AlarmActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -27,7 +29,7 @@ class AlarmActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_alarm)
         volumeControlStream = AudioManager.STREAM_ALARM
 
-        mAlarmUpdateHandler = AlarmUpdateHandler(this)
+        mAlarmUpdateHandler = AlarmUpdateHandler(applicationContext)
         mediaPlayer = MediaPlayer()
 
         // Wake up phone when this activity is launched
@@ -48,7 +50,8 @@ class AlarmActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     // Prevent quit by pressing Back
-    override fun onBackPressed() {}
+    override fun onBackPressed() {
+    }
 
     private fun startAlarm() {
         if (ApiUtil.isLOrLater()) {
@@ -66,21 +69,25 @@ class AlarmActivity : AppCompatActivity(), View.OnClickListener {
         mediaPlayer.prepare()
         mediaPlayer.start()
 
-        if (alarm.repeatType == Alarm.NON_REPEAT) {
-            alarm.isEnabled = false
-            next_time.visibility = View.INVISIBLE
-        } else {
-            alarm.nextTime = alarm.getNextOccurrence()
-            next_time.text = getString(R.string.msg_next_time, getDateString(alarm.nextTime))
-            next_time.visibility = View.VISIBLE
+        alarm.getNextOccurrence().let {
+            if (it == null) {
+                alarm.isEnabled = false
+                next_time.visibility = View.GONE
+            } else {
+                alarm.nextTime = it
+                next_time.visibility = View.VISIBLE
+                next_time.text = getString(R.string.msg_next_date, getDateString(it, false))
+            }
         }
 
-        mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
+//        mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
     }
 
     private fun stopAlarm() {
-//        alarmRingtone.stop()
         mediaPlayer.stop()
+        mediaPlayer.release()
+        mLogger.i("Alarm finished: $alarm")
+        mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
         finish()
     }
 
@@ -113,4 +120,5 @@ class AlarmActivity : AppCompatActivity(), View.OnClickListener {
         addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD)
     }
 
+    private val mLogger = LogUtils.Logger("AlarmActivity")
 }
