@@ -17,30 +17,20 @@ import net.wuqs.ontime.util.LogUtils
 import java.util.*
 
 @Entity(tableName = "alarms")
-class Alarm() : Parcelable {
-
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = INVALID_ID
-    @ColumnInfo(name = "hour")
-    var hour: Int = 0
-    @ColumnInfo(name = "minute")
-    var minute: Int = 0
-    @ColumnInfo(name = "title")
-    var title: String? = ""
-    @ColumnInfo(name = "ringtone_uri")
-    var ringtoneUri: Uri? = null
-    @ColumnInfo(name = "enabled")
-    var isEnabled: Boolean = true
-    @ColumnInfo(name = "repeat_type")
-    var repeatType: Int = 0
-    @ColumnInfo(name = "repeat_cycle")
-    var repeatCycle: Int = 0
-    @ColumnInfo(name = "repeat_index")
-    var repeatIndex: Int = 0
-    @ColumnInfo(name = "activate_date")
-    var activateDate: Calendar? = Calendar.getInstance()
-    @ColumnInfo(name = "next_occurrence")
-    var nextTime: Calendar? = null
+class Alarm(
+        @PrimaryKey(autoGenerate = true) var id: Long = INVALID_ID,
+        @ColumnInfo(name = "hour") var hour: Int = 0,
+        @ColumnInfo(name = "minute") var minute: Int = 0,
+        @ColumnInfo(name = "title") var title: String? = "",
+        @ColumnInfo(name = "ringtone_uri") var ringtoneUri: Uri? = null,
+        @ColumnInfo(name = "enabled") var isEnabled: Boolean = true,
+        @ColumnInfo(name = "repeat_type") var repeatType: Int = 0,
+        @ColumnInfo(name = "repeat_cycle") var repeatCycle: Int = 0,
+        @ColumnInfo(name = "repeat_index") var repeatIndex: Int = 0,
+        @ColumnInfo(name = "activate_date") var activateDate: Calendar? = Calendar.getInstance(),
+        @ColumnInfo(name = "next_occurrence") var nextTime: Calendar? = null,
+        @ColumnInfo(name = "snoozed") var snoozed: Int = 0
+) : Parcelable {
 
     init {
         activateDate!!.apply {
@@ -155,6 +145,7 @@ class Alarm() : Parcelable {
         repeatType != other.repeatType -> false
         repeatCycle != other.repeatCycle -> false
         repeatIndex != other.repeatIndex -> false
+        snoozed != other.snoozed -> false
         else -> true
     }
 
@@ -172,62 +163,62 @@ class Alarm() : Parcelable {
     }
 
     @Ignore
-    private constructor(parcel: Parcel) : this() {
-        this.id = parcel.readLong()
-        this.hour = parcel.readInt()
-        this.minute = parcel.readInt()
-        this.title = parcel.readString()
-        this.ringtoneUri = DTC.toUri(parcel.readString())
-        this.isEnabled = DTC.toBoolean(parcel.readByte().toInt())
-        this.repeatType = parcel.readInt()
-        this.repeatCycle = parcel.readInt()
-        this.repeatIndex = parcel.readInt()
-        this.activateDate = DTC.toCalendar(parcel.readLong())
-        this.nextTime = DTC.toCalendar(parcel.readLong().let { if (it != 0L) it else null })
-    }
+    private constructor(source: Parcel) : this(
+            id = source.readLong(),
+            hour = source.readInt(),
+            minute = source.readInt(),
+            title = source.readString(),
+            ringtoneUri = DTC.toUri(source.readString()),
+            isEnabled = DTC.toBoolean(source.readByte().toInt()),
+            repeatType = source.readInt(),
+            repeatCycle = source.readInt(),
+            repeatIndex = source.readInt(),
+            activateDate = DTC.toCalendar(source.readLong()),
+            nextTime = DTC.toCalendar(source.readLong().takeIf { it != 0L }),
+            snoozed = source.readInt()
+    )
 
     @Ignore
-    constructor(another: Alarm) : this() {
-        this.id = another.id
-        this.hour = another.hour
-        this.minute = another.minute
-        this.title = another.title
-        this.ringtoneUri = Uri.parse(another.ringtoneUri!!.toString())
-        this.isEnabled = another.isEnabled
-        this.repeatType = another.repeatType
-        this.repeatCycle = another.repeatCycle
-        this.repeatIndex = another.repeatIndex
-        this.activateDate = another.activateDate!!.clone() as Calendar
-        this.nextTime = another.nextTime?.clone() as Calendar?
-    }
-
-    @Ignore
-    constructor(hour: Int, minute: Int) : this() {
-        this.hour = hour
-        this.minute = minute
-    }
+    constructor(another: Alarm) : this(
+            id = another.id,
+            hour = another.hour,
+            minute = another.minute,
+            title = another.title,
+            ringtoneUri = Uri.parse(another.ringtoneUri!!.toString()),
+            isEnabled = another.isEnabled,
+            repeatType = another.repeatType,
+            repeatCycle = another.repeatCycle,
+            repeatIndex = another.repeatIndex,
+            activateDate = another.activateDate!!.clone() as Calendar,
+            nextTime = another.nextTime?.clone() as Calendar?,
+            snoozed = another.snoozed
+    )
 
     override fun describeContents() = 0
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeLong(id)
-        dest.writeInt(hour)
-        dest.writeInt(minute)
-        dest.writeString(title)
-        dest.writeString(DTC.toString(ringtoneUri ?: Uri.EMPTY))
-        dest.writeByte(DTC.toByte(isEnabled))
-        dest.writeInt(repeatType)
-        dest.writeInt(repeatCycle)
-        dest.writeInt(repeatIndex)
-        dest.writeLong(DTC.toLong(activateDate)!!)
-        dest.writeLong(DTC.toLong(nextTime) ?: 0L)
+        dest.run {
+            writeLong(id)
+            writeInt(hour)
+            writeInt(minute)
+            writeString(title)
+            writeString(DTC.toString(ringtoneUri ?: Uri.EMPTY))
+            writeByte(DTC.toByte(isEnabled))
+            writeInt(repeatType)
+            writeInt(repeatCycle)
+            writeInt(repeatIndex)
+            writeLong(DTC.toLong(activateDate)!!)
+            writeLong(DTC.toLong(nextTime) ?: 0L)
+            writeInt(snoozed)
+        }
     }
 
     override fun toString() = "{id=$id, $hour:$minute, hashCode=${hashCode()}, " +
             "title=$title, isEnabled=$isEnabled, " +
             "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
             "repeatIndex=${repeatIndex.binString}, " +
-            "activate=${activateDate?.time}, next=${nextTime?.time}}"
+            "activate=${activateDate?.time}, next=${nextTime?.time}, " +
+            "snoozed=$snoozed}"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -246,6 +237,7 @@ class Alarm() : Parcelable {
         if (repeatIndex != other.repeatIndex) return false
         if (activateDate != other.activateDate) return false
         if (nextTime != other.nextTime) return false
+        if (snoozed != other.snoozed) return false
 
         return true
     }
@@ -257,9 +249,6 @@ class Alarm() : Parcelable {
         const val ALARM_ID = "net.wuqs.ontime.extra.ALARM_ID"
         const val ALARM_INSTANCE = "net.wuqs.ontime.extra.ALARM_INSTANCE"
         const val IS_NEW_ALARM = "net.wuqs.ontime.extra.IS_NEW_ALARM"
-        const val NEW_ALARM_HOUR = "net.wuqs.ontime.extra.NEW_ALARM_HOUR"
-        const val NEW_ALARM_MINUTE = "net.wuqs.ontime.extra.NEW_ALARM_MINUTE"
-        const val DELTA_NEXT_OCCURRENCE = "net.wuqs.ontime.extra.DELTA_NEXT_OCCURRENCE"
 
         /*
         Repeat types
@@ -271,9 +260,9 @@ class Alarm() : Parcelable {
         const val REPEAT_DAILY = 0x11
         const val REPEAT_WEEKLY = 0x22
         const val REPEAT_MONTHLY_BY_DATE = 0x43
-        const val REPEAT_MONTHLY_BY_DAY_OF_WEEK = 0x83
+        const val REPEAT_MONTHLY_BY_WEEK = 0x83
         const val REPEAT_YEARLY_BY_DATE = 0x144
-        const val REPEAT_YEARLY_BY_DAY_OF_WEEK = 0x184
+        const val REPEAT_YEARLY_BY_WEEK = 0x184
 
         const val INVALID_ID = 0L
 
@@ -311,6 +300,7 @@ class Alarm() : Parcelable {
             LogUtils.i("Alarm deleted from database: $alarm")
         }
 
+        @Suppress("unused")
         @JvmField
         val CREATOR: Parcelable.Creator<Alarm> = object : Parcelable.Creator<Alarm> {
             override fun createFromParcel(source: Parcel): Alarm = Alarm(source)

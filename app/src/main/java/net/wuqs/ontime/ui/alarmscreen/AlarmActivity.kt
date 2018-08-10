@@ -15,8 +15,9 @@ import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.LogUtils
+import java.util.*
 
-class AlarmActivity : AppCompatActivity(), View.OnClickListener {
+class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickListener {
 
     private lateinit var alarm: Alarm
 
@@ -27,6 +28,7 @@ class AlarmActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm)
+        mLogger.v("onCreate")
         volumeControlStream = AudioManager.STREAM_ALARM
 
         mAlarmUpdateHandler = AlarmUpdateHandler(applicationContext)
@@ -39,18 +41,18 @@ class AlarmActivity : AppCompatActivity(), View.OnClickListener {
         alarm = intent.getParcelableExtra(ALARM_INSTANCE)
         startAlarm()
 
-        btnDismiss.setOnClickListener(this)
-        alarmTitle.text = alarm.title
-    }
-
-    override fun onClick(v: View?) {
-        when (v) {
-            btnDismiss -> stopAlarm()
-        }
+        btn_delay.setOnClickListener { delayAlarm() }
+        btn_dismiss.setOnClickListener { stopAlarm() }
+        tv_alarm_title.text = alarm.title
     }
 
     // Prevent quit by pressing Back
     override fun onBackPressed() {
+    }
+
+    override fun onDelayOptionPick(quantity: Int, unit: Int) {
+        alarm.nextTime = Calendar.getInstance().apply { add(unit, quantity) }
+        stopAlarm()
     }
 
     private fun startAlarm() {
@@ -72,15 +74,21 @@ class AlarmActivity : AppCompatActivity(), View.OnClickListener {
         alarm.getNextOccurrence().let {
             if (it == null) {
                 alarm.isEnabled = false
-                next_time.visibility = View.GONE
+                tv_next_date.visibility = View.GONE
             } else {
                 alarm.nextTime = it
-                next_time.visibility = View.VISIBLE
-                next_time.text = getString(R.string.msg_next_date, getDateString(it, false))
+                tv_next_date.visibility = View.VISIBLE
+                tv_next_date.text = getString(R.string.msg_next_date, getDateString(it, false))
             }
         }
 
 //        mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
+    }
+
+    private fun delayAlarm() {
+        DelayOptionFragment.newInstance(alarm.nextTime).apply {
+            setTitle(R.string.title_delay_alarm)
+        }.show(supportFragmentManager, null)
     }
 
     private fun stopAlarm() {
@@ -90,6 +98,8 @@ class AlarmActivity : AppCompatActivity(), View.OnClickListener {
         mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
         finish()
     }
+
+
 
     /**
      * Turns on the screen. Used on Android versions from O_MR1.

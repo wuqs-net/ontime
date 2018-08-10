@@ -23,13 +23,15 @@
     <string name="msg_repeat_mode">Repeat mode</string>
 
     <string name="every">Every</string>
-    <string name="msg_date">Date</string>
+    <string name="msg_alarm_date">Alarm date</string>
     <string name="msg_start_date">Start date</string>
     <string name="msg_activate_date">From %1$s</string>
     <string name="msg_next_date">Next alarm: %1$s</string>
 
-    <string name="msg_next_time">Next time: %1$s</string>
+    <string name="msg_snoozed_until">Snoozed until %1$s</string>
     <string name="action_dismiss_alarm">Dismiss</string>
+    <string name="action_delay_alarm">Snooze</string>
+    <string name="title_delay_alarm">Snooze</string>
 
     <string-array name="time_distance">
         <item>less than 1 minute</item>
@@ -102,17 +104,21 @@
         <item quantity="other">Every %1$d days</item>
     </plurals>
 
-    <plurals name="days_with_quan">
-        <item quantity="one">%d day</item>
-        <item quantity="other">%d days</item>
+    <plurals name="minutes_with_quan">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
     </plurals>
     <plurals name="hours_with_quan">
         <item quantity="one">%d hour</item>
         <item quantity="other">%d hours</item>
     </plurals>
-    <plurals name="minutes_with_quan">
-        <item quantity="one">%d minute</item>
-        <item quantity="other">%d minutes</item>
+    <plurals name="days_with_quan">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="weeks_with_quan">
+        <item quantity="one">%d week</item>
+        <item quantity="other">%d weeks</item>
     </plurals>
 
 </resources>

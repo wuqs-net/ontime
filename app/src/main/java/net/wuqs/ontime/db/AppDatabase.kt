@@ -8,7 +8,7 @@ import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
-@Database(entities = [Alarm::class], version = 3)
+@Database(entities = [Alarm::class], version = 4)
 @TypeConverters(DataTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -19,25 +19,30 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
 
         private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) = with(database) {
-                execSQL("ALTER TABLE alarms ADD COLUMN enabled INTEGER NOT NULL DEFAULT 0")
-                execSQL("ALTER TABLE alarms ADD COLUMN repeat_type INTEGER NOT NULL DEFAULT 0")
-                execSQL("ALTER TABLE alarms ADD COLUMN repeat_cycle INTEGER NOT NULL DEFAULT 0")
-                execSQL("ALTER TABLE alarms ADD COLUMN repeat_index INTEGER NOT NULL DEFAULT 0")
+            override fun migrate(database: SupportSQLiteDatabase) {
+                with(database) {
+                    execSQL("ALTER TABLE alarms ADD COLUMN enabled INTEGER NOT NULL DEFAULT 0")
+                    execSQL("ALTER TABLE alarms ADD COLUMN repeat_type INTEGER NOT NULL DEFAULT 0")
+                    execSQL("ALTER TABLE alarms ADD COLUMN repeat_cycle INTEGER NOT NULL DEFAULT 0")
+                    execSQL("ALTER TABLE alarms ADD COLUMN repeat_index INTEGER NOT NULL DEFAULT 0")
+                }
             }
         }
 
         private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) = with(database) {
-                execSQL("ALTER TABLE alarms ADD COLUMN activate_date INTEGER")
-                execSQL("ALTER TABLE alarms ADD COLUMN next_occurrence INTEGER")
+            override fun migrate(database: SupportSQLiteDatabase) {
+                with(database) {
+                    execSQL("ALTER TABLE alarms ADD COLUMN activate_date INTEGER")
+                    execSQL("ALTER TABLE alarms ADD COLUMN next_occurrence INTEGER")
+                }
             }
         }
 
-        private val MIGRATION_1_3 = object : Migration(1, 3) {
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                MIGRATION_1_2.migrate(database)
-                MIGRATION_2_3.migrate(database)
+                with(database) {
+                    execSQL("ALTER TABLE alarms ADD COLUMN snoozed INTEGER NOT NULL DEFAULT 0")
+                }
             }
         }
 
@@ -46,7 +51,7 @@ abstract class AppDatabase : RoomDatabase() {
                 synchronized(AppDatabase::class) {
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
                             AppDatabase::class.java, "alarm-database")
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_1_3)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                             .build()
                 }
             }

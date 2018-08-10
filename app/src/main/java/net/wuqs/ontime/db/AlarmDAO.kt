@@ -8,7 +8,7 @@ import android.arch.persistence.room.OnConflictStrategy.REPLACE
 interface AlarmDAO {
 
     /** All alarms in the database. */
-    @get:Query("SELECT * FROM alarms")
+    @get:Query("SELECT * FROM alarms ORDER BY next_occurrence")
     val allLive: LiveData<List<Alarm>>
 
     /** All alarms in the database. */

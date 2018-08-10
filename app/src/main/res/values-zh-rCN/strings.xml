@@ -16,7 +16,7 @@
     <string name="option_last_day_of_month">每月的最后一天</string>
     <string name="option_custom">自定义&#8230;</string>
 
-    <string name="msg_alarm_will_go_off">闹钟将在 %1$s 后响起</string>
+    <string name="msg_alarm_will_go_off">闹钟将在%1$s后响起</string>
     <string name="msg_cannot_set_past_time">不能设为过去的时间</string>
 
     <string name="prompt_delete_alarm">删除闹钟？</string>
@@ -24,13 +24,15 @@
     <string name="msg_repeat_mode">重复模式</string>
 
     <string name="every">每</string>
-    <string name="msg_date">日期</string>
+    <string name="msg_alarm_date">响铃日期</string>
     <string name="msg_start_date">开始日期</string>
     <string name="msg_activate_date">从%1$s起</string>
     <string name="msg_next_date">下次响铃日期：%1$s</string>
 
-    <string name="msg_next_time">下次响铃：%1$s</string>
+    <string name="msg_snoozed_until">推迟至%1$s</string>
     <string name="action_dismiss_alarm">关闭</string>
+    <string name="action_delay_alarm">推迟</string>
+    <string name="title_delay_alarm">推迟闹钟</string>
 
     <string-array name="time_distance">
         <item>不到1分钟</item>
@@ -92,14 +94,17 @@
         <item quantity="other">每%d天</item>
     </plurals>
 
-    <plurals name="days_with_quan">
-        <item quantity="other">%d天</item>
+    <plurals name="minutes_with_quan">
+        <item quantity="other">%d分钟</item>
     </plurals>
     <plurals name="hours_with_quan">
         <item quantity="other">%d小时</item>
     </plurals>
-    <plurals name="minutes_with_quan">
-        <item quantity="other">%d分钟</item>
+    <plurals name="days_with_quan">
+        <item quantity="other">%d天</item>
+    </plurals>
+    <plurals name="weeks_with_quan">
+        <item quantity="other">%d周</item>
     </plurals>
 
 </resources>

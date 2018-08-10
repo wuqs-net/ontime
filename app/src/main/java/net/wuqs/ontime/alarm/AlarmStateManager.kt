@@ -54,8 +54,8 @@ class AlarmStateManager : BroadcastReceiver() {
         needUpdate.forEach {
             if (it.nextTime?.before(now) == true) {
                 missedAlarms.add(Alarm(it))
+                it.nextTime = it.getNextOccurrence()
             }
-            it.nextTime = it.getNextOccurrence()
             if (it.nextTime != null) {
                 scheduleAlarm(context, it)
             } else {

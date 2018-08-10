@@ -25,9 +25,7 @@ class DataTypeConverter {
     fun toLong(calendar: Calendar?): Long? = calendar?.timeInMillis
 
     @TypeConverter
-    fun toCalendar(timeInMillis: Long?): Calendar? {
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = timeInMillis ?: return null
-        return calendar
+    fun toCalendar(timeInMillis: Long?): Calendar? = timeInMillis?.let {
+        Calendar.getInstance().apply { this.timeInMillis = timeInMillis }
     }
 }

@@ -34,9 +34,6 @@ class AlarmUpdateHandler(private val context: Context,
         : AsyncTask<Unit, Unit, Alarm>() {
 
         override fun doInBackground(vararg params: Unit?): Alarm = with(handler) {
-            if (alarm.isEnabled) {
-                alarm.nextTime = alarm.getNextOccurrence()
-            }
             Alarm.addAlarm(db, alarm)
             if (alarm.isEnabled) {
                 AlarmStateManager.scheduleAlarm(context, alarm)
@@ -61,7 +58,6 @@ class AlarmUpdateHandler(private val context: Context,
         override fun doInBackground(vararg params: Unit?): Alarm = with(handler) {
             AlarmStateManager.cancelAlarm(context, alarm)
             if (alarm.isEnabled) {
-                alarm.nextTime = alarm.getNextOccurrence()
                 AlarmStateManager.scheduleAlarm(context, alarm)
             }
             Alarm.updateAlarm(db, alarm)

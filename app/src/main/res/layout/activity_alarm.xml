@@ -7,16 +7,16 @@
     tools:context=".ui.alarmscreen.AlarmActivity">
 
     <TextView
-        android:id="@+id/next_time"
+        android:id="@+id/tv_next_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnDismiss"
+        app:layout_constraintBottom_toTopOf="@+id/btn_dismiss"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="Next" />
+        tools:text="@string/msg_next_date" />
 
     <TextClock
         android:id="@+id/clock"
@@ -32,7 +32,7 @@
         tools:text="17:00" />
 
     <TextView
-        android:id="@+id/alarmTitle"
+        android:id="@+id/tv_alarm_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -48,16 +48,23 @@
         tools:text="This is a long title a quite long title a very long title" />
 
     <ImageButton
-        android:id="@+id/btnDismiss"
+        android:id="@+id/btn_dismiss"
         android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="56dp"
+        android:contentDescription="@string/action_dismiss_alarm"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_delay"
+        app:srcCompat="@drawable/ic_alarm_off_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/btn_delay"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:contentDescription="@string/action_delay_alarm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_dismiss"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_alarm_off_black_24dp"
-        android:contentDescription="@string/action_dismiss_alarm" />
+        app:srcCompat="@drawable/ic_postpone" />
 
 </android.support.constraint.ConstraintLayout>
