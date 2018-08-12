@@ -6,13 +6,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_alarm.view.*
+import kotlinx.android.synthetic.main.item_alarm.view.*
 import net.wuqs.ontime.ui.mainscreen.AlarmListFragment.OnListFragmentActionListener
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.getDateString
+import net.wuqs.ontime.alarm.getRepeatString
 import net.wuqs.ontime.alarm.getTimeString
+import net.wuqs.ontime.alarm.sameDayAs
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.util.LogUtils
+import java.util.*
 
 /**
  * [RecyclerView.Adapter] that can display a [Alarm] and makes a call to the
@@ -25,7 +28,7 @@ class AlarmRecyclerViewAdapter
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_alarm, parent, false)
+                .inflate(R.layout.item_alarm, parent, false)
         return ViewHolder(view)
     }
 
@@ -46,27 +49,71 @@ class AlarmRecyclerViewAdapter
     inner class ViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
         fun bindData(item: Alarm) = with(mView) {
             setOnClickListener { mListener?.onListItemClick(data[adapterPosition]) }
-            alarm_enable.setOnClickListener {
-                mListener?.onAlarmSwitchClick(data[adapterPosition], alarm_enable.isChecked)
+//            alarm_enable.setOnClickListener {
+//                mListener?.onAlarmSwitchClick(data[adapterPosition], alarm_enable.isChecked)
+//            }
+
+            tv_alarm_time.text = getTimeString(this.context, item)
+            item.isEnabled.let {
+                tv_alarm_time.isEnabled = it
+                group_alarm_disabled.visibility = if (it) View.GONE else View.VISIBLE
             }
 
-            alarm_time.text = getTimeString(this.context, item)
-            alarm_title.visibility = if (!item.title!!.isEmpty()) View.VISIBLE else View.GONE
-            alarm_title.text = item.title
+            tv_alarm_title.visibility = if (!item.title!!.isEmpty()) View.VISIBLE else View.GONE
+            tv_alarm_title.text = item.title
 
-            next_date.text = getDateString(item.nextTime)
+            tv_next_date.text = Calendar.getInstance().let {
+                when {
+                    item.nextTime == null -> ""
+                    item.snoozed <= 0 -> getDateString(item.nextTime)
+                    it.sameDayAs(item.nextTime) -> context.getString(
+                            R.string.msg_snoozed_until,
+                            getTimeString(context, item.nextTime)
+                    )
+                    else -> context.getString(
+                            R.string.msg_snoozed_until,
+                            getDateString(item.nextTime)
+                    )
+                }
+            }
 //            repeat_icon.visibility = if (item.repeatType == Alarm.NON_REPEAT) {
 //                View.GONE
 //            } else {
 //                View.VISIBLE
 //            }
-            repeat_icon.visibility = View.GONE
+            if (item.repeatType == Alarm.NON_REPEAT) {
+                tv_repeat_pattern.visibility = View.GONE
+            } else {
+                tv_repeat_pattern.visibility = View.VISIBLE
+                tv_repeat_pattern.text = getRepeatString(context, item)
+            }
 
-            next_countdown.visibility = View.GONE
-//            tvCountdown.text = "10小时58分钟后"
-//            tvCountdown.visibility = if (position == 0) View.VISIBLE else View.GONE
-            alarm_enable.isChecked = item.isEnabled
-            alarm_enable.isEnabled = item.getNextOccurrence() != null
+//            item.nextTime?.let {
+//                val now = Calendar.getInstance()
+//                if (layoutPosition == 0 && now.sameDayAs(it)) {
+//                    object : CountDownTimer(it.timeInMillis - now.timeInMillis, 1000) {
+//                        override fun onTick(millisUntilFinished: Long) {
+//                            var millis = millisUntilFinished
+//                            val hour = millis / (1000 * 60 * 60)
+//                            millis %= 1000 * 60 * 60
+//                            val minute = millis / (1000 * 60)
+//                            millis %= 1000 * 60
+//                            val second = millis / 1000
+//                            tv_countdown.text = "%02d:%02d:%02d".format(hour, minute, second)
+//                        }
+//                        override fun onFinish() {
+//                            tv_countdown.visibility = View.GONE
+//                        }
+//                    }.start()
+//                    tv_countdown.visibility = View.VISIBLE
+//                } else {
+//                    tv_countdown.visibility = View.GONE
+//                }
+//            }
+            tv_countdown.visibility = View.GONE
+
+//            alarm_enable.isChecked = item.isEnabled
+//            alarm_enable.isEnabled = item.nextTime != null
         }
     }
 

@@ -3,8 +3,10 @@ package net.wuqs.ontime.ui.alarmeditscreen
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.media.AudioManager
 import android.media.RingtoneManager
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
@@ -38,6 +40,8 @@ class EditAlarmActivity : AppCompatActivity(),
 
         mAlarmUpdateHandler = AlarmUpdateHandler(this)
 
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+
         alarm = intent.getParcelableExtra(ALARM_INSTANCE)
         logger.v("Edit alarm: $alarm")
         if (alarm.id == Alarm.INVALID_ID) {
@@ -47,7 +51,6 @@ class EditAlarmActivity : AppCompatActivity(),
             title = getString(R.string.title_edit_alarm)
             til_title.editText?.setText(alarm.title)
         }
-
 
         tvTime.text = getTimeString(this, alarm)
         tvTime.setOnClickListener(this)
@@ -127,7 +130,11 @@ class EditAlarmActivity : AppCompatActivity(),
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_set_alarm, menu)
-        menu?.setGroupVisible(R.id.menuGroupEdit, alarm.id != Alarm.INVALID_ID)
+        menu?.run {
+            setGroupVisible(R.id.menuGroupEdit, alarm.id != Alarm.INVALID_ID)
+            findItem(R.id.item_enable)?.isChecked = alarm.isEnabled
+        }
+
         return true
     }
 
@@ -140,17 +147,19 @@ class EditAlarmActivity : AppCompatActivity(),
                     shortToast(R.string.msg_cannot_set_past_time)
                     return true
                 }
-                if (alarm.repeatType != Alarm.NON_REPEAT &&
-                        alarm.repeatType != Alarm.REPEAT_DAILY && alarm.repeatIndex == 0) {
-
-                }
                 alarm.title = til_title.editText?.text.toString()
-                alarm.isEnabled = true
+//                alarm.isEnabled = true
+                alarm.snoozed = 0
                 if (alarm.repeatType == Alarm.NON_REPEAT) alarm.repeatCycle = 0
                 val data = Intent(this, MainActivity::class.java)
                         .putExtra(ALARM_INSTANCE, alarm)
                 setResult(MainActivity.RESULT_SAVE, data)
                 finish()
+                return true
+            }
+            R.id.item_enable -> item.let {
+                it.isChecked = !it.isChecked
+                alarm.isEnabled = it.isChecked
                 return true
             }
             R.id.miDelete -> {

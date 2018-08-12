@@ -47,6 +47,8 @@ class DelayOptionAdapter(
 
     companion object {
         val ALL_INTERVALS = listOf(
+                1 to Calendar.MINUTE,
+                2 to Calendar.MINUTE,
                 10 to Calendar.MINUTE,
                 1 to Calendar.HOUR_OF_DAY,
                 1 to Calendar.DATE,

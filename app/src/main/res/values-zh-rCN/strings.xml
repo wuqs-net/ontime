@@ -7,9 +7,12 @@
     <string name="action_discard">放弃更改</string>
     <string name="action_delete">删除</string>
     <string name="action_cancel">取消</string>
+    <string name="action_enable">启用闹钟</string>
     <string name="title_new_alarm">新建闹钟</string>
     <string name="title_edit_alarm">修改闹钟</string>
     <string name="hint_alarm_title">闹钟标题</string>
+
+    <string name="msg_alarm_disabled">闹钟已禁用</string>
 
     <string name="option_same_day_of_month">每月的同一天</string>
     <string name="repeat_by_day_of_week">按星期重复</string>
@@ -53,15 +56,6 @@
         <!--<item>按年重复</item>-->
     </string-array>
 
-    <!--
-    Every x mDays
-    -->
-    <string-array name="repeat_patterns">
-        <item>单次</item>
-        <item>%3$s起 %1$s</item>
-        <item>%1$s %2$s</item>
-    </string-array>
-
     <plurals name="years">
         <item quantity="other">年</item>
     </plurals>
@@ -81,18 +75,23 @@
         <item quantity="other">分钟</item>
     </plurals>
 
-    <plurals name="years_for_repeat">
-        <item quantity="other">每%d年</item>
-    </plurals>
-    <plurals name="months_for_repeat">
-        <item quantity="other">每%d个月</item>
+    <plurals name="days_for_repeat">
+        <item quantity="other">每%1$d天重复</item>
     </plurals>
     <plurals name="weeks_for_repeat">
-        <item quantity="other">每%d周</item>
+        <item quantity="other">每%1$d周的%2$s重复</item>
     </plurals>
-    <plurals name="days_for_repeat">
-        <item quantity="other">每%d天</item>
+    <plurals name="months_for_repeat">
+        <item quantity="other">每%1$d个月的%2$s日重复</item>
     </plurals>
+    <plurals name="years_for_repeat">
+        <item quantity="other">每%1$d年重复</item>
+    </plurals>
+
+    <string name="msg_days_for_repeat_single">每天重复</string>
+    <string name="msg_weeks_for_repeat_single">每周的%2$s重复</string>
+    <string name="msg_months_for_repeat_single">每月的%2$s日重复</string>
+    <string name="msg_years_for_repeat">每年重复</string>
 
     <plurals name="minutes_with_quan">
         <item quantity="other">%d分钟</item>

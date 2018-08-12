@@ -14,7 +14,7 @@ class AlarmDiffCallback(private val oldAlarms: List<Alarm>,
     override fun getNewListSize(): Int = newAlarms.size
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-            oldAlarms[oldItemPosition].sameDisplaySummaryAs(newAlarms[newItemPosition])
+            oldAlarms[oldItemPosition] == newAlarms[newItemPosition]
 
 //    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
 ////        val o = oldAlarms[oldItemPosition]

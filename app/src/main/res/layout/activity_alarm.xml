@@ -55,7 +55,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_delay"
-        app:srcCompat="@drawable/ic_alarm_off_black_24dp" />
+        app:srcCompat="@drawable/ic_done_black_24dp" />
 
     <ImageButton
         android:id="@+id/btn_delay"

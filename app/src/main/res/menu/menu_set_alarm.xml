@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/miSaveAlarm"
-        android:icon="@drawable/ic_done_white_24dp"
+        android:icon="@drawable/ic_save_white"
         android:title="@string/action_save"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <group android:id="@+id/menuGroupEdit">
+        <item
+            android:id="@+id/item_enable"
+            android:checkable="true"
+            android:title="@string/action_enable" />
         <item
             android:id="@+id/miDelete"
             android:title="@string/action_delete"

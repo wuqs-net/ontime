@@ -9,14 +9,14 @@
     tools:layout_editor_absoluteY="81dp">
 
     <TextView
-        android:id="@+id/alarm_time"
+        android:id="@+id/tv_alarm_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:gravity="center"
+        android:textAlignment="center"
         android:textAllCaps="false"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/selector_alarm_list_time_text"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
         app:layout_constraintEnd_toStartOf="@+id/guideline_content"
@@ -34,43 +34,39 @@
         app:layout_constraintGuide_begin="@dimen/boundary_margin" />
 
     <TextView
-        android:id="@+id/alarm_title"
+        android:id="@+id/tv_alarm_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:paddingBottom="@dimen/summary_text_padding"
-        android:paddingTop="@dimen/summary_text_padding"
         android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintBottom_toTopOf="@+id/next_date"
-        app:layout_constraintEnd_toStartOf="@+id/alarm_enable"
+        app:layout_constraintBottom_toTopOf="@+id/tv_repeat_pattern"
+        app:layout_constraintEnd_toStartOf="@+id/iv_alarm_disabled"
         app:layout_constraintStart_toStartOf="@+id/guideline_content"
         app:layout_constraintTop_toTopOf="@+id/guideline_top"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Alarm title 这是标题长标题特别长的标题" />
 
     <TextView
-        android:id="@+id/next_date"
+        android:id="@+id/tv_repeat_pattern"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_next_date"
+        app:layout_constraintEnd_toStartOf="@+id/iv_alarm_disabled"
+        app:layout_constraintStart_toStartOf="@+id/guideline_content"
+        app:layout_constraintTop_toBottomOf="@+id/tv_alarm_title"
+        tools:text="Every 2 months on day 1, 2, 3, 10, 11, 12, 15" />
+
+    <TextView
+        android:id="@+id/tv_next_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/summary_text_padding"
-        android:paddingTop="@dimen/summary_text_padding"
-        app:layout_constraintBottom_toTopOf="@+id/next_countdown"
+        app:layout_constraintBottom_toTopOf="@+id/tv_countdown"
         app:layout_constraintStart_toStartOf="@+id/guideline_content"
-        app:layout_constraintTop_toBottomOf="@+id/alarm_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_repeat_pattern"
         tools:text="1月1日周三" />
-
-    <ImageView
-        android:id="@+id/repeat_icon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginStart="4dp"
-        android:contentDescription="Repeat Indicator"
-        app:layout_constraintBottom_toBottomOf="@+id/next_date"
-        app:layout_constraintStart_toEndOf="@+id/next_date"
-        app:layout_constraintTop_toTopOf="@+id/next_date"
-        app:srcCompat="@drawable/ic_repeat_grey_24dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline_content"
@@ -80,37 +76,22 @@
         app:layout_constraintGuide_begin="76dp"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/alarm_enable"
+    <TextView
+        android:id="@+id/tv_countdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/boundary_margin"
-        android:theme="@style/SwitchThemePrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/next_countdown"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:paddingBottom="@dimen/summary_text_padding"
-        android:paddingTop="@dimen/summary_text_padding"
         android:textColor="@color/colorAccent"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/alarm_enable"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/guideline_content"
-        app:layout_constraintTop_toBottomOf="@+id/next_date"
-        tools:text="10 小时 58 分钟 后" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_next_date"
+        tools:text="10:58:03" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/boundary_margin" />
+        app:layout_constraintGuide_end="16dp" />
 
     <View
         android:id="@+id/divider"
@@ -122,5 +103,26 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidline_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+    <ImageView
+        android:id="@+id/iv_alarm_disabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/guidline_end"
+        app:srcCompat="@drawable/ic_alarm_off_black_24dp" />
+
+    <android.support.constraint.Group
+        android:id="@+id/group_alarm_disabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="iv_alarm_disabled" />
 
 </android.support.constraint.ConstraintLayout>

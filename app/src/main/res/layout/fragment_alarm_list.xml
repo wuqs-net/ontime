@@ -10,4 +10,4 @@
     android:paddingBottom="88dp"
     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
     tools:context=".ui.mainscreen.AlarmListFragment"
-    tools:listitem="@layout/fragment_alarm" />
+    tools:listitem="@layout/item_alarm" />

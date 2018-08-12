@@ -94,6 +94,7 @@ class MainActivity : AppCompatActivity(),
         if (item.getNextOccurrence() != null) {
             item.isEnabled = isChecked
             item.nextTime = item.getNextOccurrence()
+
             mAlarmUpdateHandler.asyncUpdateAlarm(item, true)
         } else {
             shortToast(R.string.msg_cannot_set_past_time)

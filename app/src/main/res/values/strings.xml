@@ -6,9 +6,12 @@
     <string name="action_discard">Discard</string>
     <string name="action_delete">Delete</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_enable">Enable alarm</string>
     <string name="title_new_alarm">New Alarm</string>
     <string name="title_edit_alarm">Edit Alarm</string>
     <string name="hint_alarm_title">Alarm title</string>
+
+    <string name="msg_alarm_disabled">Disabled alarm</string>
 
     <string name="option_same_day_of_month">on the same day of the month</string>
     <string name="repeat_by_day_of_week">Repeat by day of week</string>
@@ -52,16 +55,6 @@
         <!--<item>Repeats yearly</item>-->
     </string-array>
 
-    <!--
-    Every x mDays
-    -->
-    <string-array name="repeat_patterns">
-        <item>Does not repeat</item>
-        <item>%1$s starts from %3$s</item>
-        <item>%1$s on %2$s</item>
-        <!--<item>%1$s on %2$s</item>-->
-    </string-array>
-
     <plurals name="years">
         <item quantity="one">year</item>
         <item quantity="other">years</item>
@@ -88,20 +81,20 @@
     </plurals>
 
     <plurals name="years_for_repeat">
-        <item quantity="one">Yearly</item>
-        <item quantity="other">Every %1$d years</item>
+        <item quantity="one">Repeats yearly</item>
+        <item quantity="other">Repeats every %1$d years</item>
     </plurals>
     <plurals name="months_for_repeat">
-        <item quantity="one">Monthly</item>
-        <item quantity="other">Every %1$d months</item>
+        <item quantity="one">Repeats monthly on day %2$s</item>
+        <item quantity="other">Repeats every %1$d months on day %2$s</item>
     </plurals>
     <plurals name="weeks_for_repeat">
-        <item quantity="one">Weekly</item>
-        <item quantity="other">Every %1$d weeks</item>
+        <item quantity="one">Repeats weekly on %2$s</item>
+        <item quantity="other">Repeats every %1$d weeks on %2$s</item>
     </plurals>
     <plurals name="days_for_repeat">
-        <item quantity="one">Daily</item>
-        <item quantity="other">Every %1$d days</item>
+        <item quantity="one">Repeats daily</item>
+        <item quantity="other">Repeats every %1$d days</item>
     </plurals>
 
     <plurals name="minutes_with_quan">

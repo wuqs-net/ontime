@@ -2,9 +2,11 @@ package net.wuqs.ontime.alarm
 
 import android.content.Context
 import android.content.res.Resources
+import android.content.res.Resources.NotFoundException
 import android.text.format.DateFormat
 import net.wuqs.ontime.R
 import net.wuqs.ontime.db.Alarm
+import java.text.DateFormatSymbols
 import java.util.*
 
 const val ALARM_INSTANCE = "net.wuqs.ontime.extra.ALARM_INSTANCE"
@@ -15,13 +17,19 @@ const val EDIT_ALARM_REQUEST = 3
 private const val MINUTE_IN_MILLIS = 60 * 1000
 
 fun getTimeString(context: Context, alarm: Alarm): String {
-    val cal = Calendar.getInstance()
-    cal[Calendar.HOUR_OF_DAY] = alarm.hour
-    cal[Calendar.MINUTE] = alarm.minute
-    cal[Calendar.SECOND] = 0
-    cal[Calendar.MILLISECOND] = 0
+    val cal = Calendar.getInstance().apply {
+        this[Calendar.HOUR_OF_DAY] = alarm.hour
+        this[Calendar.MINUTE] = alarm.minute
+        this[Calendar.SECOND] = 0
+        this[Calendar.MILLISECOND] = 0
+    }
 //    DateFormat.getBestDateTimePattern(Locale.getDefault(), "hm")
-    return DateFormat.getTimeFormat(context).format(cal.time)
+    return getTimeString(context, cal)
+}
+
+fun getTimeString(context: Context, calendar: Calendar?): String {
+    if (calendar == null) return ""
+    return DateFormat.getTimeFormat(context).format(calendar.time)
 }
 
 fun getDateString(c: Calendar?, showWeek: Boolean = true): String {
@@ -75,31 +83,68 @@ fun Alarm.getRepeatCycleText(resources: Resources): CharSequence {
     return resources.getQuantityText(cycles[repeatType and 0xF], repeatCycle)
 }
 
-fun getRepeatString(context: Context, alarm: Alarm): String {
-    val patterns = context.resources.getStringArray(R.array.repeat_patterns)
-    if (alarm.repeatType == 0) return getDateString(alarm.activateDate!!, true)
-    val cycles = listOf(0, R.plurals.days_for_repeat, R.plurals.weeks_for_repeat,
-            R.plurals.months_for_repeat, R.plurals.years_for_repeat)
-
-    val startFromStr = getDateString(alarm.activateDate!!, false)
-
-    val cycleStr = context.resources.getQuantityString(cycles[alarm.repeatType and 0xF],
-            alarm.repeatCycle, alarm.repeatCycle)
-
-    var indexStr = ""
-    if (alarm.repeatType == 2) {
-        val indexList = mutableListOf<String>()
-        for (i in 0..6) {
-            if ((alarm.repeatIndex shr i) and 1 == 1) {
-                val c = Calendar.getInstance()
-                c[Calendar.DAY_OF_WEEK] = i + 1
-                indexList.add(c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()))
+fun getRepeatString(ctx: Context, alarm: Alarm): String {
+    when (alarm.repeatType) {
+        Alarm.NON_REPEAT -> return ""
+        Alarm.REPEAT_DAILY -> {
+            val str = ctx.resources.getQuantityString(
+                    R.plurals.days_for_repeat,
+                    alarm.repeatCycle,
+                    alarm.repeatCycle
+            )
+            if (alarm.repeatCycle == 1) {
+                return try {
+                    ctx.getString(R.string.msg_days_for_repeat_single)
+                } catch (e: NotFoundException) {
+                    str
+                }
             }
+            return str
         }
-        indexStr = indexList.joinToString()
+        Alarm.REPEAT_WEEKLY -> {
+            val indexStr = run {
+                val daysOfWeek = DateFormatSymbols.getInstance().shortWeekdays
+                val repeatDays = daysOfWeek.filterIndexed { index, _ ->
+                    alarm.repeatIndex shr index and 1 == 1
+                }
+                repeatDays.joinToString()
+            }
+            val str = ctx.resources.getQuantityString(R.plurals.weeks_for_repeat,
+                    alarm.repeatCycle, alarm.repeatCycle, indexStr)
+            if (alarm.repeatCycle == 1) {
+                return try {
+                    ctx.getString(R.string.msg_weeks_for_repeat_single, null, indexStr)
+                } catch (e: NotFoundException) {
+                    str
+                }
+            }
+            return str
+        }
+        Alarm.REPEAT_MONTHLY_BY_DATE -> {
+            val indexStr = run {
+                val daysOfMonth = MutableList(31) { index -> index + 1 }
+                val repeatDays = daysOfMonth.filterIndexed { index, _ ->
+                    alarm.repeatIndex shr index and 1 == 1
+                }
+                repeatDays.joinToString()
+            }
+            val str = ctx.resources.getQuantityString(R.plurals.months_for_repeat,
+                    alarm.repeatCycle, alarm.repeatCycle, indexStr)
+            if (alarm.repeatCycle == 1) {
+                return try {
+                    ctx.getString(R.string.msg_months_for_repeat_single, null, indexStr)
+                } catch (e: NotFoundException) {
+                    str
+                }
+            }
+            return str
+        }
+        else -> {
+            return ""
+        }
+
     }
 
-    return patterns[alarm.repeatType and 0xF].format(cycleStr, indexStr, startFromStr)
 }
 
 fun Calendar.setMidnight(year: Int, month: Int, date: Int) {
@@ -112,4 +157,12 @@ fun Calendar.setHms(hour: Int, minute: Int = 0, second: Int = 0) {
     set(Calendar.MINUTE, minute)
     set(Calendar.SECOND, second)
     set(Calendar.MILLISECOND, 0)
+}
+
+fun Calendar.sameDayAs(another: Calendar?): Boolean {
+    if (another == null) return false
+
+    if (this[Calendar.YEAR] != another[Calendar.YEAR]) return false
+    if (this[Calendar.DAY_OF_YEAR] != another[Calendar.DAY_OF_YEAR]) return false
+    return true
 }

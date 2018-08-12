@@ -42,7 +42,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
         startAlarm()
 
         btn_delay.setOnClickListener { delayAlarm() }
-        btn_dismiss.setOnClickListener { stopAlarm() }
+        btn_dismiss.setOnClickListener { dismissAlarm() }
         tv_alarm_title.text = alarm.title
     }
 
@@ -52,6 +52,8 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
 
     override fun onDelayOptionPick(quantity: Int, unit: Int) {
         alarm.nextTime = Calendar.getInstance().apply { add(unit, quantity) }
+        alarm.snoozed += 1
+        alarm.isEnabled = true
         stopAlarm()
     }
 
@@ -72,11 +74,11 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
         mediaPlayer.start()
 
         alarm.getNextOccurrence().let {
+            alarm.nextTime = it
             if (it == null) {
                 alarm.isEnabled = false
                 tv_next_date.visibility = View.GONE
             } else {
-                alarm.nextTime = it
                 tv_next_date.visibility = View.VISIBLE
                 tv_next_date.text = getString(R.string.msg_next_date, getDateString(it, false))
             }
@@ -86,9 +88,12 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
     }
 
     private fun delayAlarm() {
-        DelayOptionFragment.newInstance(alarm.nextTime).apply {
-            setTitle(R.string.title_delay_alarm)
-        }.show(supportFragmentManager, null)
+        DelayOptionFragment.newInstance(alarm.nextTime).show(supportFragmentManager, null)
+    }
+
+    private fun dismissAlarm() {
+        alarm.snoozed = 0
+        stopAlarm()
     }
 
     private fun stopAlarm() {
@@ -98,8 +103,6 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
         mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
         finish()
     }
-
-
 
     /**
      * Turns on the screen. Used on Android versions from O_MR1.
