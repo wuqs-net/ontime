@@ -1,6 +1,5 @@
 package net.wuqs.ontime.ui.alarmscreen
 
-import android.support.v7.widget.AppCompatButton
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View

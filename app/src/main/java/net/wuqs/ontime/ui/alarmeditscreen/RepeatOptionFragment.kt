@@ -1,6 +1,5 @@
 package net.wuqs.ontime.ui.alarmeditscreen
 
-import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -18,7 +17,6 @@ import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.ui.dialog.DatePickerFragment
 import net.wuqs.ontime.ui.dialog.TAG_ACTIVATE_DATE
 import net.wuqs.ontime.util.LogUtils
-import java.util.*
 
 abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragment.DateSetListener {
 
@@ -38,8 +36,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(mLayout, container, false)
-        return view
+        return inflater.inflate(mLayout, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

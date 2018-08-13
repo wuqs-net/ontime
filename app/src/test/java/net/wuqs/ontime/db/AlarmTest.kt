@@ -7,7 +7,7 @@ import java.util.*
 class AlarmTest {
 
     val alarm = Alarm()
-    val next = Calendar.getInstance().apply { set(Calendar.MILLISECOND, 0) }
+    val next = Calendar.getInstance().apply { set(Calendar.MILLISECOND, 0) }!!
 
     @Test
     fun testRepeatDaily() {

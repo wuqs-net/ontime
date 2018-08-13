@@ -12,9 +12,9 @@ import java.util.*
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [MonthlyRepeatFragment.OnFragmentInteractionListener] interface
+ * [RepeatOptionFragment.OnRepeatIndexPickListener] interface
  * to handle interaction events.
- * Use the [MonthlyRepeatFragment.newInstance] factory method to
+ * Use the [RepeatOptionFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
@@ -31,7 +31,7 @@ class MonthlyRepeatFragment : RepeatOptionFragment(),
             adapter = MonthDayAdapter(this@MonthlyRepeatFragment, mAlarm.repeatIndex)
         }
         if (mAlarm.repeatIndex == 0) checkDefaultDate()
-        logger.v("onViewCreated")
+        mLogger.v("onViewCreated")
     }
 
     override fun onClick(v: View?) {
@@ -59,8 +59,6 @@ class MonthlyRepeatFragment : RepeatOptionFragment(),
             notifyItemChanged(defaultDate)
         }
     }
-
-    private val logger = LogUtils.Logger("MonthlyRepeatFragment")
 }
 
 val Int.binString get() = Integer.toBinaryString(this)!!

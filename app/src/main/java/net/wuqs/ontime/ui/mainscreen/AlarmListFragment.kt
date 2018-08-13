@@ -37,7 +37,7 @@ class AlarmListFragment : Fragment() {
         mAlarms = ViewModelProviders.of(this)[AlarmDataModel::class.java].alarms
         mAlarmsObserver = Observer { onDataChange(it!!) }
         mAlarms.observe(this, mAlarmsObserver)
-        LOGGER.v("onCreate")
+        mLogger.v("onCreate")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -101,5 +101,5 @@ class AlarmListFragment : Fragment() {
         fun onRecyclerViewUpdate(itemCount: Int)
     }
 
-    private val LOGGER = LogUtils.Logger("AlarmListFragment")
+    private val mLogger = LogUtils.Logger("AlarmListFragment")
 }

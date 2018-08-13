@@ -3,19 +3,17 @@ package net.wuqs.ontime.ui.mainscreen
 
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SwitchCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
 import kotlinx.android.synthetic.main.item_alarm.view.*
-import net.wuqs.ontime.ui.mainscreen.AlarmListFragment.OnListFragmentActionListener
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.getDateString
 import net.wuqs.ontime.alarm.getRepeatString
 import net.wuqs.ontime.alarm.getTimeString
 import net.wuqs.ontime.alarm.sameDayAs
 import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.ui.mainscreen.AlarmListFragment.OnListFragmentActionListener
 import net.wuqs.ontime.util.LogUtils
 import java.util.*
 
@@ -117,6 +115,6 @@ class AlarmRecyclerViewAdapter
         }
     }
 
-    private val LOGGER = LogUtils.Logger("AlarmAdapter")
+    private val mLogger = LogUtils.Logger("AlarmAdapter")
 
 }

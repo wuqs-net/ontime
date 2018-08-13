@@ -10,11 +10,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.ui.dialog.TimePickerFragment
-import net.wuqs.ontime.alarm.AlarmStateManager
 import net.wuqs.ontime.ui.alarmeditscreen.EditAlarmActivity
+import net.wuqs.ontime.ui.dialog.TimePickerFragment
 import net.wuqs.ontime.util.LogUtils
-import net.wuqs.ontime.util.shortToast
 import java.util.*
 
 

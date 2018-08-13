@@ -12,5 +12,3 @@ object ApiUtil {
     fun isOOrLater() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
     fun isOMR1OrLater() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1
 }
-
-val sdkint get() = Build.VERSION.SDK_INT

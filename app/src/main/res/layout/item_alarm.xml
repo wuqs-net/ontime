@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
+    android:foreground="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
     tools:layout_editor_absoluteY="81dp">
 
@@ -103,7 +103,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/guidline_end"
+        android:id="@+id/guideline_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -115,7 +115,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/SwitchThemePrimary"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/guidline_end"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintTop_toTopOf="@+id/guideline_top" />
 
 </android.support.constraint.ConstraintLayout>
