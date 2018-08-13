@@ -32,12 +32,19 @@ class AlarmStateManager : BroadcastReceiver() {
             }
             ACTION_ALARM_START -> {
                 val alarm = intent.getBundleExtra(ALARM_INSTANCE).getParcelable<Alarm>(ALARM_INSTANCE)
-                LOGGER.i("Alarm started: $alarm")
-                val myIntent = Intent(context, AlarmActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    putExtra(ALARM_INSTANCE, alarm)
+                if (alarm.isEnabled) {
+                    LOGGER.i("Alarm started: $alarm")
+                    val myIntent = Intent(context, AlarmActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        putExtra(ALARM_INSTANCE, alarm)
+                    }
+                    context.startActivity(myIntent)
+                } else {
+                    LOGGER.i("Disabled alarm triggered: $alarm")
+                    alarm.snoozed = 0
+                    alarm.nextTime = alarm.getNextOccurrence()
+                    AlarmUpdateHandler(context).asyncUpdateAlarm(alarm)
                 }
-                context.startActivity(myIntent)
             }
         }
     }
@@ -51,7 +58,7 @@ class AlarmStateManager : BroadcastReceiver() {
         val now = Calendar.getInstance()
         val missedAlarms = mutableListOf<Alarm>()
         val needUpdate = alarms.filter { it.isEnabled }
-        needUpdate.forEach {
+        alarms.forEach {
             if (it.nextTime?.before(now) == true) {
                 missedAlarms.add(Alarm(it))
                 it.nextTime = it.getNextOccurrence()

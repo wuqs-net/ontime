@@ -90,15 +90,14 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean) {
-
-        if (item.getNextOccurrence() != null) {
-            item.isEnabled = isChecked
-            item.nextTime = item.getNextOccurrence()
-
-            mAlarmUpdateHandler.asyncUpdateAlarm(item, true)
-        } else {
-            shortToast(R.string.msg_cannot_set_past_time)
-        }
+        item.isEnabled = isChecked
+//        if (item.getNextOccurrence() != null) {
+//            item.isEnabled = isChecked
+//            item.nextTime = item.getNextOccurrence()
+//        } else {
+//            shortToast(R.string.msg_cannot_set_past_time)
+//        }
+        mAlarmUpdateHandler.asyncUpdateAlarm(item, true)
     }
 
     override fun onRecyclerViewUpdate(itemCount: Int) {

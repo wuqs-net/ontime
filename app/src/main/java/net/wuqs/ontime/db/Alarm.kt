@@ -213,7 +213,7 @@ class Alarm(
         }
     }
 
-    override fun toString() = "{id=$id, $hour:$minute, hashCode=${hashCode()}, " +
+    override fun toString() = "{id=$id, $hour:$minute, " +
             "title=$title, isEnabled=$isEnabled, " +
             "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
             "repeatIndex=${repeatIndex.binString}, " +

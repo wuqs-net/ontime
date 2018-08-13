@@ -37,27 +37,25 @@
         android:id="@+id/tv_alarm_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textAlignment="viewStart"
         android:textAppearance="@style/TextAppearance.AppCompat"
         app:layout_constraintBottom_toTopOf="@+id/tv_repeat_pattern"
-        app:layout_constraintEnd_toStartOf="@+id/iv_alarm_disabled"
         app:layout_constraintStart_toStartOf="@+id/guideline_content"
         app:layout_constraintTop_toTopOf="@+id/guideline_top"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="Alarm title 这是标题长标题特别长的标题" />
+        tools:text="Alarm title" />
 
     <TextView
         android:id="@+id/tv_repeat_pattern"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:textAlignment="viewStart"
         app:layout_constraintBottom_toTopOf="@+id/tv_next_date"
-        app:layout_constraintEnd_toStartOf="@+id/iv_alarm_disabled"
         app:layout_constraintStart_toStartOf="@+id/guideline_content"
         app:layout_constraintTop_toBottomOf="@+id/tv_alarm_title"
-        tools:text="Every 2 months on day 1, 2, 3, 10, 11, 12, 15" />
+        tools:text="Every 2 months on day 3" />
 
     <TextView
         android:id="@+id/tv_next_date"
@@ -111,18 +109,13 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="16dp" />
 
-    <ImageView
-        android:id="@+id/iv_alarm_disabled"
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/swc_enable_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:theme="@style/SwitchThemePrimary"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
         app:layout_constraintEnd_toStartOf="@+id/guidline_end"
-        app:srcCompat="@drawable/ic_alarm_off_black_24dp" />
-
-    <android.support.constraint.Group
-        android:id="@+id/group_alarm_disabled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="iv_alarm_disabled" />
+        app:layout_constraintTop_toTopOf="@+id/guideline_top" />
 
 </android.support.constraint.ConstraintLayout>

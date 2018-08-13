@@ -34,9 +34,11 @@ fun getTimeString(context: Context, calendar: Calendar?): String {
 
 fun getDateString(c: Calendar?, showWeek: Boolean = true): String {
     if (c == null) return ""
-    var skeleton =
-            if (c[Calendar.YEAR] == Calendar.getInstance()[Calendar.YEAR]) "MMMd"
-            else "yyyyMMMd"
+    var skeleton = if (c[Calendar.YEAR] == Calendar.getInstance()[Calendar.YEAR]) {
+        "MMMd"
+    } else {
+        "yyyyMMMd"
+    }
     if (showWeek) skeleton += "E"
     val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
     return DateFormat.format(pattern, c).toString()

@@ -12,9 +12,10 @@ import net.wuqs.ontime.util.LogUtils
 /**
  * API for asynchronously updating a single [Alarm].
  */
-class AlarmUpdateHandler(private val context: Context,
+class AlarmUpdateHandler(context: Context,
                          private val snackbarAnchor: View? = null) {
-    private val db = AppDatabase[context]!!
+    private val context = context.applicationContext
+    private val db = AppDatabase[this.context]!!
 
     fun asyncAddAlarm(alarm: Alarm, showSnackbar: Boolean = false) {
         AddAlarmTask(this, alarm, showSnackbar).execute()
@@ -56,16 +57,14 @@ class AlarmUpdateHandler(private val context: Context,
         : AsyncTask<Unit, Unit, Alarm>() {
 
         override fun doInBackground(vararg params: Unit?): Alarm = with(handler) {
-            AlarmStateManager.cancelAlarm(context, alarm)
-            if (alarm.isEnabled) {
-                AlarmStateManager.scheduleAlarm(context, alarm)
-            }
+            //            AlarmStateManager.cancelAlarm(context, alarm)
+            if (alarm.nextTime != null) AlarmStateManager.scheduleAlarm(context, alarm)
             Alarm.updateAlarm(db, alarm)
             return alarm
         }
 
-        override fun onPostExecute(result: Alarm?) = with(handler) {
-            if (showSnackbar && result?.isEnabled == true && snackbarAnchor != null) {
+        override fun onPostExecute(result: Alarm) = with(handler) {
+            if (showSnackbar && result.isEnabled && snackbarAnchor != null) {
                 showAlarmSetSnackbar(snackbarAnchor, result.nextTime?.timeInMillis)
             }
         }

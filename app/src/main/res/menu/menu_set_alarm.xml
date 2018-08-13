@@ -8,10 +8,6 @@
         app:showAsAction="always" />
     <group android:id="@+id/menuGroupEdit">
         <item
-            android:id="@+id/item_enable"
-            android:checkable="true"
-            android:title="@string/action_enable" />
-        <item
             android:id="@+id/miDelete"
             android:title="@string/action_delete"
             app:showAsAction="never" />

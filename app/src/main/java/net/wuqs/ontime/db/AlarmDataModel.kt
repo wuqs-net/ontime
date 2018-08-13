@@ -6,5 +6,5 @@ import android.arch.lifecycle.LiveData
 
 class AlarmDataModel(application: Application) : AndroidViewModel(application) {
     private val db = AppDatabase[application]!!
-    val alarms = db.alarmDAO.allLive
+    val alarms = db.alarmDAO.getAllLive()
 }

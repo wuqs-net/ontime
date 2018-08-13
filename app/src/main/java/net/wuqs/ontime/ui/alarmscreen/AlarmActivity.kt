@@ -109,6 +109,8 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
      */
     @TargetApi(Build.VERSION_CODES.O_MR1)
     private fun turnScreenOnOMR1() {
+        window.addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON
+                or LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
         setTurnScreenOn(true)
         setShowWhenLocked(true)
     }
@@ -118,8 +120,10 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
      */
     @Suppress("DEPRECATION")
     private fun turnScreenOnPreOMR1() = window.run {
-        addFlags(LayoutParams.FLAG_TURN_SCREEN_ON)
-        addFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+        addFlags(LayoutParams.FLAG_TURN_SCREEN_ON
+                or LayoutParams.FLAG_KEEP_SCREEN_ON
+                or LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                or LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
     }
 
     @TargetApi(Build.VERSION_CODES.O)

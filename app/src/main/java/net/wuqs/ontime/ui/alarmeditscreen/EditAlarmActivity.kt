@@ -3,12 +3,11 @@ package net.wuqs.ontime.ui.alarmeditscreen
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
 import android.media.AudioManager
 import android.media.RingtoneManager
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.view.*
 import kotlinx.android.synthetic.main.activity_edit_alarm.*
@@ -40,10 +39,10 @@ class EditAlarmActivity : AppCompatActivity(),
 
         mAlarmUpdateHandler = AlarmUpdateHandler(this)
 
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         alarm = intent.getParcelableExtra(ALARM_INSTANCE)
-        logger.v("Edit alarm: $alarm")
+        mLogger.v("Edit alarm: $alarm")
         if (alarm.id == Alarm.INVALID_ID) {
             title = getString(R.string.title_new_alarm)
             alarm.ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
@@ -132,7 +131,7 @@ class EditAlarmActivity : AppCompatActivity(),
         menuInflater.inflate(R.menu.menu_set_alarm, menu)
         menu?.run {
             setGroupVisible(R.id.menuGroupEdit, alarm.id != Alarm.INVALID_ID)
-            findItem(R.id.item_enable)?.isChecked = alarm.isEnabled
+//            findItem(R.id.item_enable)?.isChecked = alarm.isEnabled
         }
 
         return true
@@ -143,12 +142,12 @@ class EditAlarmActivity : AppCompatActivity(),
             R.id.miSaveAlarm -> {
                 // Save alarm
                 if (alarm.repeatType == Alarm.NON_REPEAT && alarm.nextTime == null) {
-                    // If the user set a non-repeat alarm in the past, don't save it
+                    // Prevent the user from setting a non-repeat alarm in the past
                     shortToast(R.string.msg_cannot_set_past_time)
                     return true
                 }
                 alarm.title = til_title.editText?.text.toString()
-//                alarm.isEnabled = true
+                alarm.isEnabled = true
                 alarm.snoozed = 0
                 if (alarm.repeatType == Alarm.NON_REPEAT) alarm.repeatCycle = 0
                 val data = Intent(this, MainActivity::class.java)
@@ -157,17 +156,17 @@ class EditAlarmActivity : AppCompatActivity(),
                 finish()
                 return true
             }
-            R.id.item_enable -> item.let {
-                it.isChecked = !it.isChecked
-                alarm.isEnabled = it.isChecked
-                return true
-            }
+//            R.id.item_enable -> item.let {
+//                it.isChecked = !it.isChecked
+//                alarm.isEnabled = it.isChecked
+//                return true
+//            }
             R.id.miDelete -> {
                 promptDelete()
                 return true
             }
             android.R.id.home -> {
-                onBackPressed()
+                NavUtils.navigateUpFromSameTask(this)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -196,12 +195,14 @@ class EditAlarmActivity : AppCompatActivity(),
         }
     }
 
-    private fun updateNextAlarmDate() {
+    private fun updateNextAlarmDate(onlyDisplay: Boolean = false) {
         alarm.getNextOccurrence().let {
-            tv_next_date.visibility = if (it == null) View.GONE else View.VISIBLE
-            tv_next_date.text = getString(R.string.msg_next_date,
-                    getDateString(it, false))
-            logger.i(it?.time.toString())
+            tv_next_date.text = if (it != null) {
+                getString(R.string.msg_next_date, getDateString(it, false))
+            } else {
+                getString(R.string.msg_cannot_set_past_time)
+            }
+            mLogger.i(it?.time.toString())
             alarm.nextTime = it
         }
 
@@ -211,6 +212,6 @@ class EditAlarmActivity : AppCompatActivity(),
         fun createIntent(context: Context) = Intent(context, EditAlarmActivity::class.java)
     }
 
-    private val logger = LogUtils.Logger("EditAlarmActivity")
+    private val mLogger = LogUtils.Logger("EditAlarmActivity")
 
 }

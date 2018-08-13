@@ -3,9 +3,11 @@ package net.wuqs.ontime.ui.mainscreen
 
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SwitchCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Switch
 import kotlinx.android.synthetic.main.item_alarm.view.*
 import net.wuqs.ontime.ui.mainscreen.AlarmListFragment.OnListFragmentActionListener
 import net.wuqs.ontime.R
@@ -49,31 +51,32 @@ class AlarmRecyclerViewAdapter
     inner class ViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
         fun bindData(item: Alarm) = with(mView) {
             setOnClickListener { mListener?.onListItemClick(data[adapterPosition]) }
-//            alarm_enable.setOnClickListener {
-//                mListener?.onAlarmSwitchClick(data[adapterPosition], alarm_enable.isChecked)
-//            }
+
+            swc_enable_alarm.let {
+                it.setOnCheckedChangeListener(null)
+                it.isEnabled = item.nextTime != null
+                it.isChecked = item.isEnabled
+                it.setOnCheckedChangeListener { _, isChecked ->
+                    mListener?.onAlarmSwitchClick(data[adapterPosition], isChecked)
+                    tv_alarm_time.isEnabled = isChecked
+                }
+            }
 
             tv_alarm_time.text = getTimeString(this.context, item)
-            item.isEnabled.let {
-                tv_alarm_time.isEnabled = it
-                group_alarm_disabled.visibility = if (it) View.GONE else View.VISIBLE
-            }
+            tv_alarm_time.isEnabled = item.isEnabled
 
             tv_alarm_title.visibility = if (!item.title!!.isEmpty()) View.VISIBLE else View.GONE
             tv_alarm_title.text = item.title
 
-            tv_next_date.text = Calendar.getInstance().let {
-                when {
-                    item.nextTime == null -> ""
+            item.nextTime.let {
+                tv_next_date.visibility = if (it == null) View.GONE else View.VISIBLE
+                tv_next_date.text = when {
+                    it == null -> ""
                     item.snoozed <= 0 -> getDateString(item.nextTime)
-                    it.sameDayAs(item.nextTime) -> context.getString(
-                            R.string.msg_snoozed_until,
-                            getTimeString(context, item.nextTime)
+                    it.sameDayAs(Calendar.getInstance()) -> context.getString(
+                            R.string.msg_snoozed_until, getTimeString(context, it)
                     )
-                    else -> context.getString(
-                            R.string.msg_snoozed_until,
-                            getDateString(item.nextTime)
-                    )
+                    else -> context.getString(R.string.msg_snoozed_until, getDateString(it))
                 }
             }
 //            repeat_icon.visibility = if (item.repeatType == Alarm.NON_REPEAT) {
@@ -111,9 +114,6 @@ class AlarmRecyclerViewAdapter
 //                }
 //            }
             tv_countdown.visibility = View.GONE
-
-//            alarm_enable.isChecked = item.isEnabled
-//            alarm_enable.isEnabled = item.nextTime != null
         }
     }
 
