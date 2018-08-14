@@ -8,8 +8,11 @@ import android.media.RingtoneManager
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.NavUtils
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import kotlinx.android.synthetic.main.activity_edit_alarm.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
@@ -32,6 +35,8 @@ class EditAlarmActivity : AppCompatActivity(),
 
     private lateinit var mAlarmUpdateHandler: AlarmUpdateHandler
 
+    private var mAlarmEdited = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_alarm)
@@ -46,13 +51,15 @@ class EditAlarmActivity : AppCompatActivity(),
         if (alarm.id == Alarm.INVALID_ID) {
             title = getString(R.string.title_new_alarm)
             alarm.ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            mAlarmEdited = true
+            mLogger.v("Alarm changes made: new alarm")
         } else {
             title = getString(R.string.title_edit_alarm)
             til_title.editText?.setText(alarm.title)
         }
 
-        tvTime.text = getTimeString(this, alarm)
-        tvTime.setOnClickListener(this)
+        tv_alarm_time.text = getTimeString(this, alarm)
+        tv_alarm_time.setOnClickListener(this)
         oiv_repeat_type.setOnClickListener(this)
 
         updateNextAlarmDate()
@@ -61,7 +68,7 @@ class EditAlarmActivity : AppCompatActivity(),
 
     override fun onClick(v: View?) {
         when (v) {
-            tvTime -> showTimePickerDialog()
+            tv_alarm_time -> showTimePickerDialog()
             oiv_repeat_type -> showRepeatPickerDialog()
         }
     }
@@ -77,15 +84,19 @@ class EditAlarmActivity : AppCompatActivity(),
 
     override fun onTimeSet(tag: String?, hourOfDay: Int, minute: Int) {
         if (tag == TimePickerFragment.EDIT_ALARM) {
+            mAlarmEdited = true
+            mLogger.v("Alarm changes made: time")
             alarm.hour = hourOfDay
             alarm.minute = minute
             alarm.ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            tvTime.text = getTimeString(this, alarm)
+            tv_alarm_time.text = getTimeString(this, alarm)
             updateNextAlarmDate()
         }
     }
 
     override fun updateRepeatOption(repeatType: Int?, repeatCycle: Int?, repeatIndex: Int?) {
+        mAlarmEdited = true
+        mLogger.v("Alarm changes made: repeat option")
         repeatType?.let { alarm.repeatType = it }
         repeatCycle?.let { alarm.repeatCycle = it }
         repeatIndex?.let { alarm.repeatIndex = it }
@@ -93,6 +104,8 @@ class EditAlarmActivity : AppCompatActivity(),
     }
 
     override fun updateActivateDate(year: Int, month: Int, dayOfMonth: Int) {
+        mAlarmEdited = true
+        mLogger.v("Alarm changes made: date")
         alarm.activateDate!!.setMidnight(year, month, dayOfMonth)
         updateNextAlarmDate()
     }
@@ -107,7 +120,7 @@ class EditAlarmActivity : AppCompatActivity(),
         )
         types[which].let {
             when (it) {
-                alarm.repeatType -> return@let
+                alarm.repeatType -> return
                 Alarm.NON_REPEAT -> {
                     alarm.repeatCycle = 0
                     alarm.repeatIndex = 0
@@ -122,6 +135,8 @@ class EditAlarmActivity : AppCompatActivity(),
                 }
             }
             alarm.repeatType = it
+            mAlarmEdited = true
+            mLogger.v("Alarm changes made: repeat type")
         }
         updateRepeatDisplay()
         updateNextAlarmDate()
@@ -133,7 +148,6 @@ class EditAlarmActivity : AppCompatActivity(),
             setGroupVisible(R.id.menuGroupEdit, alarm.id != Alarm.INVALID_ID)
 //            findItem(R.id.item_enable)?.isChecked = alarm.isEnabled
         }
-
         return true
     }
 
@@ -166,15 +180,35 @@ class EditAlarmActivity : AppCompatActivity(),
                 return true
             }
             android.R.id.home -> {
-                NavUtils.navigateUpFromSameTask(this)
+                promptDiscard()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
     }
 
+    override fun onBackPressed() {
+        promptDiscard()
+    }
+
     private fun promptDelete() {
         DeleteDialogFragment().show(supportFragmentManager, DeleteDialogFragment.TAG_DELETE_ALARM)
+    }
+
+    private fun promptDiscard() {
+        if (til_title.editText?.text.toString() != alarm.title) mAlarmEdited = true
+        if (!mAlarmEdited) {
+            NavUtils.navigateUpFromSameTask(this)
+            return
+        }
+        AlertDialog.Builder(this).apply {
+            if (alarm.id == Alarm.INVALID_ID) setMessage(R.string.prompt_discard_new_alarm)
+            else setMessage(R.string.prompt_discard_changes)
+            setNegativeButton(R.string.action_keep_editing, null)
+            setPositiveButton(R.string.action_discard) {dialog, which ->
+                NavUtils.navigateUpFromSameTask(this@EditAlarmActivity)
+            }
+        }.create().show()
     }
 
     private fun showTimePickerDialog() {

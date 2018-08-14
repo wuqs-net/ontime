@@ -52,8 +52,8 @@
         android:layout_height="56dp"
         android:contentDescription="@string/action_dismiss_alarm"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_delay"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delay"
+        app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_alarm_off_black_24dp" />
 
     <ImageButton
@@ -61,9 +61,10 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:contentDescription="@string/action_delay_alarm"
+        android:tint="?android:attr/colorForeground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_dismiss"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_postpone" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_dismiss"
+        app:srcCompat="@drawable/ic_arrow_right" />
 
 </android.support.constraint.ConstraintLayout>

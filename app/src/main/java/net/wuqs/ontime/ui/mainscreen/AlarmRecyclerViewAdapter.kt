@@ -56,36 +56,40 @@ class AlarmRecyclerViewAdapter
                 it.isChecked = item.isEnabled
                 it.setOnCheckedChangeListener { _, isChecked ->
                     mListener?.onAlarmSwitchClick(data[adapterPosition], isChecked)
-                    tv_alarm_time.isEnabled = isChecked
+                    updateEnabledDisplay(isChecked)
                 }
             }
 
-            tv_alarm_time.text = getTimeString(this.context, item)
-            tv_alarm_time.isEnabled = item.isEnabled
+            updateEnabledDisplay(item.isEnabled)
 
-            tv_alarm_title.visibility = if (!item.title!!.isEmpty()) View.VISIBLE else View.GONE
+            tv_alarm_time.text = getTimeString(context, item)
             tv_alarm_title.text = item.title
 
+            // Display information about snooze and next alarm
             item.nextTime.let {
                 tv_next_date.visibility = if (it == null) View.GONE else View.VISIBLE
                 tv_next_date.text = when {
                     it == null -> ""
-                    item.snoozed <= 0 -> getDateString(item.nextTime)
-                    it.sameDayAs(Calendar.getInstance()) -> context.getString(
-                            R.string.msg_snoozed_until, getTimeString(context, it)
+                    item.snoozed <= 0 -> getDateString(it)
+                    else -> context.getString(
+                            R.string.msg_snoozed_until,
+                            if (it.sameDayAs(Calendar.getInstance())) {
+                                getTimeString(context, it)
+                            } else {
+                                getDateString(it)
+                            },
+                            context.resources.getQuantityString(R.plurals.msg_times,
+                                    item.snoozed, item.snoozed)
                     )
-                    else -> context.getString(R.string.msg_snoozed_until, getDateString(it))
                 }
             }
-//            repeat_icon.visibility = if (item.repeatType == Alarm.NON_REPEAT) {
-//                View.GONE
-//            } else {
-//                View.VISIBLE
-//            }
+            iv_snoozed.visibility = if (item.snoozed <= 0) View.GONE else View.VISIBLE
+
+            // Display information about repeat
             if (item.repeatType == Alarm.NON_REPEAT) {
-                tv_repeat_pattern.visibility = View.GONE
+                group_repeat.visibility = View.GONE
             } else {
-                tv_repeat_pattern.visibility = View.VISIBLE
+                group_repeat.visibility = View.VISIBLE
                 tv_repeat_pattern.text = getRepeatString(context, item)
             }
 
@@ -112,6 +116,15 @@ class AlarmRecyclerViewAdapter
 //                }
 //            }
             tv_countdown.visibility = View.GONE
+        }
+
+        private fun updateEnabledDisplay(enabled: Boolean) = mView.run {
+            tv_alarm_time.isEnabled = enabled
+            tv_alarm_title.isEnabled = enabled
+            tv_repeat_pattern.isEnabled = enabled
+            tv_next_date.isEnabled = enabled
+            iv_repeat.isEnabled = enabled
+            iv_snoozed.isEnabled = enabled
         }
     }
 

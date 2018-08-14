@@ -10,15 +10,15 @@
     tools:layout_editor_absoluteY="81dp">
 
     <TextView
-        android:id="@+id/tvTime"
+        android:id="@+id/tv_alarm_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:foreground="?android:attr/selectableItemBackground"
         android:gravity="center"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
         android:paddingTop="16dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="?android:attr/textColorPrimaryInverse"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,11 +31,12 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:paddingBottom="16dp"
+        android:paddingTop="8dp"
         android:textAlignment="center"
         android:textColor="?android:attr/textColorSecondaryInverse"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTime"
+        app:layout_constraintTop_toBottomOf="@+id/tv_alarm_time"
         tools:text="下次响铃日期：2018年12月10日" />
 
     <ScrollView

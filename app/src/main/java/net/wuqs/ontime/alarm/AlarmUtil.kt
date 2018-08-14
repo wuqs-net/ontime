@@ -23,7 +23,6 @@ fun getTimeString(context: Context, alarm: Alarm): String {
         this[Calendar.SECOND] = 0
         this[Calendar.MILLISECOND] = 0
     }
-//    DateFormat.getBestDateTimePattern(Locale.getDefault(), "hm")
     return getTimeString(context, cal)
 }
 
@@ -34,7 +33,13 @@ fun getTimeString(context: Context, calendar: Calendar?): String {
 
 fun getDateString(c: Calendar?, showWeek: Boolean = true): String {
     if (c == null) return ""
-    var skeleton = if (c[Calendar.YEAR] == Calendar.getInstance()[Calendar.YEAR]) {
+    val now = Calendar.getInstance()
+//    if (now.sameDayAs(c)) return context.getString(R.string.msg_today)
+//    if (now.apply { add(Calendar.DATE, 1) }.sameDayAs(c)) {
+//        return context.getString(R.string.msg_tomorrow)
+//    }
+//    now.add(Calendar.DATE, -1)
+    var skeleton = if (c[Calendar.YEAR] == now[Calendar.YEAR]) {
         "MMMd"
     } else {
         "yyyyMMMd"

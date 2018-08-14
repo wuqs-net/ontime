@@ -41,8 +41,8 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         et_repeatCycle?.apply {
-            addTextChangedListener(this@RepeatOptionFragment)
             setText(mAlarm.repeatCycle.toString())
+            addTextChangedListener(this@RepeatOptionFragment)
         }
         oiv_date?.apply {
             valueText = getDateString(mAlarm.activateDate)

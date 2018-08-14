@@ -4,7 +4,8 @@
     <string name="new_alarm">新建闹钟</string>
     <string name="hint_click_add">要新建闹钟，请点击下方的“添加”按钮</string>
     <string name="action_save">保存</string>
-    <string name="action_discard">放弃更改</string>
+    <string name="action_discard">舍弃</string>
+    <string name="action_keep_editing">继续修改</string>
     <string name="action_delete">删除</string>
     <string name="action_cancel">取消</string>
     <string name="action_enable">启用闹钟</string>
@@ -13,6 +14,8 @@
     <string name="hint_alarm_title">闹钟标题</string>
 
     <string name="msg_alarm_disabled">闹钟已禁用</string>
+    <string name="msg_is_repeat_alarm">重复闹钟</string>
+    <string name="msg_is_snoozed">已推迟的闹钟</string>
 
     <string name="option_same_day_of_month">每月的同一天</string>
     <string name="repeat_by_day_of_week">按星期重复</string>
@@ -22,6 +25,8 @@
     <string name="msg_alarm_will_go_off">闹钟将在%1$s后响起</string>
     <string name="msg_cannot_set_past_time">不能设为过去的时间</string>
 
+    <string name="prompt_discard_changes">舍弃对此闹钟的修改？</string>
+    <string name="prompt_discard_new_alarm">舍弃此闹钟？</string>
     <string name="prompt_delete_alarm">删除闹钟？</string>
 
     <string name="msg_repeat_mode">重复模式</string>
@@ -32,10 +37,13 @@
     <string name="msg_activate_date">从%1$s起</string>
     <string name="msg_next_date">下次响铃日期：%1$s</string>
 
-    <string name="msg_snoozed_until">推迟至%1$s</string>
+    <string name="msg_snoozed_until">%1$s（%2$s）</string>
     <string name="action_dismiss_alarm">关闭</string>
     <string name="action_delay_alarm">推迟</string>
     <string name="title_delay_alarm">推迟闹钟</string>
+
+    <string name="msg_today">今天</string>
+    <string name="msg_tomorrow">明天</string>
 
     <string-array name="time_distance">
         <item>不到1分钟</item>
@@ -55,6 +63,10 @@
         <item>按月重复</item>
         <!--<item>按年重复</item>-->
     </string-array>
+
+    <plurals name="msg_times">
+        <item quantity="other">%1$d次</item>
+    </plurals>
 
     <plurals name="years">
         <item quantity="other">年</item>
@@ -76,22 +88,22 @@
     </plurals>
 
     <plurals name="days_for_repeat">
-        <item quantity="other">每%1$d天重复</item>
+        <item quantity="other">每%1$d天</item>
     </plurals>
     <plurals name="weeks_for_repeat">
-        <item quantity="other">每%1$d周的%2$s重复</item>
+        <item quantity="other">每%1$d周的%2$s</item>
     </plurals>
     <plurals name="months_for_repeat">
-        <item quantity="other">每%1$d个月的%2$s日重复</item>
+        <item quantity="other">每%1$d个月的%2$s日</item>
     </plurals>
     <plurals name="years_for_repeat">
-        <item quantity="other">每%1$d年重复</item>
+        <item quantity="other">每%1$d年</item>
     </plurals>
 
-    <string name="msg_days_for_repeat_single" tools:ignore="ExtraTranslation">每天重复</string>
-    <string name="msg_weeks_for_repeat_single" tools:ignore="ExtraTranslation">每周的%2$s重复</string>
-    <string name="msg_months_for_repeat_single" tools:ignore="ExtraTranslation">每月的%2$s日重复</string>
-    <string name="msg_years_for_repeat" tools:ignore="ExtraTranslation">每年重复</string>
+    <string name="msg_days_for_repeat_single" tools:ignore="ExtraTranslation">每天</string>
+    <string name="msg_weeks_for_repeat_single" tools:ignore="ExtraTranslation">每周的%2$s</string>
+    <string name="msg_months_for_repeat_single" tools:ignore="ExtraTranslation">每月的%2$s日</string>
+    <string name="msg_years_for_repeat" tools:ignore="ExtraTranslation">每年</string>
 
     <plurals name="minutes_with_quan">
         <item quantity="other">%d分钟</item>

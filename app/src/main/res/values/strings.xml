@@ -4,6 +4,7 @@
     <string name="hint_click_add">Click the \"Add\" button below to create new alarm</string>
     <string name="action_save">Save</string>
     <string name="action_discard">Discard</string>
+    <string name="action_keep_editing">Keep editing</string>
     <string name="action_delete">Delete</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_enable">Enable alarm</string>
@@ -12,6 +13,8 @@
     <string name="hint_alarm_title">Alarm title</string>
 
     <string name="msg_alarm_disabled">Disabled alarm</string>
+    <string name="msg_is_repeat_alarm">This alarm will repeat</string>
+    <string name="msg_is_snoozed">This alarm is snoozed</string>
 
     <string name="option_same_day_of_month">on the same day of the month</string>
     <string name="repeat_by_day_of_week">Repeat by day of week</string>
@@ -21,6 +24,8 @@
     <string name="msg_alarm_will_go_off">Alarm will go off in %1$s</string>
     <string name="msg_cannot_set_past_time">Can\'t set alarm in the past</string>
 
+    <string name="prompt_discard_changes">Discard changes to this alarm?</string>
+    <string name="prompt_discard_new_alarm">Discard this alarm?</string>
     <string name="prompt_delete_alarm">Delete alarm?</string>
 
     <string name="msg_repeat_mode">Repeat mode</string>
@@ -31,10 +36,13 @@
     <string name="msg_activate_date">From %1$s</string>
     <string name="msg_next_date">Alarm will go off on %1$s</string>
 
-    <string name="msg_snoozed_until">Snoozed until %1$s</string>
+    <string name="msg_snoozed_until">%1$s (%2$s)</string>
     <string name="action_dismiss_alarm">Dismiss</string>
     <string name="action_delay_alarm">Snooze</string>
     <string name="title_delay_alarm">Snooze</string>
+
+    <string name="msg_today">Today</string>
+    <string name="msg_tomorrow">Tomorrow</string>
 
     <string-array name="time_distance">
         <item>less than 1 minute</item>
@@ -54,6 +62,12 @@
         <item>Repeats monthly</item>
         <!--<item>Repeats yearly</item>-->
     </string-array>
+
+    <plurals name="msg_times">
+        <item quantity="one">once</item>
+        <item quantity="two">twice</item>
+        <item quantity="other">%1$d times</item>
+    </plurals>
 
     <plurals name="years">
         <item quantity="one">year</item>
@@ -81,20 +95,20 @@
     </plurals>
 
     <plurals name="years_for_repeat">
-        <item quantity="one">Repeats yearly</item>
-        <item quantity="other">Repeats every %1$d years</item>
+        <item quantity="one">Yearly</item>
+        <item quantity="other">Every %1$d years</item>
     </plurals>
     <plurals name="months_for_repeat">
-        <item quantity="one">Repeats monthly on day %2$s</item>
-        <item quantity="other">Repeats every %1$d months on day %2$s</item>
+        <item quantity="one">Monthly on day %2$s</item>
+        <item quantity="other">Every %1$d months on day %2$s</item>
     </plurals>
     <plurals name="weeks_for_repeat">
-        <item quantity="one">Repeats weekly on %2$s</item>
-        <item quantity="other">Repeats every %1$d weeks on %2$s</item>
+        <item quantity="one">Weekly on %2$s</item>
+        <item quantity="other">Every %1$d weeks on %2$s</item>
     </plurals>
     <plurals name="days_for_repeat">
-        <item quantity="one">Repeats daily</item>
-        <item quantity="other">Repeats every %1$d days</item>
+        <item quantity="one">Daily</item>
+        <item quantity="other">Every %1$d days</item>
     </plurals>
 
     <plurals name="minutes_with_quan">
