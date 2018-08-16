@@ -5,10 +5,10 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import net.wuqs.ontime.ui.alarmscreen.AlarmActivity
-import net.wuqs.ontime.ui.mainscreen.MainActivity
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
+import net.wuqs.ontime.ui.alarmscreen.AlarmActivity
+import net.wuqs.ontime.ui.mainscreen.MainActivity
 import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.AsyncHandler
 import net.wuqs.ontime.util.LogUtils
@@ -22,7 +22,7 @@ class AlarmStateManager : BroadcastReceiver() {
         LOGGER.i("Received intent: ${intent.action}")
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED,
-            Intent.ACTION_LOCKED_BOOT_COMPLETED,
+//            Intent.ACTION_LOCKED_BOOT_COMPLETED,
             ACTION_SCHEDULE_ALL_ALARMS -> {
                 val result = goAsync()
                 AsyncHandler.post {
@@ -46,6 +46,9 @@ class AlarmStateManager : BroadcastReceiver() {
                     AlarmUpdateHandler(context).asyncUpdateAlarm(alarm)
                 }
             }
+            ACTION_SHOW_MISSED_ALARMS -> {
+                LOGGER.i("Show missed alarms")
+            }
         }
     }
 
@@ -55,12 +58,12 @@ class AlarmStateManager : BroadcastReceiver() {
     private fun scheduleAllAlarms(context: Context) {
         val db = AppDatabase[context]!!
         val alarms = db.alarmDAO.allSync
+        val alarmsInUse = alarms.filter { it.nextTime != null }
+        val missedAlarms = arrayListOf<Alarm>()
         val now = Calendar.getInstance()
-        val missedAlarms = mutableListOf<Alarm>()
-        val needUpdate = alarms.filter { it.isEnabled }
-        alarms.forEach {
-            if (it.nextTime?.before(now) == true) {
-                missedAlarms.add(Alarm(it))
+        alarmsInUse.forEach {
+            if (it.nextTime!!.before(now)) {
+                missedAlarms += Alarm(it)
                 it.nextTime = it.getNextOccurrence()
             }
             if (it.nextTime != null) {
@@ -71,11 +74,18 @@ class AlarmStateManager : BroadcastReceiver() {
             Alarm.updateAlarm(db, it)
         }
         LOGGER.i("Finished scheduling all alarms")
+
+//        if (missedAlarms.isEmpty()) return
+        val intent = createIntent(ACTION_SHOW_MISSED_ALARMS, context).apply {
+            putExtra(EXTRA_MISSED_ALARMS, missedAlarms)
+        }
+        context.sendBroadcast(intent)
     }
 
     companion object {
         const val ACTION_ALARM_START = "net.wuqs.ontime.action.ALARM_START"
         const val ACTION_SCHEDULE_ALL_ALARMS = "net.wuqs.ontime.action.SCHEDULE_ALL_ALARMS"
+        private const val ACTION_SHOW_MISSED_ALARMS = "net.wuqs.ontime.action.SHOW_MISSED_ALARMS"
 
         fun createIntent(action: String, context: Context) =
                 Intent(action, null, context, AlarmStateManager::class.java)
@@ -118,3 +128,5 @@ class AlarmStateManager : BroadcastReceiver() {
         private val LOGGER = LogUtils.Logger("AlarmStateManager")
     }
 }
+
+private const val EXTRA_MISSED_ALARMS = "net.wuqs.ontime.extra.MISSED_ALARMS"

@@ -39,6 +39,7 @@
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="net.wuqs.ontime.action.ALARM_START" />
                 <action android:name="net.wuqs.ontime.action.SCHEDULE_ALL_ALARMS" />
+                <action android:name="net.wuqs.ontime.action.SHOW_MISSED_ALARMS" />
             </intent-filter>
         </receiver>
 

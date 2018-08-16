@@ -5,12 +5,12 @@ import android.os.HandlerThread
 
 object AsyncHandler {
     private val handlerThread = HandlerThread("AsyncHandler")
-    private val handler: Handler
+    private val mHandler: Handler
 
     init {
         handlerThread.start()
-        handler = Handler(handlerThread.looper)
+        mHandler = Handler(handlerThread.looper)
     }
 
-    fun post(r: () -> Unit) = handler.post(r)
+    fun post(r: () -> Unit) = mHandler.post(r)
 }
