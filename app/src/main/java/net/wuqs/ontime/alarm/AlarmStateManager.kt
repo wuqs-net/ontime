@@ -7,9 +7,8 @@ import android.content.Context
 import android.content.Intent
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
+import net.wuqs.ontime.db.updateAlarmToDb
 import net.wuqs.ontime.ui.alarmscreen.AlarmActivity
-import net.wuqs.ontime.ui.mainscreen.MainActivity
-import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.AsyncHandler
 import net.wuqs.ontime.util.LogUtils
 import java.util.*
@@ -71,7 +70,7 @@ class AlarmStateManager : BroadcastReceiver() {
             } else {
                 it.isEnabled = false
             }
-            Alarm.updateAlarm(db, it)
+            updateAlarmToDb(db, it)
         }
         LOGGER.i("Finished scheduling all alarms")
 
@@ -103,14 +102,14 @@ class AlarmStateManager : BroadcastReceiver() {
             val operation = PendingIntent.getBroadcast(context, alarm.hashCode(),
                     startAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-            if (ApiUtil.isLOrLater()) {
-                val viewIntent = PendingIntent.getActivity(context, alarm.hashCode(),
-                        alarm.createIntent(context, MainActivity::class.java), 0)
-                val info = AlarmManager.AlarmClockInfo(alarm.nextTime!!.timeInMillis, viewIntent)
-                am.setAlarmClock(info, operation)
-            } else {
-                am.setExact(AlarmManager.RTC_WAKEUP, alarm.nextTime!!.timeInMillis, operation)
-            }
+//            if (ApiUtil.isLOrLater()) {
+//                val viewIntent = PendingIntent.getActivity(context, alarm.hashCode(),
+//                        alarm.createIntent(context, MainActivity::class.java), 0)
+//                val info = AlarmManager.AlarmClockInfo(alarm.nextTime!!.timeInMillis, viewIntent)
+//                am.setAlarmClock(info, operation)
+//            } else {
+            am.setExact(AlarmManager.RTC_WAKEUP, alarm.nextTime!!.timeInMillis, operation)
+//            }
             LOGGER.d("Alarm registered: $alarm")
         }
 

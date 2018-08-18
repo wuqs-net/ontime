@@ -6,7 +6,6 @@ import android.support.v7.widget.GridLayoutManager
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_repeat_monthly.*
 import net.wuqs.ontime.R
-import net.wuqs.ontime.util.LogUtils
 import java.util.*
 
 /**
@@ -19,23 +18,16 @@ import java.util.*
  *
  */
 class MonthlyRepeatFragment : RepeatOptionFragment(),
-        View.OnClickListener,
         MonthDayAdapter.OnDayClickListener {
 
     override val mLayout = R.layout.fragment_repeat_monthly
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rv_day_picker.apply {
-            layoutManager = GridLayoutManager(this@MonthlyRepeatFragment.context, 7)
-            adapter = MonthDayAdapter(this@MonthlyRepeatFragment, mAlarm.repeatIndex)
-        }
+        rv_day_picker.layoutManager = GridLayoutManager(context, 7)
+        rv_day_picker.adapter = MonthDayAdapter(this, mAlarm.repeatIndex)
         if (mAlarm.repeatIndex == 0) checkDefaultDate()
         mLogger.v("onViewCreated")
-    }
-
-    override fun onClick(v: View?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onDayClick(which: Int, isChecked: Boolean) {
@@ -63,3 +55,8 @@ class MonthlyRepeatFragment : RepeatOptionFragment(),
 
 val Int.binString get() = Integer.toBinaryString(this)!!
 val Int.hexString get() = Integer.toHexString(this)!!
+fun Int.setBit(bitIndex: Int, on: Boolean) = if (on) {
+    this or (1 shl bitIndex)
+} else {
+    this and (1 shl bitIndex).inv()
+}

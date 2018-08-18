@@ -11,6 +11,7 @@
     <string name="title_new_alarm">New Alarm</string>
     <string name="title_edit_alarm">Edit Alarm</string>
     <string name="hint_alarm_title">Alarm title</string>
+    <string name="action_more_options">More options</string>
 
     <string name="msg_alarm_disabled">Disabled alarm</string>
     <string name="msg_is_repeat_alarm">This alarm will repeat</string>
@@ -28,9 +29,10 @@
     <string name="prompt_discard_new_alarm">Discard this alarm?</string>
     <string name="prompt_delete_alarm">Delete alarm?</string>
 
-    <string name="msg_repeat_mode">Repeat mode</string>
+    <string name="msg_repeat_mode">Repeat</string>
 
-    <string name="every">Every</string>
+    <string name="msg_every_x_cycles_1">Repeats every</string>
+    <string name="msg_every_x_cycles_2">%1$s</string>
     <string name="msg_alarm_date">Alarm date</string>
     <string name="msg_start_date">Start date</string>
     <string name="msg_activate_date">From %1$s</string>
@@ -58,7 +60,7 @@
     <string-array name="repeat_types">
         <item>Does not repeat</item>
         <item>Repeats daily</item>
-        <!--<item>Repeats weekly</item>-->
+        <item>Repeats weekly</item>
         <item>Repeats monthly</item>
         <!--<item>Repeats yearly</item>-->
     </string-array>

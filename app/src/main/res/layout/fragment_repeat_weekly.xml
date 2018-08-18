@@ -1,8 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_day_picker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/content_start_padding"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_advanced"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:paddingBottom="@dimen/text_margin"
+        android:paddingEnd="@dimen/text_margin"
+        android:paddingStart="@dimen/content_start_padding"
+        android:paddingTop="@dimen/text_margin"
+        android:text="@string/action_more_options"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_day_picker" />
+
+    <net.wuqs.ontime.ui.alarmeditscreen.OptionItemView
+        android:id="@+id/oiv_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:captionText="@string/msg_start_date"
+        app:iconImage="@drawable/ic_event_black_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_advanced"
+        tools:valueText="Mon, Aug 6" />
 
     <include
         android:id="@+id/inc_repeatCycle"
@@ -11,7 +50,15 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/oiv_date" />
+
+    <android.support.constraint.Group
+        android:id="@+id/group_advanced"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="oiv_date,inc_repeatCycle" />
 
 </android.support.constraint.ConstraintLayout>

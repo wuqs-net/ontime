@@ -5,8 +5,7 @@ import android.os.AsyncTask
 import android.support.design.widget.Snackbar
 import android.view.View
 import net.wuqs.ontime.R
-import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.db.AppDatabase
+import net.wuqs.ontime.db.*
 import net.wuqs.ontime.util.LogUtils
 
 /**
@@ -35,7 +34,7 @@ class AlarmUpdateHandler(context: Context,
         : AsyncTask<Unit, Unit, Alarm>() {
 
         override fun doInBackground(vararg params: Unit?): Alarm = with(handler) {
-            Alarm.addAlarm(db, alarm)
+            addAlarmToDb(db, alarm)
             if (alarm.isEnabled) {
                 AlarmStateManager.scheduleAlarm(context, alarm)
             } else {
@@ -59,7 +58,7 @@ class AlarmUpdateHandler(context: Context,
         override fun doInBackground(vararg params: Unit?): Alarm = with(handler) {
             //            AlarmStateManager.cancelAlarm(context, alarm)
             if (alarm.nextTime != null) AlarmStateManager.scheduleAlarm(context, alarm)
-            Alarm.updateAlarm(db, alarm)
+            updateAlarmToDb(db, alarm)
             return alarm
         }
 
@@ -76,7 +75,7 @@ class AlarmUpdateHandler(context: Context,
 
         override fun doInBackground(vararg params: Unit?) = with(handler) {
             AlarmStateManager.cancelAlarm(context, alarm)
-            Alarm.deleteAlarm(db, alarm)
+            deleteAlarmFromDb(db, alarm)
         }
     }
 

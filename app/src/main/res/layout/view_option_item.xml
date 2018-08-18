@@ -30,7 +30,7 @@
         android:layout_marginEnd="@dimen/boundary_margin"
         android:layout_marginStart="@dimen/content_start_padding"
         android:text="Option caption"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textAppearance="@style/TextAppearance.AppCompat.Menu"
         app:layout_constraintBottom_toTopOf="@+id/tv_option_value"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +44,6 @@
         android:layout_marginStart="@dimen/content_start_padding"
         android:focusable="true"
         android:text="Option value"
-        android:textAppearance="@style/TextAppearance.AppCompat.Menu"
         app:layout_constraintBottom_toTopOf="@+id/guide_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,6 +54,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="16dp" />
+        app:layout_constraintGuide_end="12dp" />
 
 </android.support.constraint.ConstraintLayout>

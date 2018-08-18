@@ -24,7 +24,9 @@
 
         <activity
             android:name=".ui.alarmscreen.AlarmActivity"
-            android:excludeFromRecents="true" />
+            android:excludeFromRecents="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
 
         <activity
             android:name=".ui.alarmeditscreen.EditAlarmActivity"

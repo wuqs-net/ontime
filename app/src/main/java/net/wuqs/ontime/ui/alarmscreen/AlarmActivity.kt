@@ -3,7 +3,9 @@ package net.wuqs.ontime.ui.alarmscreen
 import android.annotation.TargetApi
 import android.app.KeyguardManager
 import android.content.Context
-import android.media.*
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -11,7 +13,9 @@ import android.view.View
 import android.view.WindowManager.LayoutParams
 import kotlinx.android.synthetic.main.activity_alarm.*
 import net.wuqs.ontime.R
-import net.wuqs.ontime.alarm.*
+import net.wuqs.ontime.alarm.ALARM_INSTANCE
+import net.wuqs.ontime.alarm.AlarmUpdateHandler
+import net.wuqs.ontime.alarm.getDateString
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.LogUtils
@@ -35,8 +39,11 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
         mediaPlayer = MediaPlayer()
 
         // Wake up phone when this activity is launched
-        if (ApiUtil.isOMR1OrLater()) turnScreenOnOMR1() else turnScreenOnPreOMR1()
-        if (ApiUtil.isOOrLater()) dismissKeyguardO() else dismissKeyguardPreO()
+//        if (ApiUtil.isOMR1OrLater()) turnScreenOnOMR1() else turnScreenOnPreOMR1()
+//        if (ApiUtil.isOOrLater()) dismissKeyguardO() else dismissKeyguardPreO()
+        window.addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON
+                or LayoutParams.FLAG_TURN_SCREEN_ON
+                or LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
 
         alarm = intent.getParcelableExtra(ALARM_INSTANCE)
         startAlarm()

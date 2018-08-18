@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_non_repeat.*
 import kotlinx.android.synthetic.main.partial_edit_cycle_number.*
+import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.getDateString
 import net.wuqs.ontime.alarm.getRepeatCycleText
 import net.wuqs.ontime.alarm.setMidnight
@@ -101,7 +102,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
     }
 
     private fun showRepeatCycle() {
-        tv_repeatCycle?.text = mAlarm.getRepeatCycleText(resources)
+        tv_repeatCycle?.text = getString(R.string.msg_every_x_cycles_2, mAlarm.getRepeatCycleText(resources))
     }
 
     interface OnRepeatIndexPickListener {

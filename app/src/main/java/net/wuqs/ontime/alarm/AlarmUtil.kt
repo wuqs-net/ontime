@@ -3,10 +3,12 @@ package net.wuqs.ontime.alarm
 import android.content.Context
 import android.content.res.Resources
 import android.content.res.Resources.NotFoundException
+import android.support.v4.util.ArrayMap
 import android.text.format.DateFormat
 import net.wuqs.ontime.R
 import net.wuqs.ontime.db.Alarm
 import java.text.DateFormatSymbols
+import java.text.SimpleDateFormat
 import java.util.*
 
 const val ALARM_INSTANCE = "net.wuqs.ontime.extra.ALARM_INSTANCE"
@@ -79,7 +81,8 @@ fun Alarm.getRepeatTypeText(resources: Resources): CharSequence {
     val index = when (repeatType) {
         Alarm.NON_REPEAT -> 0
         Alarm.REPEAT_DAILY -> 1
-        Alarm.REPEAT_MONTHLY_BY_DATE -> 2
+        Alarm.REPEAT_WEEKLY -> 2
+        Alarm.REPEAT_MONTHLY_BY_DATE -> 3
         else -> throw IllegalArgumentException("Illegal repeat type")
     }
     return resources.getStringArray(R.array.repeat_types)[index]
@@ -112,7 +115,7 @@ fun getRepeatString(ctx: Context, alarm: Alarm): String {
             val indexStr = run {
                 val daysOfWeek = DateFormatSymbols.getInstance().shortWeekdays
                 val repeatDays = daysOfWeek.filterIndexed { index, _ ->
-                    alarm.repeatIndex shr index and 1 == 1
+                    alarm.repeatIndex shr (index - 1) and 1 == 1
                 }
                 repeatDays.joinToString()
             }
@@ -172,4 +175,17 @@ fun Calendar.sameDayAs(another: Calendar?): Boolean {
     if (this[Calendar.YEAR] != another[Calendar.YEAR]) return false
     if (this[Calendar.DAY_OF_YEAR] != another[Calendar.DAY_OF_YEAR]) return false
     return true
+}
+
+fun getOrderedWeekDays(firstDay: Int) = List(7) { (firstDay + it - 1) % 7 + 1 }
+
+val shortWeekDay: ArrayMap<Int, String> by lazy {
+    val format = SimpleDateFormat("ccccc", Locale.getDefault())
+    val calendar = Calendar.getInstance()
+    ArrayMap<Int, String>(7).apply {
+        for (i in Calendar.SUNDAY..Calendar.SATURDAY) {
+            calendar[Calendar.DAY_OF_WEEK] = i
+            put(i, format.format(calendar.time))
+        }
+    }
 }

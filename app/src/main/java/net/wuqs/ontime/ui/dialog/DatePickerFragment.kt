@@ -2,10 +2,11 @@ package net.wuqs.ontime.ui.dialog
 
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.widget.DatePicker
-import java.util.Calendar
+import java.util.*
 
 class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
 
@@ -25,6 +26,9 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
         val day = args.getInt(ARG_DAY_OF_MONTH)
         return DatePickerDialog(activity, this, year, month, day).apply {
             if (args.containsKey(ARG_MIN_DATE)) datePicker.minDate = args.getLong(ARG_MIN_DATE)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                datePicker.firstDayOfWeek = Calendar.getInstance().firstDayOfWeek
+            }
         }
     }
 

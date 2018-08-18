@@ -11,9 +11,11 @@ import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import net.wuqs.ontime.alarm.AlarmStateManager
+import net.wuqs.ontime.alarm.nextTimeDaily
+import net.wuqs.ontime.alarm.nextTimeMonthlyByDate
+import net.wuqs.ontime.alarm.nextTimeWeekly
 import net.wuqs.ontime.ui.alarmeditscreen.binString
 import net.wuqs.ontime.ui.alarmeditscreen.hexString
-import net.wuqs.ontime.util.LogUtils
 import java.util.*
 
 @Entity(tableName = "alarms")
@@ -46,79 +48,26 @@ class Alarm(
      */
     fun getNextOccurrence(now: Calendar = Calendar.getInstance()): Calendar? {
 
-        val next = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
+//        val next = Calendar.getInstance().apply {
+//            activateDate!!.let {
+//                set(it[Calendar.YEAR], it[Calendar.MONTH], it[Calendar.DATE], hour, minute, 0)
+//            }
+//            set(Calendar.MILLISECOND, 0)
+//        }
+
         when (repeatType) {
             NON_REPEAT -> {
-                with(activateDate!!) {
-                    next.set(this[Calendar.YEAR], this[Calendar.MONTH], this[Calendar.DATE])
+                val next = activateDate!!.let {
+                    GregorianCalendar(it[Calendar.YEAR], it[Calendar.MONTH], it[Calendar.DAY_OF_MONTH],
+                            hour, minute)
                 }
-                if (next.before(now)) return null
-//                with(nextTime!!) {
-//                    if (before(now)) {
-//                        set(now[Calendar.YEAR], now[Calendar.MONTH], now[Calendar.DATE])
-//                        if (before(now)) add(Calendar.DATE, 1)
-//                    }
-//                }
+                return next.takeIf { it.after(now) }
             }
-            REPEAT_DAILY -> {
-                with(activateDate!!) {
-                    next.set(this[Calendar.YEAR], this[Calendar.MONTH], this[Calendar.DATE])
-                }
-                if (next.before(now)) {
-                    val c = ((now.timeInMillis + now[Calendar.DST_OFFSET]) -
-                            (next.timeInMillis + next[Calendar.DST_OFFSET])) /
-                            86400000 / repeatCycle + 1
-                    next.add(Calendar.DATE, c.toInt() * repeatCycle)
-                }
-            }
-            REPEAT_MONTHLY_BY_DATE -> {
-                if (repeatIndex == 0) return null
-                with(activateDate!!) {
-                    next.set(this[Calendar.YEAR], this[Calendar.MONTH], this[Calendar.DATE])
-                    if (next.before(now)) {
-                        next[Calendar.DATE] = now[Calendar.DATE]
-                        val c = ((now[Calendar.YEAR] * 12 + now[Calendar.MONTH]) -
-                                (this[Calendar.YEAR] * 12 + this[Calendar.MONTH])) /
-                                repeatCycle
-                        next.add(Calendar.MONTH, c * repeatCycle)
-                    }
-                }
-                for (i in next[Calendar.DATE]..31) {
-                    if (repeatIndex shr (i - 1) and 1 == 1) {
-                        next[Calendar.DATE] = i
-                        if (next.after(now)) {
-                            if (next[Calendar.DATE] == i) {
-                                return next
-                            } else {
-                                next.add(Calendar.MONTH, -1)
-                                break
-                            }
-                        }
-                    }
-                }
-                next.apply {
-                    for (i in 1..31) {
-                        if (repeatIndex shr (i - 1) and 1 == 1) {
-                            do {
-                                add(Calendar.MONTH, repeatCycle)
-                            } while (i > getActualMaximum(Calendar.DATE))
-                            set(Calendar.DATE, i)
-                            if (get(Calendar.DATE) != i) {
-                                add(Calendar.MONTH, -1)
-                                set(Calendar.DATE, getActualMaximum(Calendar.DATE))
-                            }
-                            break
-                        }
-                    }
-                }
-            }
+            REPEAT_DAILY -> return nextTimeDaily(now)
+            REPEAT_WEEKLY -> return nextTimeWeekly(now)
+            REPEAT_MONTHLY_BY_DATE -> return nextTimeMonthlyByDate(now)
         }
-        return next
+        return null
     }
 
     fun updateMissed() {
@@ -126,27 +75,6 @@ class Alarm(
             NON_REPEAT -> isEnabled = false
             REPEAT_DAILY -> nextTime = getNextOccurrence()
         }
-    }
-
-    /**
-     * Checks if another [Alarm] has the same display summary as this [Alarm].
-     *
-     * @param other the other [Alarm] to check.
-     * @return whether the two [Alarm]s have the same display summary.
-     */
-    fun sameDisplaySummaryAs(other: Alarm?) = when {
-        other == null -> false
-        id != other.id -> false
-        hour != other.hour || minute != minute -> false
-        title != other.title -> false
-        isEnabled != other.isEnabled -> false
-        activateDate != other.activateDate -> false
-        nextTime != other.nextTime -> false
-        repeatType != other.repeatType -> false
-        repeatCycle != other.repeatCycle -> false
-        repeatIndex != other.repeatIndex -> false
-        snoozed != other.snoozed -> false
-        else -> true
     }
 
     fun createIntent(context: Context, cls: Class<*>): Intent {
@@ -265,40 +193,6 @@ class Alarm(
         const val REPEAT_YEARLY_BY_WEEK = 0x184
 
         const val INVALID_ID = 0L
-
-        /**
-         * Adds the [Alarm] to database.
-         *
-         * @param db the [AppDatabase] instance.
-         * @return the [Alarm] saved to database, with its id updated.
-         */
-        fun addAlarm(db: AppDatabase, alarm: Alarm): Alarm {
-            alarm.id = db.alarmDAO.insert(alarm)
-            LogUtils.i("Alarm added to database: $alarm")
-            return alarm
-        }
-
-        /**
-         * Updates the [Alarm] in database.
-         *
-         * @param db the [AppDatabase] instance.
-         * @return the [Alarm] saved to database, with its id updated.
-         */
-        fun updateAlarm(db: AppDatabase, alarm: Alarm): Int {
-            val count = db.alarmDAO.update(alarm)
-            LogUtils.i("Alarm updated in database: $alarm")
-            return count
-        }
-
-        /**
-         * Deletes the [Alarm] from database.
-         *
-         * @param db the [AppDatabase] instance.
-         */
-        fun deleteAlarm(db: AppDatabase, alarm: Alarm) {
-            db.alarmDAO.delete(alarm)
-            LogUtils.i("Alarm deleted from database: $alarm")
-        }
 
         @Suppress("unused")
         @JvmField

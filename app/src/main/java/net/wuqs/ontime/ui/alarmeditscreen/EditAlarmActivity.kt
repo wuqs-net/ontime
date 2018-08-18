@@ -23,6 +23,7 @@ import net.wuqs.ontime.ui.dialog.TimePickerFragment
 import net.wuqs.ontime.ui.mainscreen.MainActivity
 import net.wuqs.ontime.util.LogUtils
 import net.wuqs.ontime.util.shortToast
+import java.util.*
 
 class EditAlarmActivity : AppCompatActivity(),
         View.OnClickListener,
@@ -97,9 +98,9 @@ class EditAlarmActivity : AppCompatActivity(),
     override fun updateRepeatOption(repeatType: Int?, repeatCycle: Int?, repeatIndex: Int?) {
         mAlarmEdited = true
         mLogger.v("Alarm changes made: repeat option")
-        repeatType?.let { alarm.repeatType = it }
-        repeatCycle?.let { alarm.repeatCycle = it }
-        repeatIndex?.let { alarm.repeatIndex = it }
+//        repeatType?.let { alarm.repeatType = it }
+//        repeatCycle?.let { alarm.repeatCycle = it }
+//        repeatIndex?.let { alarm.repeatIndex = it }
         updateNextAlarmDate()
     }
 
@@ -114,7 +115,7 @@ class EditAlarmActivity : AppCompatActivity(),
         val types = arrayOf(
                 Alarm.NON_REPEAT,
                 Alarm.REPEAT_DAILY,
-//                Alarm.REPEAT_WEEKLY,
+                Alarm.REPEAT_WEEKLY,
                 Alarm.REPEAT_MONTHLY_BY_DATE,
                 Alarm.REPEAT_YEARLY_BY_DATE
         )
@@ -128,6 +129,10 @@ class EditAlarmActivity : AppCompatActivity(),
                 Alarm.REPEAT_DAILY -> {
                     alarm.repeatCycle = 1
                     alarm.repeatIndex = 0
+                }
+                Alarm.REPEAT_WEEKLY -> {
+                    alarm.repeatCycle = 1
+                    alarm.repeatIndex = (Calendar.getInstance().firstDayOfWeek shl 8) + 0b0111110
                 }
                 Alarm.REPEAT_MONTHLY_BY_DATE -> {
                     alarm.repeatCycle = 1
@@ -205,7 +210,7 @@ class EditAlarmActivity : AppCompatActivity(),
             if (alarm.id == Alarm.INVALID_ID) setMessage(R.string.prompt_discard_new_alarm)
             else setMessage(R.string.prompt_discard_changes)
             setNegativeButton(R.string.action_keep_editing, null)
-            setPositiveButton(R.string.action_discard) {dialog, which ->
+            setPositiveButton(R.string.action_discard) { dialog, which ->
                 NavUtils.navigateUpFromSameTask(this@EditAlarmActivity)
             }
         }.create().show()
@@ -229,7 +234,7 @@ class EditAlarmActivity : AppCompatActivity(),
         }
     }
 
-    private fun updateNextAlarmDate(onlyDisplay: Boolean = false) {
+    private fun updateNextAlarmDate() {
         alarm.getNextOccurrence().let {
             tv_next_date.text = if (it != null) {
                 getString(R.string.msg_next_date, getDateString(it, false))

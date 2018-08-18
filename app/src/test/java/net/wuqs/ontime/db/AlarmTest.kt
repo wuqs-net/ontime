@@ -89,57 +89,108 @@ class AlarmTest {
     }
 
     @Test
-    fun updateNextOccurrence() {
+    fun testRepeatWeekly() {
+        alarm.apply {
+            hour = 23
+            minute = 41
+            repeatType = Alarm.REPEAT_WEEKLY
+            repeatCycle = 2
+            repeatIndex = 0b1000010 + (2 shl 8)
+            activateDate = GregorianCalendar(2018, Calendar.AUGUST, 12)
+            nextTime = getNextOccurrence()
+        }
+        next.apply {
+            set(2018, Calendar.AUGUST, 20, alarm.hour, alarm.minute, 0)
+        }
+        println("activate: ${alarm.activateDate?.time}, next: ${alarm.nextTime?.time}")
+        assert(next == alarm.nextTime)
+
+        alarm.apply {
+            hour = 23
+            minute = 41
+            repeatType = Alarm.REPEAT_WEEKLY
+            repeatCycle = 1
+            repeatIndex = 0b1000010 + (1 shl 8)
+            activateDate = GregorianCalendar(2018, Calendar.AUGUST, 12)
+            nextTime = getNextOccurrence()
+        }
+        next.apply {
+            set(2018, Calendar.AUGUST, 18, alarm.hour, alarm.minute, 0)
+        }
+        println("activate: ${alarm.activateDate?.time}, next: ${alarm.nextTime?.time}")
+        assert(next == alarm.nextTime)
+    }
+
+    @Test
+    fun testRepeatMonthly() {
         alarm.apply {
             hour = 23
             minute = 41
             repeatType = Alarm.REPEAT_MONTHLY_BY_DATE
             repeatCycle = 1
-            repeatIndex = 0b101
-            activateDate = Calendar.getInstance().apply {
-                set(1950, Calendar.NOVEMBER, 4, 0, 0, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
+            repeatIndex = 0b111111111111000010
+            activateDate = GregorianCalendar(2018, Calendar.AUGUST, 12)
             nextTime = getNextOccurrence()
         }
         next.apply {
-            set(2018, Calendar.AUGUST, 3, alarm.hour, alarm.minute, 0)
+            set(2018, Calendar.AUGUST, 18, alarm.hour, alarm.minute, 0)
         }
         println("activate: ${alarm.activateDate?.time}, next: ${alarm.nextTime?.time}")
         assert(next == alarm.nextTime)
+    }
+
+    @Test
+    fun updateNextOccurrence() {
+//        alarm.apply {
+//            hour = 23
+//            minute = 41
+//            repeatType = Alarm.REPEAT_MONTHLY_BY_DATE
+//            repeatCycle = 1
+//            repeatIndex = 0b101
+//            activateDate = Calendar.getInstance().apply {
+//                set(1950, Calendar.NOVEMBER, 4, 0, 0, 0)
+//                set(Calendar.MILLISECOND, 0)
+//            }
+//            nextTime = getNextOccurrence()
+//        }
+//        next.apply {
+//            set(2018, Calendar.AUGUST, 3, alarm.hour, alarm.minute, 0)
+//        }
+//        println("activate: ${alarm.activateDate?.time}, next: ${alarm.nextTime?.time}")
+//        assert(next == alarm.nextTime)
+//
+//        alarm.apply {
+//            hour = 23
+//            minute = 41
+//            repeatType = Alarm.REPEAT_MONTHLY_BY_DATE
+//            repeatCycle = 2
+//            repeatIndex = 0b111
+//            activateDate = Calendar.getInstance().apply {
+//                set(2018, Calendar.AUGUST, 4, 0, 0, 0)
+//                set(Calendar.MILLISECOND, 0)
+//            }
+//            nextTime = getNextOccurrence()
+//        }
+//        next.apply {
+//            set(2018, Calendar.OCTOBER, 1, alarm.hour, alarm.minute, 0)
+//        }
+//        println("activate: ${alarm.activateDate?.time}, next: ${alarm.nextTime?.time}")
+//        assert(next == alarm.nextTime)
 
         alarm.apply {
             hour = 23
             minute = 41
             repeatType = Alarm.REPEAT_MONTHLY_BY_DATE
             repeatCycle = 2
-            repeatIndex = 0b111
-            activateDate = Calendar.getInstance().apply {
-                set(2018, Calendar.AUGUST, 4, 0, 0, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-            nextTime = getNextOccurrence()
-        }
-        next.apply {
-            set(2018, Calendar.OCTOBER, 1, alarm.hour, alarm.minute, 0)
-        }
-        println("activate: ${alarm.activateDate?.time}, next: ${alarm.nextTime?.time}")
-        assert(next == alarm.nextTime)
-
-        alarm.apply {
-            hour = 23
-            minute = 41
-            repeatType = Alarm.REPEAT_MONTHLY_BY_DATE
-            repeatCycle = 3
             repeatIndex = 0b100000000001
             activateDate = Calendar.getInstance().apply {
-                set(1950, Calendar.AUGUST, 4, 0, 0, 0)
+                set(2017, Calendar.SEPTEMBER, 4, 0, 0, 0)
                 set(Calendar.MILLISECOND, 0)
             }
-            nextTime = getNextOccurrence()
+            nextTime = getNextOccurrence(GregorianCalendar(2018, Calendar.AUGUST, 5))
         }
         next.apply {
-            set(2018, Calendar.AUGUST, 12, alarm.hour, alarm.minute, 0)
+            set(2018, Calendar.SEPTEMBER, 1, alarm.hour, alarm.minute, 0)
         }
         println("activate: ${alarm.activateDate?.time}, next: ${alarm.nextTime?.time}")
         assert(next == alarm.nextTime)
