@@ -11,7 +11,7 @@
     <string name="action_enable">启用闹钟</string>
     <string name="title_new_alarm">新建闹钟</string>
     <string name="title_edit_alarm">修改闹钟</string>
-    <string name="hint_alarm_title">闹钟标题</string>
+    <string name="hint_alarm_title">闹钟名称</string>
     <string name="action_more_options">更多选项</string>
 
     <string name="msg_alarm_disabled">闹钟已禁用</string>
@@ -25,6 +25,7 @@
 
     <string name="msg_alarm_will_go_off">闹钟将在%1$s后响起</string>
     <string name="msg_cannot_set_past_time">不能设为过去的时间</string>
+    <string name="msg_select_at_least_one_day">请至少选择一个重复日</string>
 
     <string name="prompt_discard_changes">舍弃对此闹钟的修改？</string>
     <string name="prompt_discard_new_alarm">舍弃此闹钟？</string>

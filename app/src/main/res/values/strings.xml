@@ -10,7 +10,7 @@
     <string name="action_enable">Enable alarm</string>
     <string name="title_new_alarm">New Alarm</string>
     <string name="title_edit_alarm">Edit Alarm</string>
-    <string name="hint_alarm_title">Alarm title</string>
+    <string name="hint_alarm_title">Name</string>
     <string name="action_more_options">More options</string>
 
     <string name="msg_alarm_disabled">Disabled alarm</string>
@@ -24,6 +24,7 @@
 
     <string name="msg_alarm_will_go_off">Alarm will go off in %1$s</string>
     <string name="msg_cannot_set_past_time">Can\'t set alarm in the past</string>
+    <string name="msg_select_at_least_one_day">Please select at least one day to repeat</string>
 
     <string name="prompt_discard_changes">Discard changes to this alarm?</string>
     <string name="prompt_discard_new_alarm">Discard this alarm?</string>

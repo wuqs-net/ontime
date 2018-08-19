@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.activity_edit_alarm.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
@@ -22,6 +23,7 @@ import net.wuqs.ontime.ui.dialog.SpinnerDialogFragment
 import net.wuqs.ontime.ui.dialog.TimePickerFragment
 import net.wuqs.ontime.ui.mainscreen.MainActivity
 import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.hideSoftInput
 import net.wuqs.ontime.util.shortToast
 import java.util.*
 
@@ -56,7 +58,18 @@ class EditAlarmActivity : AppCompatActivity(),
             mLogger.v("Alarm changes made: new alarm")
         } else {
             title = getString(R.string.title_edit_alarm)
-            til_title.editText?.setText(alarm.title)
+            et_alarm_title.setText(alarm.title)
+        }
+
+        et_alarm_title.setOnEditorActionListener { v, actionId, _ ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    v.clearFocus()
+                    hideSoftInput(v)
+                    true
+                }
+                else -> false
+            }
         }
 
         tv_alarm_time.text = getTimeString(this, alarm)
@@ -160,12 +173,16 @@ class EditAlarmActivity : AppCompatActivity(),
         when (item?.itemId) {
             R.id.miSaveAlarm -> {
                 // Save alarm
-                if (alarm.repeatType == Alarm.NON_REPEAT && alarm.nextTime == null) {
-                    // Prevent the user from setting a non-repeat alarm in the past
-                    shortToast(R.string.msg_cannot_set_past_time)
+                if (alarm.nextTime == null) {
+                    if (alarm.repeatType == Alarm.NON_REPEAT) {
+                        // Prevent the user from setting a non-repeat alarm in the past
+                        shortToast(R.string.msg_cannot_set_past_time)
+                    } else {
+                        shortToast(R.string.msg_select_at_least_one_day)
+                    }
                     return true
                 }
-                alarm.title = til_title.editText?.text.toString()
+                alarm.title = et_alarm_title.text.toString()
                 alarm.isEnabled = true
                 alarm.snoozed = 0
                 if (alarm.repeatType == Alarm.NON_REPEAT) alarm.repeatCycle = 0
@@ -201,7 +218,7 @@ class EditAlarmActivity : AppCompatActivity(),
     }
 
     private fun promptDiscard() {
-        if (til_title.editText?.text.toString() != alarm.title) mAlarmEdited = true
+        if (et_alarm_title.text.toString() != alarm.title) mAlarmEdited = true
         if (!mAlarmEdited) {
             NavUtils.navigateUpFromSameTask(this)
             return
@@ -239,7 +256,11 @@ class EditAlarmActivity : AppCompatActivity(),
             tv_next_date.text = if (it != null) {
                 getString(R.string.msg_next_date, getDateString(it, false))
             } else {
-                getString(R.string.msg_cannot_set_past_time)
+                if (alarm.repeatType == Alarm.NON_REPEAT) {
+                    getString(R.string.msg_cannot_set_past_time)
+                } else {
+                    getString(R.string.msg_select_at_least_one_day)
+                }
             }
             mLogger.i(it?.time.toString())
             alarm.nextTime = it
