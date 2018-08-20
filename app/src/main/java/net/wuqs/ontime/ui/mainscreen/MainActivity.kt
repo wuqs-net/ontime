@@ -1,7 +1,10 @@
 package net.wuqs.ontime.ui.mainscreen
 
+import android.app.ActivityManager.TaskDescription
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -39,6 +42,18 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mLogger.v("onCreate")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+            val color = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getColor(R.color.colorPrimaryDark)
+            } else {
+                @Suppress("DEPRECATION")
+                resources.getColor(R.color.colorPrimaryDark)
+            }
+            val task = TaskDescription(getString(R.string.app_name), bitmap, color)
+            setTaskDescription(task)
+        }
 
         mAlarmUpdateHandler = AlarmUpdateHandler(this, fabCreateAlarm)
 

@@ -13,7 +13,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="12dp" />
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/iv_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,6 +21,8 @@
         app:layout_constraintBottom_toTopOf="@+id/guide_bottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guide_top"
+        app:tint="?attr/colorControlNormal"
+        app:tintMode="src_in"
         tools:srcCompat="@drawable/ic_event_black_24dp" />
 
     <TextView

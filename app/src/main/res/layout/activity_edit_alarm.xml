@@ -14,6 +14,18 @@
         android:focusable="true"
         android:focusableInTouchMode="true">
 
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_alarm_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            app:tintMode="src_in"
+            app:tint="?attr/colorControlNormal"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_alarm_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_alarm_time"
+            app:srcCompat="@drawable/ic_schedule" />
+
         <TextView
             android:id="@+id/tv_alarm_time"
             android:layout_width="wrap_content"
@@ -37,6 +49,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_alarm_title"
             tools:text="下次响铃日期：2018年12月10日" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_alarm_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            app:tint="?attr/colorControlNormal"
+            app:tintMode="src_in"
+            app:layout_constraintBottom_toBottomOf="@+id/et_alarm_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_alarm_title"
+            app:srcCompat="@drawable/ic_title" />
 
         <EditText
             android:id="@+id/et_alarm_title"

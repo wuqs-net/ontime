@@ -28,8 +28,7 @@ class WeekDayAdapter(private val mListener: OnDayClickListener, var days: Int)
         val day = mDays[position]
         holder.toggleBtn.apply {
             val dayText = shortWeekDay[day]
-            textOn = dayText
-            textOff = dayText
+            text = dayText
             isChecked = days shr (day - 1) and 1 == 1
             setOnClickListener { mListener.onDayClick(day, isChecked) }
         }

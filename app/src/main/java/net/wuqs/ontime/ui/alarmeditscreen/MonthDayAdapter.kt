@@ -23,8 +23,7 @@ class MonthDayAdapter(private val mListener: OnDayClickListener, var dates: Int)
     override fun onBindViewHolder(holder: DayItemHolder, position: Int) {
         holder.toggleBtn.apply {
             val dayText = mDays[position].toString()
-            textOn = dayText
-            textOff = dayText
+            text = dayText
             isChecked = dates shr position and 1 == 1
             setOnClickListener { mListener.onDayClick(position, isChecked) }
         }
