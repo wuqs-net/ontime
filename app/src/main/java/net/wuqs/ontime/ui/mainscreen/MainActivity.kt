@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity(),
 //        }
 //
 //    }
+    // TODO: display missed alarm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,8 +89,10 @@ class MainActivity : AppCompatActivity(),
 
     override fun onTimeSet(tag: String?, hourOfDay: Int, minute: Int) {
         if (tag == TimePickerFragment.NEW_ALARM) {
+            val alarm = Alarm(hour = hourOfDay, minute = minute)
+            // TODO: automatically change start date if alarm time is before now
             val editAlarmIntent = EditAlarmActivity.createIntent(this)
-                    .putExtra(ALARM_INSTANCE, Alarm(hour = hourOfDay, minute = minute))
+                    .putExtra(ALARM_INSTANCE, alarm)
             startActivityForResult(editAlarmIntent, CREATE_ALARM_REQUEST)
         }
     }
@@ -104,12 +107,6 @@ class MainActivity : AppCompatActivity(),
 
     override fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean) {
         item.isEnabled = isChecked
-//        if (item.getNextOccurrence() != null) {
-//            item.isEnabled = isChecked
-//            item.nextTime = item.getNextOccurrence()
-//        } else {
-//            shortToast(R.string.msg_cannot_set_past_time)
-//        }
         mAlarmUpdateHandler.asyncUpdateAlarm(item, true)
     }
 

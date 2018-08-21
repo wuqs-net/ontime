@@ -76,6 +76,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
                 mAlarm.repeatCycle = it
             }
         }
+        et_repeatCycle.hint = mAlarm.repeatCycle.toString()
         showRepeatCycle()
         mListener?.updateRepeatOption(repeatCycle = mAlarm.repeatCycle)
     }
@@ -120,6 +121,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
                 1 -> DailyRepeatFragment()
                 2 -> WeeklyRepeatFragment()
                 3 -> MonthlyRepeatFragment()
+                4 -> YearlyRepeatFragment()
                 else -> throw IllegalArgumentException("Illegal repeat type")
             }
             return fragment.apply {

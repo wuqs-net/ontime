@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">On Time</string>
+    <string name="app_name">OnTime</string>
     <string name="new_alarm">Create new alarm</string>
     <string name="hint_click_add">Click the \"Add\" button below to create new alarm</string>
     <string name="action_save">Save</string>
@@ -63,7 +63,7 @@
         <item>Repeats daily</item>
         <item>Repeats weekly</item>
         <item>Repeats monthly</item>
-        <!--<item>Repeats yearly</item>-->
+        <item>Repeats yearly</item>
     </string-array>
 
     <plurals name="msg_times">
@@ -98,8 +98,8 @@
     </plurals>
 
     <plurals name="years_for_repeat">
-        <item quantity="one">Yearly</item>
-        <item quantity="other">Every %1$d years</item>
+        <item quantity="one">Yearly on %2$s</item>
+        <item quantity="other">Every %1$d years on %2$s</item>
     </plurals>
     <plurals name="months_for_repeat">
         <item quantity="one">Monthly on day %2$s</item>

@@ -63,7 +63,11 @@ class AlarmRecyclerViewAdapter
             updateEnabledDisplay(item.isEnabled)
 
             tv_alarm_time.text = getTimeString(context, item)
-            tv_alarm_title.text = item.title
+
+            item.title.let {
+                tv_alarm_title.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
+                tv_alarm_title.text = it
+            }
 
             // Display information about snooze and next alarm
             item.nextTime.let {

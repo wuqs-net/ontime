@@ -22,11 +22,12 @@
         app:autoSizeMinTextSize="14sp"
         app:autoSizeStepGranularity="4sp"
         app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_next_date"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
         app:layout_constraintEnd_toStartOf="@+id/guideline_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_alarm_title"
         app:layout_constraintVertical_chainStyle="spread"
+        app:textAllCaps="false"
         tools:text="11:11" />
 
     <android.support.constraint.Guideline

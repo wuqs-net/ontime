@@ -151,6 +151,10 @@ class EditAlarmActivity : AppCompatActivity(),
                     alarm.repeatCycle = 1
                     alarm.repeatIndex = 0
                 }
+                Alarm.REPEAT_YEARLY_BY_DATE -> {
+                    alarm.repeatCycle = 1
+                    alarm.repeatIndex = 0
+                }
             }
             alarm.repeatType = it
             mAlarmEdited = true

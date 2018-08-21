@@ -10,10 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import net.wuqs.ontime.alarm.AlarmStateManager
-import net.wuqs.ontime.alarm.nextTimeDaily
-import net.wuqs.ontime.alarm.nextTimeMonthlyByDate
-import net.wuqs.ontime.alarm.nextTimeWeekly
+import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.ui.alarmeditscreen.binString
 import net.wuqs.ontime.ui.alarmeditscreen.hexString
 import java.util.*
@@ -46,28 +43,13 @@ class Alarm(
     /**
      * Determines the [Alarm]'s next occurrence.
      */
-    fun getNextOccurrence(now: Calendar = Calendar.getInstance()): Calendar? {
-
-//        val next = Calendar.getInstance().apply {
-//            activateDate!!.let {
-//                set(it[Calendar.YEAR], it[Calendar.MONTH], it[Calendar.DATE], hour, minute, 0)
-//            }
-//            set(Calendar.MILLISECOND, 0)
-//        }
-
-        when (repeatType) {
-            NON_REPEAT -> {
-                val next = activateDate!!.let {
-                    GregorianCalendar(it[Calendar.YEAR], it[Calendar.MONTH], it[Calendar.DAY_OF_MONTH],
-                            hour, minute)
-                }
-                return next.takeIf { it.after(now) }
-            }
-            REPEAT_DAILY -> return nextTimeDaily(now)
-            REPEAT_WEEKLY -> return nextTimeWeekly(now)
-            REPEAT_MONTHLY_BY_DATE -> return nextTimeMonthlyByDate(now)
-        }
-        return null
+    fun getNextOccurrence(now: Calendar = Calendar.getInstance()): Calendar? = when (repeatType) {
+        NON_REPEAT -> nextTimeNonRepeat(now)
+        REPEAT_DAILY -> nextTimeDaily(now)
+        REPEAT_WEEKLY -> nextTimeWeekly(now)
+        REPEAT_MONTHLY_BY_DATE -> nextTimeMonthlyByDate(now)
+        REPEAT_YEARLY_BY_DATE -> nextTimeYearlyByDate(now)
+        else -> null
     }
 
     fun updateMissed() {

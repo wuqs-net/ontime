@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <net.wuqs.ontime.ui.alarmeditscreen.OptionItemView
+        android:id="@+id/oiv_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:captionText="@string/msg_alarm_date"
+        app:iconImage="@drawable/ic_event_black_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:valueText="Mon, Aug 6" />
+
+    <include
+        android:id="@+id/inc_repeatCycle"
+        layout="@layout/partial_edit_cycle_number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/oiv_date" />
+
+</android.support.constraint.ConstraintLayout>

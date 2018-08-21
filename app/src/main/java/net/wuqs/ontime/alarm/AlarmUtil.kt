@@ -33,7 +33,7 @@ fun getTimeString(context: Context, calendar: Calendar?): String {
     return DateFormat.getTimeFormat(context).format(calendar.time)
 }
 
-fun getDateString(c: Calendar?, showWeek: Boolean = true): String {
+fun getDateString(c: Calendar?, showWeek: Boolean = true, showYear: Boolean = true): String {
     if (c == null) return ""
     val now = Calendar.getInstance()
 //    if (now.sameDayAs(c)) return context.getString(R.string.msg_today)
@@ -41,7 +41,7 @@ fun getDateString(c: Calendar?, showWeek: Boolean = true): String {
 //        return context.getString(R.string.msg_tomorrow)
 //    }
 //    now.add(Calendar.DATE, -1)
-    var skeleton = if (c[Calendar.YEAR] == now[Calendar.YEAR]) {
+    var skeleton = if (c[Calendar.YEAR] == now[Calendar.YEAR] || !showYear) {
         "MMMd"
     } else {
         "yyyyMMMd"
@@ -83,6 +83,7 @@ fun Alarm.getRepeatTypeText(resources: Resources): CharSequence {
         Alarm.REPEAT_DAILY -> 1
         Alarm.REPEAT_WEEKLY -> 2
         Alarm.REPEAT_MONTHLY_BY_DATE -> 3
+        Alarm.REPEAT_YEARLY_BY_DATE -> 4
         else -> throw IllegalArgumentException("Illegal repeat type")
     }
     return resources.getStringArray(R.array.repeat_types)[index]
@@ -143,6 +144,19 @@ fun getRepeatString(ctx: Context, alarm: Alarm): String {
             if (alarm.repeatCycle == 1) {
                 return try {
                     ctx.getString(R.string.msg_months_for_repeat_single, null, indexStr)
+                } catch (e: NotFoundException) {
+                    str
+                }
+            }
+            return str
+        }
+        Alarm.REPEAT_YEARLY_BY_DATE -> {
+            val date = getDateString(alarm.activateDate, false, false)
+            val str = ctx.resources.getQuantityString(R.plurals.years_for_repeat,
+                    alarm.repeatCycle, alarm.repeatCycle, date)
+            if (alarm.repeatCycle == 1) {
+                return try {
+                    ctx.getString(R.string.msg_years_for_repeat, null, date)
                 } catch (e: NotFoundException) {
                     str
                 }
