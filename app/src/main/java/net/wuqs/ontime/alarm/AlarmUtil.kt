@@ -5,9 +5,9 @@ import android.content.res.Resources
 import android.content.res.Resources.NotFoundException
 import android.support.v4.util.ArrayMap
 import android.text.format.DateFormat
+import android.text.format.DateUtils
 import net.wuqs.ontime.R
 import net.wuqs.ontime.db.Alarm
-import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,6 +51,41 @@ fun getDateString(c: Calendar?, showWeek: Boolean = true, showYear: Boolean = tr
     return DateFormat.format(pattern, c).toString()
 //    return DateFormat.getDateFormat(context).format(c.time)
 }
+
+fun getDateTimeString(ctx: Context, c: Calendar?): String {
+    if (c == null) return ""
+
+    return DateUtils.formatDateTime(ctx, c.timeInMillis,
+            DateUtils.FORMAT_SHOW_DATE
+                    or DateUtils.FORMAT_SHOW_TIME
+                    or DateUtils.FORMAT_ABBREV_MONTH)
+}
+
+fun getRelativeDateTimeString(ctx: Context, c: Calendar?): String {
+    if (c == null) return ""
+
+    val tomorrowResolution = Calendar.getInstance().apply {
+        setHms(0)
+        add(Calendar.DAY_OF_YEAR, 2)
+    }
+    val yesterdayResolution = Calendar.getInstance().apply {
+        setHms(0)
+        add(Calendar.DAY_OF_YEAR, -1)
+    }
+    if (c.before(tomorrowResolution) && !c.before(yesterdayResolution)) {
+        return DateUtils.getRelativeDateTimeString(ctx, c.timeInMillis,
+                DateUtils.DAY_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
+                DateUtils.FORMAT_SHOW_DATE
+                        or DateUtils.FORMAT_SHOW_TIME
+                        or DateUtils.FORMAT_ABBREV_MONTH).toString()
+    } else {
+        return DateUtils.formatDateTime(ctx, c.timeInMillis,
+                DateUtils.FORMAT_SHOW_DATE
+                        or DateUtils.FORMAT_SHOW_TIME
+                        or DateUtils.FORMAT_ABBREV_MONTH)
+    }
+}
+
 
 fun getTimeDistanceString(context: Context, alarmTime: Long): String {
     var delta = alarmTime - Calendar.getInstance().timeInMillis
@@ -114,10 +149,13 @@ fun getRepeatString(ctx: Context, alarm: Alarm): String {
         }
         Alarm.REPEAT_WEEKLY -> {
             val indexStr = run {
-                val daysOfWeek = DateFormatSymbols.getInstance().shortWeekdays
-                val repeatDays = daysOfWeek.filterIndexed { index, _ ->
-                    alarm.repeatIndex shr (index - 1) and 1 == 1
+                val daysOfWeek = when (Locale.getDefault().language) {
+                    Locale.CHINESE.language -> getShortWeekDays()
+                    else -> getShortWeekDays("E")
                 }
+                val repeatDays = daysOfWeek.filterKeys {
+                    alarm.repeatIndex.isWeekdaySet(it)
+                }.values
                 repeatDays.joinToString()
             }
             val str = ctx.resources.getQuantityString(R.plurals.weeks_for_repeat,
@@ -171,12 +209,12 @@ fun getRepeatString(ctx: Context, alarm: Alarm): String {
 
 }
 
-fun Calendar.setMidnight(year: Int, month: Int, date: Int) {
+fun Calendar.setMidnight(year: Int, month: Int, date: Int) = apply {
     set(year, month, date, 0, 0, 0)
     set(Calendar.MILLISECOND, 0)
 }
 
-fun Calendar.setHms(hour: Int, minute: Int = 0, second: Int = 0) {
+fun Calendar.setHms(hour: Int, minute: Int = 0, second: Int = 0) = apply {
     set(Calendar.HOUR_OF_DAY, hour)
     set(Calendar.MINUTE, minute)
     set(Calendar.SECOND, second)
@@ -193,13 +231,18 @@ fun Calendar.sameDayAs(another: Calendar?): Boolean {
 
 fun getOrderedWeekDays(firstDay: Int) = List(7) { (firstDay + it - 1) % 7 + 1 }
 
-val shortWeekDay: ArrayMap<Int, String> by lazy {
-    val format = SimpleDateFormat("ccccc", Locale.getDefault())
-    val calendar = Calendar.getInstance()
-    ArrayMap<Int, String>(7).apply {
-        for (i in Calendar.SUNDAY..Calendar.SATURDAY) {
-            calendar[Calendar.DAY_OF_WEEK] = i
-            put(i, format.format(calendar.time))
+fun getShortWeekDays(pattern: String = "ccccc"): ArrayMap<Int, String> {
+    if (shortWeekDays[pattern] == null) {
+        val format = SimpleDateFormat(pattern, Locale.getDefault())
+        val calendar = Calendar.getInstance()
+        shortWeekDays[pattern] = ArrayMap<Int, String>(7).apply {
+            for (i in Calendar.SUNDAY..Calendar.SATURDAY) {
+                calendar[Calendar.DAY_OF_WEEK] = i
+                put(i, format.format(calendar.time))
+            }
         }
     }
+    return shortWeekDays[pattern]!!
 }
+
+private val shortWeekDays = ArrayMap<String, ArrayMap<Int, String>>()

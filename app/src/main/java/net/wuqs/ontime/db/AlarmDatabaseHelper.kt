@@ -1,6 +1,8 @@
 package net.wuqs.ontime.db
 
 import net.wuqs.ontime.util.LogUtils
+import java.security.MessageDigest
+import java.util.*
 
 /**
  * Adds the [Alarm] to database.
@@ -9,7 +11,8 @@ import net.wuqs.ontime.util.LogUtils
  * @return the [Alarm] saved to database, with its id updated.
  */
 fun addAlarmToDb(db: AppDatabase, alarm: Alarm): Alarm {
-    alarm.id = db.alarmDAO.insert(alarm)
+//    alarm.id = generateId()
+    alarm.id = db.alarmDao.insert(alarm)
     mLogger.i("Alarm added to database: $alarm")
     return alarm
 }
@@ -21,7 +24,7 @@ fun addAlarmToDb(db: AppDatabase, alarm: Alarm): Alarm {
  * @return the [Alarm] saved to database, with its id updated.
  */
 fun updateAlarmToDb(db: AppDatabase, alarm: Alarm): Int {
-    val count = db.alarmDAO.update(alarm)
+    val count = db.alarmDao.update(alarm)
     mLogger.i("Alarm updated in database: $alarm")
     return count
 }
@@ -32,8 +35,18 @@ fun updateAlarmToDb(db: AppDatabase, alarm: Alarm): Int {
  * @param db the [AppDatabase] instance.
  */
 fun deleteAlarmFromDb(db: AppDatabase, alarm: Alarm) {
-    db.alarmDAO.delete(alarm)
+    db.alarmDao.delete(alarm)
     mLogger.i("Alarm deleted from database: $alarm")
+}
+
+fun generateMd5(): String = MessageDigest.getInstance("MD5").run {
+    update(System.currentTimeMillis().toString().toByteArray())
+    update(ByteArray(8).also { Random().nextBytes(it) })
+    digest().joinToString("") { "%02x".format(it) }
+}
+
+fun generateId(): Long {
+    return (System.currentTimeMillis() shl 17) + Random().nextInt(1 shl 17)
 }
 
 private val mLogger = LogUtils.Logger("AlarmDatabaseHelper")

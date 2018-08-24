@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.getOrderedWeekDays
-import net.wuqs.ontime.alarm.shortWeekDay
+import net.wuqs.ontime.alarm.getShortWeekDays
 import java.util.*
 
 class WeekDayAdapter(private val mListener: OnDayClickListener, var days: Int)
@@ -27,7 +27,7 @@ class WeekDayAdapter(private val mListener: OnDayClickListener, var days: Int)
     override fun onBindViewHolder(holder: DayItemHolder, position: Int) {
         val day = mDays[position]
         holder.toggleBtn.apply {
-            val dayText = shortWeekDay[day]
+            val dayText = getShortWeekDays()[day]
             text = dayText
             isChecked = days shr (day - 1) and 1 == 1
             setOnClickListener { mListener.onDayClick(day, isChecked) }

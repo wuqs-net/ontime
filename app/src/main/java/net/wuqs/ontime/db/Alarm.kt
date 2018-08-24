@@ -31,13 +31,10 @@ class Alarm(
         @ColumnInfo(name = "snoozed") var snoozed: Int = 0
 ) : Parcelable {
 
+    // TODO: new primary key using hashcode/md5
+
     init {
-        activateDate!!.apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
+        activateDate?.setHms(0)
     }
 
     /**
@@ -57,10 +54,6 @@ class Alarm(
             NON_REPEAT -> isEnabled = false
             REPEAT_DAILY -> nextTime = getNextOccurrence()
         }
-    }
-
-    fun createIntent(context: Context, cls: Class<*>): Intent {
-        return Intent(context, cls)
     }
 
     fun createAlarmStartIntent(context: Context): Intent {
@@ -106,21 +99,19 @@ class Alarm(
 
     override fun describeContents() = 0
 
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.run {
-            writeLong(id)
-            writeInt(hour)
-            writeInt(minute)
-            writeString(title)
-            writeString(DTC.toString(ringtoneUri ?: Uri.EMPTY))
-            writeByte(DTC.toByte(isEnabled))
-            writeInt(repeatType)
-            writeInt(repeatCycle)
-            writeInt(repeatIndex)
-            writeLong(DTC.toLong(activateDate)!!)
-            writeLong(DTC.toLong(nextTime) ?: 0L)
-            writeInt(snoozed)
-        }
+    override fun writeToParcel(dest: Parcel, flags: Int) = dest.run {
+        writeLong(id)
+        writeInt(hour)
+        writeInt(minute)
+        writeString(title)
+        writeString(DTC.toString(ringtoneUri ?: Uri.EMPTY))
+        writeByte(DTC.toByte(isEnabled))
+        writeInt(repeatType)
+        writeInt(repeatCycle)
+        writeInt(repeatIndex)
+        writeLong(DTC.toLong(activateDate)!!)
+        writeLong(DTC.toLong(nextTime) ?: 0L)
+        writeInt(snoozed)
     }
 
     override fun toString() = "{id=$id, $hour:$minute, " +

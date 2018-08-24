@@ -9,6 +9,8 @@ import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
 import net.wuqs.ontime.db.updateAlarmToDb
 import net.wuqs.ontime.ui.alarmscreen.AlarmActivity
+import net.wuqs.ontime.util.AlarmWakeLock
+import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.AsyncHandler
 import net.wuqs.ontime.util.LogUtils
 import java.util.*
@@ -16,18 +18,30 @@ import java.util.*
 
 class AlarmStateManager : BroadcastReceiver() {
 
+    private val ACTION_BOOT_COMPLETED = if (ApiUtil.isNOrLater()) {
+        Intent.ACTION_LOCKED_BOOT_COMPLETED
+    } else {
+        Intent.ACTION_BOOT_COMPLETED
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
         LOGGER.i("Received intent: ${intent.action}")
+        val result = goAsync()
+        val wl = AlarmWakeLock.createPartialWakeLock(context)
+        wl.acquire()
+        AsyncHandler.post {
+            handleIntent(context, intent)
+            result.finish()
+            wl.release()
+        }
+    }
+
+    private fun handleIntent(context: Context, intent: Intent) {
         when (intent.action) {
-            Intent.ACTION_BOOT_COMPLETED,
-//            Intent.ACTION_LOCKED_BOOT_COMPLETED,
+            ACTION_BOOT_COMPLETED,
             ACTION_SCHEDULE_ALL_ALARMS -> {
-                val result = goAsync()
-                AsyncHandler.post {
-                    scheduleAllAlarms(context)
-                    result.finish()
-                }
+                scheduleAllAlarms(context)
             }
             ACTION_ALARM_START -> {
                 val alarm = intent.getBundleExtra(ALARM_INSTANCE).getParcelable<Alarm>(ALARM_INSTANCE)
@@ -56,7 +70,7 @@ class AlarmStateManager : BroadcastReceiver() {
      */
     private fun scheduleAllAlarms(context: Context) {
         val db = AppDatabase[context]!!
-        val alarms = db.alarmDAO.allSync
+        val alarms = db.alarmDao.allSync
         val alarmsInUse = alarms.filter { it.nextTime != null }
         val missedAlarms = arrayListOf<Alarm>()
         val now = Calendar.getInstance()

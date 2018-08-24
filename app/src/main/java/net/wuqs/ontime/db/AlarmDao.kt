@@ -5,7 +5,7 @@ import android.arch.persistence.room.*
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 
 @Dao
-interface AlarmDAO {
+interface AlarmDao {
 
     /** All alarms in the database. */
     @Query("SELECT * FROM alarms ORDER BY next_occurrence IS NULL, next_occurrence")

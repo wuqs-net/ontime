@@ -24,8 +24,8 @@ android {
         applicationId "net.wuqs.ontime"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 12
-        versionName '0.5'
+        versionCode 13
+        versionName '0.5.1'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {

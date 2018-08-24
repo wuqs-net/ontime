@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity(),
             CREATE_ALARM_REQUEST, EDIT_ALARM_REQUEST -> {
                 if (resultCode == RESULT_SAVE) {
                     val alarm = data!!.getParcelableExtra<Alarm>(ALARM_INSTANCE)
-                    alarm.nextTime = alarm.getNextOccurrence()
                     if (alarm.id == Alarm.INVALID_ID) {
                         mAlarmUpdateHandler.asyncAddAlarm(alarm, true)
                     } else {

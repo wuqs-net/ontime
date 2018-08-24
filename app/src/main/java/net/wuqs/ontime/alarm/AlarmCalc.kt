@@ -39,11 +39,10 @@ fun Alarm.nextTimeWeekly(now: Calendar = Calendar.getInstance()): Calendar? {
     val firstDayOfWeek = repeatIndex ushr 8
     val weekDays = getOrderedWeekDays(firstDayOfWeek)
 
-    if (next.before(now)) {
-        next.add(Calendar.DAY_OF_WEEK, -weekDays.indexOf(next[Calendar.DAY_OF_WEEK]))
-        val week = (now dayDiff next) / (7 * repeatCycle)
-        next.add(Calendar.DAY_OF_YEAR, week.toInt() * 7 * repeatCycle)
-    }
+    next.add(Calendar.DAY_OF_WEEK, -weekDays.indexOf(next[Calendar.DAY_OF_WEEK]))
+    val week = (now dayDiff next) / (7 * repeatCycle)
+    next.add(Calendar.DAY_OF_YEAR, week.toInt() * 7 * repeatCycle)
+    println(next.time)
 
     for (i in weekDays) {
         if (repeatIndex.isWeekdaySet(i) && next.after(now)) return next
@@ -127,7 +126,7 @@ fun Alarm.nextTimeYearlyByDate(now: Calendar = Calendar.getInstance()): Calendar
  * @receiver an Integer representing the weekly repeat pattern.
  * @param calendarDay day of week indicated by [Calendar.SUNDAY], [Calendar.MONDAY], etc.
  */
-private fun Int.isWeekdaySet(calendarDay: Int) = this shr (calendarDay - 1) and 1 == 1
+internal fun Int.isWeekdaySet(calendarDay: Int) = this shr (calendarDay - 1) and 1 == 1
 
 /**
  * Checks if the day of week specified by [calendarDay] is set to `on`.

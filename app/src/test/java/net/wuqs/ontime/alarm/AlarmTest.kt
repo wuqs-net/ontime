@@ -1,5 +1,6 @@
-package net.wuqs.ontime.db
+package net.wuqs.ontime.alarm
 
+import net.wuqs.ontime.db.Alarm
 import org.junit.Test
 
 import java.util.*

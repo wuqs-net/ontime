@@ -12,7 +12,7 @@ import android.content.Context
 @TypeConverters(DataTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract val alarmDAO: AlarmDAO
+    abstract val alarmDao: AlarmDao
 
     companion object {
 
@@ -46,6 +46,16 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_4_5 = newMigration(4, 5) {
+            execSQL("CREATE TABLE alarms_new " +
+                    "(id INTEGER PRIMARY KEY NOT NULL, " +
+                    "hour INTEGER NOT NULL, minute INTEGER NOT NULL, " +
+                    "title TEXT, ringtone_uri TEXT, enabled INTEGER NOT NULL, " +
+                    "repeat_type INTEGER NOT NULL, repeat_cycle INTEGER NOT NULL, " +
+                    "repeat_index INTEGER NOT NULL, activate_date INTEGER, " +
+                    "next_occurrence INTEGER, snoozed INTEGER NOT NULL)")
+        }
+
         operator fun get(context: Context): AppDatabase? {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
@@ -61,5 +71,15 @@ abstract class AppDatabase : RoomDatabase() {
         fun destroyInstance() {
             INSTANCE = null
         }
+    }
+}
+
+private fun newMigration(
+        startVersion: Int,
+        endVersion: Int,
+        migrate: SupportSQLiteDatabase.() -> Unit
+) = object : Migration(startVersion, endVersion) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.migrate()
     }
 }

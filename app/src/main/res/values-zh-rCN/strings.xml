@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">OnTime</string>
+    <string name="app_name">OwnTime</string>
     <string name="new_alarm">新建闹钟</string>
     <string name="hint_click_add">要新建闹钟，请点击下方的“添加”按钮</string>
     <string name="action_save">保存</string>
@@ -38,9 +38,10 @@
     <string name="msg_alarm_date">响铃日期</string>
     <string name="msg_start_date">开始日期</string>
     <string name="msg_activate_date">从%1$s起</string>
-    <string name="msg_next_date">下次响铃日期：%1$s</string>
+    <string name="msg_next_date">下次响铃：%1$s</string>
 
-    <string name="msg_snoozed_until">%1$s（%2$s）</string>
+    <string name="msg_snoozed_until">推迟至%1$s</string>
+    <string name="msg_snoozed_time">%1$s（%2$s）</string>
     <string name="action_dismiss_alarm">关闭</string>
     <string name="action_delay_alarm">推迟</string>
     <string name="title_delay_alarm">推迟闹钟</string>
@@ -94,7 +95,7 @@
         <item quantity="other">每%1$d天</item>
     </plurals>
     <plurals name="weeks_for_repeat">
-        <item quantity="other">每%1$d周的%2$s</item>
+        <item quantity="other">每%1$d周%2$s</item>
     </plurals>
     <plurals name="months_for_repeat">
         <item quantity="other">每%1$d个月的%2$s日</item>
@@ -104,7 +105,7 @@
     </plurals>
 
     <string name="msg_days_for_repeat_single" tools:ignore="ExtraTranslation">每天</string>
-    <string name="msg_weeks_for_repeat_single" tools:ignore="ExtraTranslation">每周的%2$s</string>
+    <string name="msg_weeks_for_repeat_single" tools:ignore="ExtraTranslation">每周%2$s</string>
     <string name="msg_months_for_repeat_single" tools:ignore="ExtraTranslation">每月的%2$s日</string>
     <string name="msg_years_for_repeat" tools:ignore="ExtraTranslation">每年%2$s</string>
 

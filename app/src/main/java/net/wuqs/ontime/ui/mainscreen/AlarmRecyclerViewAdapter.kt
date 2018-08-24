@@ -76,7 +76,7 @@ class AlarmRecyclerViewAdapter
                     it == null -> ""
                     item.snoozed <= 0 -> getDateString(it)
                     else -> context.getString(
-                            R.string.msg_snoozed_until,
+                            R.string.msg_snoozed_time,
                             if (it.sameDayAs(Calendar.getInstance())) {
                                 getTimeString(context, it)
                             } else {

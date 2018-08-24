@@ -76,7 +76,7 @@ class EditAlarmActivity : AppCompatActivity(),
         tv_alarm_time.setOnClickListener(this)
         oiv_repeat_type.setOnClickListener(this)
 
-        updateNextAlarmDate()
+        updateNextAlarmDate(alarm.snoozed != 0)
         updateRepeatDisplay()
     }
 
@@ -111,9 +111,6 @@ class EditAlarmActivity : AppCompatActivity(),
     override fun updateRepeatOption(repeatType: Int?, repeatCycle: Int?, repeatIndex: Int?) {
         mAlarmEdited = true
         mLogger.v("Alarm changes made: repeat option")
-//        repeatType?.let { alarm.repeatType = it }
-//        repeatCycle?.let { alarm.repeatCycle = it }
-//        repeatIndex?.let { alarm.repeatIndex = it }
         updateNextAlarmDate()
     }
 
@@ -168,7 +165,6 @@ class EditAlarmActivity : AppCompatActivity(),
         menuInflater.inflate(R.menu.menu_set_alarm, menu)
         menu?.run {
             setGroupVisible(R.id.menuGroupEdit, alarm.id != Alarm.INVALID_ID)
-//            findItem(R.id.item_enable)?.isChecked = alarm.isEnabled
         }
         return true
     }
@@ -188,7 +184,6 @@ class EditAlarmActivity : AppCompatActivity(),
                 }
                 alarm.title = et_alarm_title.text.toString()
                 alarm.isEnabled = true
-                alarm.snoozed = 0
                 if (alarm.repeatType == Alarm.NON_REPEAT) alarm.repeatCycle = 0
                 val data = Intent(this, MainActivity::class.java)
                         .putExtra(ALARM_INSTANCE, alarm)
@@ -196,11 +191,6 @@ class EditAlarmActivity : AppCompatActivity(),
                 finish()
                 return true
             }
-//            R.id.item_enable -> item.let {
-//                it.isChecked = !it.isChecked
-//                alarm.isEnabled = it.isChecked
-//                return true
-//            }
             R.id.miDelete -> {
                 promptDelete()
                 return true
@@ -230,8 +220,8 @@ class EditAlarmActivity : AppCompatActivity(),
         AlertDialog.Builder(this).apply {
             if (alarm.id == Alarm.INVALID_ID) setMessage(R.string.prompt_discard_new_alarm)
             else setMessage(R.string.prompt_discard_changes)
-            setNegativeButton(R.string.action_keep_editing, null)
-            setPositiveButton(R.string.action_discard) { dialog, which ->
+            setPositiveButton(R.string.action_keep_editing, null)
+            setNegativeButton(R.string.action_discard) { _, _ ->
                 NavUtils.navigateUpFromSameTask(this@EditAlarmActivity)
             }
         }.create().show()
@@ -255,10 +245,15 @@ class EditAlarmActivity : AppCompatActivity(),
         }
     }
 
-    private fun updateNextAlarmDate() {
+    private fun updateNextAlarmDate(snoozed: Boolean = false) {
+        if (snoozed) {
+            val dateTime = getRelativeDateTimeString(this, alarm.nextTime)
+            tv_next_date.text = getString(R.string.msg_snoozed_until, dateTime)
+            return
+        }
         alarm.getNextOccurrence().let {
             tv_next_date.text = if (it != null) {
-                getString(R.string.msg_next_date, getDateString(it, false))
+                getString(R.string.msg_next_date, getDateString(it))
             } else {
                 if (alarm.repeatType == Alarm.NON_REPEAT) {
                     getString(R.string.msg_cannot_set_past_time)
@@ -268,6 +263,7 @@ class EditAlarmActivity : AppCompatActivity(),
             }
             mLogger.i(it?.time.toString())
             alarm.nextTime = it
+            alarm.snoozed = 0
         }
 
     }

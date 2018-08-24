@@ -17,6 +17,7 @@ import net.wuqs.ontime.alarm.ALARM_INSTANCE
 import net.wuqs.ontime.alarm.AlarmUpdateHandler
 import net.wuqs.ontime.alarm.getDateString
 import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.util.AlarmWakeLock
 import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.LogUtils
 import java.util.*
@@ -33,6 +34,8 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm)
         mLogger.v("onCreate")
+
+        AlarmWakeLock.acquireCpuWakeLock(this)
         volumeControlStream = AudioManager.STREAM_ALARM
 
         mAlarmUpdateHandler = AlarmUpdateHandler(applicationContext)
@@ -108,6 +111,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
         mediaPlayer.release()
         mLogger.i("Alarm finished: $alarm")
         mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
+        AlarmWakeLock.releaseCpuLock()
         finish()
     }
 
