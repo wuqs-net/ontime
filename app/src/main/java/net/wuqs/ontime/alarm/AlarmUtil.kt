@@ -52,13 +52,17 @@ fun getDateString(c: Calendar?, showWeek: Boolean = true, showYear: Boolean = tr
 //    return DateFormat.getDateFormat(context).format(c.time)
 }
 
-fun getDateTimeString(ctx: Context, c: Calendar?): String {
+fun getDateTimeString(ctx: Context, c: Calendar?, showWeek: Boolean = true): String {
     if (c == null) return ""
-
-    return DateUtils.formatDateTime(ctx, c.timeInMillis,
-            DateUtils.FORMAT_SHOW_DATE
-                    or DateUtils.FORMAT_SHOW_TIME
-                    or DateUtils.FORMAT_ABBREV_MONTH)
+    val now = Calendar.getInstance()
+    val skeleton = StringBuilder().apply {
+        if (!c.sameYearAs(now)) append("yyyy")
+        append("MMMd")
+        if (showWeek) append("E")
+        append(if (DateFormat.is24HourFormat(ctx)) "Hm" else "hma")
+    }.toString()
+    val inFormat = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
+    return DateFormat.format(inFormat, c).toString()
 }
 
 fun getRelativeDateTimeString(ctx: Context, c: Calendar?): String {
@@ -227,6 +231,11 @@ fun Calendar.sameDayAs(another: Calendar?): Boolean {
     if (this[Calendar.YEAR] != another[Calendar.YEAR]) return false
     if (this[Calendar.DAY_OF_YEAR] != another[Calendar.DAY_OF_YEAR]) return false
     return true
+}
+
+fun Calendar.sameYearAs(other: Calendar?): Boolean {
+    if (other == null) return false
+    return this[Calendar.YEAR] == other[Calendar.YEAR]
 }
 
 fun getOrderedWeekDays(firstDay: Int) = List(7) { (firstDay + it - 1) % 7 + 1 }

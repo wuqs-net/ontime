@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">OwnTime</string>
+    <string name="app_name">OnTime</string>
     <string name="new_alarm">Create new alarm</string>
     <string name="hint_click_add">Click the \"Add\" button below to create new alarm</string>
     <string name="action_save">Save</string>
@@ -8,8 +8,9 @@
     <string name="action_delete">Delete</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_enable">Enable alarm</string>
-    <string name="title_new_alarm">New Alarm</string>
-    <string name="title_edit_alarm">Edit Alarm</string>
+    <string name="title_new_alarm">New alarm</string>
+    <string name="title_edit_alarm">Edit alarm</string>
+    <string name="title_missed_alarms">Missed alarms</string>
     <string name="hint_alarm_title">Name</string>
     <string name="action_more_options">More options</string>
 
@@ -44,6 +45,8 @@
     <string name="action_dismiss_alarm">Dismiss</string>
     <string name="action_delay_alarm">Snooze</string>
     <string name="title_delay_alarm">Snooze</string>
+
+    <string name="action_dismiss_all">Dismiss all</string>
 
     <string name="msg_today">Today</string>
     <string name="msg_tomorrow">Tomorrow</string>
@@ -107,7 +110,7 @@
         <item quantity="other">Every %1$d months on day %2$s</item>
     </plurals>
     <plurals name="weeks_for_repeat">
-        <item quantity="one">Weekly on %2$s</item>
+        <item quantity="one">%2$s</item>
         <item quantity="other">Every %1$d weeks on %2$s</item>
     </plurals>
     <plurals name="days_for_repeat">

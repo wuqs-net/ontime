@@ -32,6 +32,8 @@
             android:name=".ui.alarmeditscreen.EditAlarmActivity"
             android:parentActivityName=".ui.mainscreen.MainActivity" />
 
+        <activity android:name=".ui.missedalarms.MissedAlarmsActivity" />
+
         <receiver
             android:name=".alarm.AlarmStateManager"
             android:enabled="true"

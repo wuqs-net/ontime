@@ -15,6 +15,9 @@ interface AlarmDao {
     @get:Query("SELECT * FROM alarms")
     val allSync: List<Alarm>
 
+    @get:Query("SELECT * FROM alarms WHERE next_occurrence IS NOT NULL")
+    val alarmsHasNextTime: List<Alarm>
+
     /** The number of alarms stored in database. */
     @get:Query("SELECT COUNT(*) FROM alarms")
     val count: Int

@@ -247,7 +247,7 @@ class EditAlarmActivity : AppCompatActivity(),
 
     private fun updateNextAlarmDate(snoozed: Boolean = false) {
         if (snoozed) {
-            val dateTime = getRelativeDateTimeString(this, alarm.nextTime)
+            val dateTime = getDateTimeString(this, alarm.nextTime)
             tv_next_date.text = getString(R.string.msg_snoozed_until, dateTime)
             return
         }

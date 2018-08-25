@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">OwnTime</string>
+    <string name="app_name">OnTime</string>
     <string name="new_alarm">新建闹钟</string>
     <string name="hint_click_add">要新建闹钟，请点击下方的“添加”按钮</string>
     <string name="action_save">保存</string>
@@ -11,6 +11,7 @@
     <string name="action_enable">启用闹钟</string>
     <string name="title_new_alarm">新建闹钟</string>
     <string name="title_edit_alarm">修改闹钟</string>
+    <string name="title_missed_alarms">错过闹钟</string>
     <string name="hint_alarm_title">闹钟名称</string>
     <string name="action_more_options">更多选项</string>
 
@@ -45,6 +46,8 @@
     <string name="action_dismiss_alarm">关闭</string>
     <string name="action_delay_alarm">推迟</string>
     <string name="title_delay_alarm">推迟闹钟</string>
+
+    <string name="action_dismiss_all">全部关闭</string>
 
     <string name="msg_today">今天</string>
     <string name="msg_tomorrow">明天</string>

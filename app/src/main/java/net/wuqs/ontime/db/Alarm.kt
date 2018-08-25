@@ -59,7 +59,7 @@ class Alarm(
     fun createAlarmStartIntent(context: Context): Intent {
         val bundle = Bundle().apply { putParcelable(ALARM_INSTANCE, this@Alarm) }
         return Intent(context, AlarmStateManager::class.java).apply {
-            action = AlarmStateManager.ACTION_ALARM_START
+            action = ACTION_ALARM_START
             putExtra(ALARM_ID, id)
             putExtra(ALARM_INSTANCE, bundle)
         }

@@ -9,11 +9,13 @@ import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
 import net.wuqs.ontime.db.updateAlarmToDb
 import net.wuqs.ontime.ui.alarmscreen.AlarmActivity
+import net.wuqs.ontime.ui.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.util.AlarmWakeLock
 import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.AsyncHandler
 import net.wuqs.ontime.util.LogUtils
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AlarmStateManager : BroadcastReceiver() {
@@ -61,6 +63,14 @@ class AlarmStateManager : BroadcastReceiver() {
             }
             ACTION_SHOW_MISSED_ALARMS -> {
                 LOGGER.i("Show missed alarms")
+                val mIntent = Intent(context, MissedAlarmsActivity::class.java).apply {
+                    putExtras(intent.extras)
+                }
+                context.startActivity(mIntent)
+            }
+            ACTION_DISMISS_ALL_MISSED_ALARMS -> {
+                dismissAllMissedAlarms(context,
+                        intent.getParcelableArrayListExtra(EXTRA_MISSED_ALARMS))
             }
         }
     }
@@ -70,15 +80,26 @@ class AlarmStateManager : BroadcastReceiver() {
      */
     private fun scheduleAllAlarms(context: Context) {
         val db = AppDatabase[context]!!
-        val alarms = db.alarmDao.allSync
-        val alarmsInUse = alarms.filter { it.nextTime != null }
-        val missedAlarms = arrayListOf<Alarm>()
+        val alarms = db.alarmDao.alarmsHasNextTime
         val now = Calendar.getInstance()
-        alarmsInUse.forEach {
-            if (it.nextTime!!.before(now)) {
-                missedAlarms += Alarm(it)
-                it.nextTime = it.getNextOccurrence()
-            }
+        val (notMissed, missed) = alarms.partition { it.nextTime!!.after(now) }
+        LOGGER.d("Not missed: ${notMissed.joinToString()}")
+        LOGGER.d("Missed: ${missed.joinToString()}")
+        notMissed.forEach { scheduleAlarm(context, it) }
+        LOGGER.i("Finished scheduling all alarms")
+
+        if (missed.isEmpty()) return
+        val intent = createIntent(ACTION_SHOW_MISSED_ALARMS, context).apply {
+            putParcelableArrayListExtra(EXTRA_MISSED_ALARMS, ArrayList(missed))
+        }
+        context.sendBroadcast(intent)
+    }
+
+    private fun dismissAllMissedAlarms(context: Context, alarms: List<Alarm>) {
+        val db = AppDatabase[context]!!
+        val now = Calendar.getInstance()
+        alarms.forEach {
+            it.nextTime = it.getNextOccurrence(now)
             if (it.nextTime != null) {
                 scheduleAlarm(context, it)
             } else {
@@ -86,25 +107,16 @@ class AlarmStateManager : BroadcastReceiver() {
             }
             updateAlarmToDb(db, it)
         }
-        LOGGER.i("Finished scheduling all alarms")
-
-//        if (missedAlarms.isEmpty()) return
-        val intent = createIntent(ACTION_SHOW_MISSED_ALARMS, context).apply {
-            putExtra(EXTRA_MISSED_ALARMS, missedAlarms)
-        }
-        context.sendBroadcast(intent)
     }
 
     companion object {
-        const val ACTION_ALARM_START = "net.wuqs.ontime.action.ALARM_START"
-        const val ACTION_SCHEDULE_ALL_ALARMS = "net.wuqs.ontime.action.SCHEDULE_ALL_ALARMS"
         private const val ACTION_SHOW_MISSED_ALARMS = "net.wuqs.ontime.action.SHOW_MISSED_ALARMS"
 
         fun createIntent(action: String, context: Context) =
                 Intent(action, null, context, AlarmStateManager::class.java)
 
         fun createScheduleAllAlarmsIntent(context: Context) =
-                createIntent(AlarmStateManager.ACTION_SCHEDULE_ALL_ALARMS, context)
+                createIntent(ACTION_SCHEDULE_ALL_ALARMS, context)
 
         fun scheduleAlarm(context: Context, alarm: Alarm) {
             val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -142,4 +154,7 @@ class AlarmStateManager : BroadcastReceiver() {
     }
 }
 
-private const val EXTRA_MISSED_ALARMS = "net.wuqs.ontime.extra.MISSED_ALARMS"
+const val EXTRA_MISSED_ALARMS = "net.wuqs.ontime.extra.MISSED_ALARMS"
+const val ACTION_ALARM_START = "net.wuqs.ontime.action.ALARM_START"
+const val ACTION_SCHEDULE_ALL_ALARMS = "net.wuqs.ontime.action.SCHEDULE_ALL_ALARMS"
+const val ACTION_DISMISS_ALL_MISSED_ALARMS = "net.wuqs.ontime.action.DISMISS_ALL_MISSED_ALARMS"

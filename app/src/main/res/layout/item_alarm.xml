@@ -20,13 +20,12 @@
         android:textColor="?android:attr/textColorPrimary"
         app:autoSizeMaxTextSize="26sp"
         app:autoSizeMinTextSize="14sp"
-        app:autoSizeStepGranularity="4sp"
+        app:autoSizeStepGranularity="6sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
         app:layout_constraintEnd_toStartOf="@+id/guideline_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_alarm_title"
-        app:layout_constraintVertical_chainStyle="spread"
+        app:layout_constraintTop_toTopOf="@+id/guideline_top"
         app:textAllCaps="false"
         tools:text="11:11" />
 
@@ -91,6 +90,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
         app:layout_constraintEnd_toStartOf="@+id/swc_enable_alarm"
         app:layout_constraintStart_toStartOf="@+id/guideline_content"
