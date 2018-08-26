@@ -30,8 +30,16 @@ class MissedAlarmsAdapter(private val mListener: OnListInteractListener, private
 
     inner class MissedAlarmVH(private val mView: View) : RecyclerView.ViewHolder(mView) {
         fun bind(alarm: Alarm) = with(mView) {
-            tv_alarm_time.text = getDateTimeString(context, alarm.nextTime)
             tv_alarm_title.text = alarm.title
+            tv_alarm_time.text = alarm.getNextOccurrence().let {
+                if (it == null) {
+                    getDateTimeString(context, alarm.nextTime)
+                } else {
+                    context.getString(R.string.msg_missed_alarm_next_time,
+                            getDateTimeString(context, alarm.nextTime),
+                            getDateTimeString(context, it))
+                }
+            }
         }
     }
 }
