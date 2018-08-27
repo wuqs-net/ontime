@@ -13,6 +13,7 @@ class NonRepeatFragment : RepeatOptionFragment() {
         val minDate = Calendar.getInstance().apply {
             setHms(mAlarm.hour, mAlarm.minute)
             if (timeInMillis < System.currentTimeMillis()) add(Calendar.DATE, 1)
+            setHms(0)
         }
         DatePickerFragment.newInstance(mAlarm.activateDate!!, minDate).apply {
             setTargetFragment(this@NonRepeatFragment, 0)

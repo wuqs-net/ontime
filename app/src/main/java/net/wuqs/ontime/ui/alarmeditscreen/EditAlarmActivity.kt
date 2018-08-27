@@ -96,8 +96,8 @@ class EditAlarmActivity : AppCompatActivity(),
         }
     }
 
-    override fun onTimeSet(tag: String?, hourOfDay: Int, minute: Int) {
-        if (tag == TimePickerFragment.EDIT_ALARM) {
+    override fun onTimeSet(fragment: TimePickerFragment, hourOfDay: Int, minute: Int) {
+        if (fragment.tag == TimePickerFragment.EDIT_ALARM) {
             mAlarmEdited = true
             mLogger.v("Alarm changes made: time")
             alarm.hour = hourOfDay

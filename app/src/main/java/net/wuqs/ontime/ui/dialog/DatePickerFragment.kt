@@ -2,10 +2,11 @@ package net.wuqs.ontime.ui.dialog
 
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.support.v7.app.AlertDialog
 import android.widget.DatePicker
+import net.wuqs.ontime.util.ApiUtil
 import java.util.*
 
 class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
@@ -20,14 +21,30 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val context = activity!!
         val args = arguments!!
         val year = args.getInt(ARG_YEAR)
         val month = args.getInt(ARG_MONTH)
         val day = args.getInt(ARG_DAY_OF_MONTH)
-        return DatePickerDialog(activity, this, year, month, day).apply {
-            if (args.containsKey(ARG_MIN_DATE)) datePicker.minDate = args.getLong(ARG_MIN_DATE)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                datePicker.firstDayOfWeek = Calendar.getInstance().firstDayOfWeek
+        val minDate = args[ARG_MIN_DATE] as? Long
+        return if (ApiUtil.isLOrLater()) {
+            DatePickerDialog(context, this, year, month, day).apply {
+                minDate?.let { datePicker.minDate = it }
+            }
+        } else {
+            AlertDialog.Builder(context).run {
+                val datePicker = DatePicker(context).apply {
+                    init(year, month, day, null)
+                    minDate?.let { this.minDate = it }
+                    calendarViewShown = false
+                }
+                setView(datePicker)
+                setPositiveButton(android.R.string.ok) { dialog, which ->
+                    mListener?.onDateSet(this@DatePickerFragment, datePicker.year,
+                            datePicker.month, datePicker.dayOfMonth)
+                }
+                setNegativeButton(android.R.string.cancel, null)
+                create()
             }
         }
     }
@@ -42,7 +59,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
 //    }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        mListener?.onDateSet(tag, year, month, dayOfMonth)
+        mListener?.onDateSet(this, year, month, dayOfMonth)
     }
 
     interface DateSetListener {
@@ -50,9 +67,9 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
         /**
          * Called when user sets a date with the dialog.
          *
-         * @param tag the tag of this [DialogFragment].
+         * @param fragment the tag of this [DialogFragment].
          */
-        fun onDateSet(tag: String?, year: Int, month: Int, dayOfMonth: Int)
+        fun onDateSet(fragment: DatePickerFragment, year: Int, month: Int, dayOfMonth: Int)
     }
 
     companion object {

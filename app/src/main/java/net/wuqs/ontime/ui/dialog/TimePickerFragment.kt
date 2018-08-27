@@ -5,19 +5,40 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.support.v7.app.AlertDialog
 import android.text.format.DateFormat
 import android.widget.TimePicker
+import net.wuqs.ontime.util.ApiUtil
 
 class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
 
     private lateinit var mListener: TimeSetListener
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val context = activity!!
         val args = arguments!!
         val hour = args.getInt(ARG_HOUR)
         val minute = args.getInt(ARG_MINUTE)
-        return TimePickerDialog(activity, this, hour, minute,
-                DateFormat.is24HourFormat(activity))
+        val is24HourView = DateFormat.is24HourFormat(activity)
+        return if (ApiUtil.isLOrLater()) {
+            TimePickerDialog(activity, this, hour, minute, is24HourView)
+        } else {
+            AlertDialog.Builder(context).run {
+                val timePicker = TimePicker(context).apply {
+                    currentHour = hour
+                    currentMinute = minute
+                    setIs24HourView(is24HourView)
+                }
+                setView(timePicker)
+                setPositiveButton(android.R.string.ok) { dialog, which ->
+                    mListener.onTimeSet(this@TimePickerFragment,
+                            timePicker.currentHour, timePicker.currentMinute)
+                }
+                setNegativeButton(android.R.string.cancel, null)
+                create()
+            }
+        }
+
     }
 
     override fun onAttach(context: Context?) {
@@ -30,7 +51,7 @@ class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener 
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        mListener.onTimeSet(tag, hourOfDay, minute)
+        mListener.onTimeSet(this, hourOfDay, minute)
     }
 
     interface TimeSetListener {
@@ -38,9 +59,9 @@ class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener 
         /**
          * Called when user sets a time with the dialog.
          *
-         * @param tag the tag of this [DialogFragment].
+         * @param fragment the fragment associated with this listener.
          */
-        fun onTimeSet(tag: String?, hourOfDay: Int, minute: Int)
+        fun onTimeSet(fragment: TimePickerFragment, hourOfDay: Int, minute: Int)
     }
 
     companion object {

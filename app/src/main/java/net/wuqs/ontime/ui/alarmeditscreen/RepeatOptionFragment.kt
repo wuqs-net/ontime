@@ -87,7 +87,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
     }
 
-    override fun onDateSet(tag: String?, year: Int, month: Int, dayOfMonth: Int) {
+    override fun onDateSet(fragment: DatePickerFragment, year: Int, month: Int, dayOfMonth: Int) {
         mAlarm.activateDate!!.let {
             it.setMidnight(year, month, dayOfMonth)
             mLogger.v(it.time.toString())

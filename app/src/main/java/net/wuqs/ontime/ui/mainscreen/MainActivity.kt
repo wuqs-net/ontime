@@ -86,8 +86,8 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun onTimeSet(tag: String?, hourOfDay: Int, minute: Int) {
-        if (tag == TimePickerFragment.NEW_ALARM) {
+    override fun onTimeSet(fragment: TimePickerFragment, hourOfDay: Int, minute: Int) {
+        if (fragment.tag == TimePickerFragment.NEW_ALARM) {
             val alarm = Alarm(hour = hourOfDay, minute = minute)
             // TODO: automatically change start date if alarm time is before now
             val editAlarmIntent = EditAlarmActivity.createIntent(this)

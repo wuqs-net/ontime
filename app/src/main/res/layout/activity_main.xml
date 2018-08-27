@@ -16,21 +16,21 @@
         android:text="@string/hint_click_add"
         android:visibility="gone" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabCreateAlarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:srcCompat="@drawable/ic_add_white_24dp" />
-
     <fragment
         android:id="@+id/fragment"
         android:name="net.wuqs.ontime.ui.mainscreen.AlarmListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_alarm_list" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabCreateAlarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:srcCompat="@drawable/ic_add_white_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>
