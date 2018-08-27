@@ -46,7 +46,7 @@
     <string name="action_delay_alarm">Snooze</string>
     <string name="title_delay_alarm">Snooze</string>
 
-    <string name="msg_missed_alarm_next_time">%1$s &#2022; Next: %2$s</string>
+    <string name="msg_missed_alarm_next_time">%1$s &#8226; Next: %2$s</string>
     <string name="action_dismiss_all">Dismiss all</string>
 
     <string name="msg_today">Today</string>
