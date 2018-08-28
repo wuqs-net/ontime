@@ -48,7 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_4_5 = newMigration(4, 5) {
             execSQL("CREATE TABLE alarms_new " +
-                    "(id INTEGER PRIMARY KEY NOT NULL, " +
+                    "(id INTEGER PRIMARY KEY, " +
                     "hour INTEGER NOT NULL, minute INTEGER NOT NULL, " +
                     "title TEXT, ringtone_uri TEXT, enabled INTEGER NOT NULL, " +
                     "repeat_type INTEGER NOT NULL, repeat_cycle INTEGER NOT NULL, " +
@@ -75,9 +75,9 @@ abstract class AppDatabase : RoomDatabase() {
 }
 
 private fun newMigration(
-        startVersion: Int,
-        endVersion: Int,
-        migrate: SupportSQLiteDatabase.() -> Unit
+    startVersion: Int,
+    endVersion: Int,
+    migrate: SupportSQLiteDatabase.() -> Unit
 ) = object : Migration(startVersion, endVersion) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.migrate()

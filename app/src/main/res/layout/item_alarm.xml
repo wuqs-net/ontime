@@ -21,11 +21,10 @@
         app:autoSizeMaxTextSize="26sp"
         app:autoSizeMinTextSize="14sp"
         app:autoSizeStepGranularity="6sp"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_repeat_pattern"
         app:layout_constraintEnd_toStartOf="@+id/guideline_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline_top"
+        app:layout_constraintTop_toTopOf="@+id/tv_alarm_title"
         app:textAllCaps="false"
         tools:text="11:11" />
 

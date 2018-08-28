@@ -1,5 +1,6 @@
 package net.wuqs.ontime.ui.missedalarms
 
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -10,6 +11,7 @@ import net.wuqs.ontime.alarm.AlarmStateManager
 import net.wuqs.ontime.alarm.EXTRA_MISSED_ALARMS
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.getCustomTaskDescription
 
 class MissedAlarmsActivity : AppCompatActivity(),
         MissedAlarmsAdapter.OnListInteractListener {
@@ -21,6 +23,10 @@ class MissedAlarmsActivity : AppCompatActivity(),
         setContentView(R.layout.activity_missed_alarms)
         title = getText(R.string.title_missed_alarms)
         mLogger.v("onCreate")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setTaskDescription(getCustomTaskDescription())
+        }
 
         alarms = intent.getParcelableArrayListExtra(EXTRA_MISSED_ALARMS)
         rv_missed_alarms.layoutManager = LinearLayoutManager(this)

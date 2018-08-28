@@ -114,12 +114,14 @@ class Alarm(
         writeInt(snoozed)
     }
 
-    override fun toString() = "{id=$id, $hour:$minute, " +
-            "title=$title, isEnabled=$isEnabled, " +
-            "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
-            "repeatIndex=${repeatIndex.binString}, " +
-            "activate=${activateDate?.time}, next=${nextTime?.time}, " +
-            "snoozed=$snoozed}"
+    override fun toString(): String {
+        return "{id=$id, $hour:$minute, " +
+                "title=$title, isEnabled=$isEnabled, " +
+                "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
+                "repeatIndex=${repeatIndex.binString}, " +
+                "activate=${activateDate?.time}, next=${nextTime?.time}, " +
+                "snoozed=$snoozed}"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

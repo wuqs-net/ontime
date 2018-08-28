@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.media.AudioManager
 import android.media.RingtoneManager
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.NavUtils
@@ -23,6 +24,7 @@ import net.wuqs.ontime.ui.dialog.SpinnerDialogFragment
 import net.wuqs.ontime.ui.dialog.TimePickerFragment
 import net.wuqs.ontime.ui.mainscreen.MainActivity
 import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.getCustomTaskDescription
 import net.wuqs.ontime.util.hideSoftInput
 import net.wuqs.ontime.util.shortToast
 import java.util.*
@@ -43,6 +45,11 @@ class EditAlarmActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_alarm)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setTaskDescription(getCustomTaskDescription())
+        }
+
         volumeControlStream = AudioManager.STREAM_ALARM
 
         mAlarmUpdateHandler = AlarmUpdateHandler(this)

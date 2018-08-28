@@ -1,11 +1,13 @@
 package net.wuqs.ontime.ui.mainscreen
 
-import android.app.ActivityManager.TaskDescription
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
+import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
@@ -15,7 +17,9 @@ import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.ui.alarmeditscreen.EditAlarmActivity
 import net.wuqs.ontime.ui.dialog.TimePickerFragment
+import net.wuqs.ontime.ui.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.getCustomTaskDescription
 import java.util.*
 
 
@@ -25,43 +29,41 @@ class MainActivity : AppCompatActivity(),
 
     private lateinit var mAlarmUpdateHandler: AlarmUpdateHandler
 
-//    val mReceiver = object : BroadcastReceiver() {
-//        override fun onReceive(context: Context?, intent: Intent?) {
-//            when (intent!!.action) {
-//                OnTimeApplication.SHOW_MISSED_ALARMS_ACTION -> {
-//                    val missedAlarms = intent.getParcelableArrayExtra(OnTimeApplication.EXTRA_MISSED_ALARMS)
-//
-//                    Toast.makeText(this@MainActivity, missedAlarms.toString(), Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
-//
-//    }
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            logger.d("onReceive(): ${intent?.action}")
+            when (intent!!.action) {
+                ACTION_SHOW_MISSED_ALARMS -> {
+                    if (!intent.hasExtra(EXTRA_MISSED_ALARMS)) return
+                    logger.i("Show missed alarms")
+                    val missedAlarmsIntent = Intent(
+                            this@MainActivity,
+                            MissedAlarmsActivity::class.java
+                    ).apply {
+                        putExtras(intent)
+                    }
+                    startActivity(missedAlarmsIntent)
+                }
+            }
+        }
+
+    }
     // TODO: display missed alarm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mLogger.v("onCreate")
+        logger.v("onCreate")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
-            val color = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                getColor(R.color.colorPrimaryDark)
-            } else {
-                @Suppress("DEPRECATION")
-                resources.getColor(R.color.colorPrimaryDark)
-            }
-            val task = TaskDescription(getString(R.string.app_name), bitmap, color)
-            setTaskDescription(task)
+            setTaskDescription(getCustomTaskDescription())
         }
 
         mAlarmUpdateHandler = AlarmUpdateHandler(this, fabCreateAlarm)
 
-//        val filter = IntentFilter().apply {
-//            addAction(OnTimeApplication.SHOW_MISSED_ALARMS_ACTION)
-//        }
-//        registerReceiver(mReceiver, filter)
+        val filter = IntentFilter(ACTION_SHOW_MISSED_ALARMS)
+        val lbm = LocalBroadcastManager.getInstance(this)
+        lbm.registerReceiver(receiver, filter)
 
         volumeControlStream = AudioManager.STREAM_ALARM
         fabCreateAlarm.setOnClickListener { onFabCreateAlarmClick() }
@@ -98,7 +100,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onListItemClick(item: Alarm) {
         Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show()
-        mLogger.v("onListItemClick: $item")
+        logger.v("onListItemClick: $item")
         val editAlarmIntent = EditAlarmActivity.createIntent(this)
                 .putExtra(ALARM_INSTANCE, item)
         startActivityForResult(editAlarmIntent, EDIT_ALARM_REQUEST)
@@ -111,7 +113,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onRecyclerViewUpdate(itemCount: Int) {
         tvNoAlarm.visibility = if (itemCount == 0) View.VISIBLE else View.GONE
-        mLogger.d("RecyclerView updated, item count: $itemCount")
+        logger.d("RecyclerView updated, item count: $itemCount")
     }
 
     private fun onFabCreateAlarmClick() {
@@ -123,15 +125,16 @@ class MainActivity : AppCompatActivity(),
                 .show(supportFragmentManager, TimePickerFragment.NEW_ALARM)
     }
 
-//    override fun onDestroy() {
-//        unregisterReceiver(mReceiver)
-//        super.onDestroy()
-//    }
+    override fun onDestroy() {
+        val lbm = LocalBroadcastManager.getInstance(this)
+        lbm.unregisterReceiver(receiver)
+        super.onDestroy()
+    }
 
     companion object {
         const val RESULT_SAVE = 1
         const val RESULT_DELETE = 2
     }
 
-    private val mLogger = LogUtils.Logger("MainActivity")
+    private val logger = LogUtils.Logger("MainActivity")
 }

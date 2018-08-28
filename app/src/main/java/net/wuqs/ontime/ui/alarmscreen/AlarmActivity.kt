@@ -63,16 +63,16 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
     }
 
     override fun onDelayOptionPick(quantity: Int, unit: Int) {
-        val _quantity: Int
-        val _unit: Int
+        val newQuantity: Int
+        val newUnit: Int
         if (unit == Calendar.WEEK_OF_YEAR) {
-            _quantity = 7 * quantity
-            _unit = Calendar.DATE
+            newQuantity = 7 * quantity
+            newUnit = Calendar.DATE
         } else {
-            _quantity = quantity
-            _unit = unit
+            newQuantity = quantity
+            newUnit = unit
         }
-        alarm.nextTime = Calendar.getInstance().apply { add(_unit, _quantity) }
+        alarm.nextTime = Calendar.getInstance().apply { add(newUnit, newQuantity) }
         alarm.snoozed += 1
         alarm.isEnabled = true
         stopAlarm()
