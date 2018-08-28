@@ -52,6 +52,8 @@
 
     <string name="msg_today">今天</string>
     <string name="msg_tomorrow">明天</string>
+    <string name="msg_am">上午</string>
+    <string name="msg_pm">下午</string>
 
     <string-array name="time_distance">
         <item>不到1分钟</item>

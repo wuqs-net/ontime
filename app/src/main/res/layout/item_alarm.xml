@@ -11,29 +11,50 @@
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tv_alarm_time"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="16dp"
         android:enabled="true"
         android:maxLines="1"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
         android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?android:attr/textColorPrimary"
-        app:autoSizeMaxTextSize="26sp"
-        app:autoSizeMinTextSize="14sp"
-        app:autoSizeStepGranularity="6sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_repeat_pattern"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
         app:layout_constraintEnd_toStartOf="@+id/guideline_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_alarm_title"
-        app:textAllCaps="false"
-        tools:text="11:11" />
+        app:layout_constraintTop_toTopOf="@+id/guideline_top"
+        tools:text="12\u200Ah\u200A12" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_dot_am"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:contentDescription="@string/msg_am"
+        app:layout_constraintStart_toStartOf="@+id/tv_alarm_time"
+        app:layout_constraintTop_toTopOf="@+id/tv_alarm_time"
+        app:srcCompat="@drawable/ic_dot_black_24dp"
+        app:tint="?android:attr/textColorPrimary"
+        app:tintMode="src_in" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_dot_pm"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:contentDescription="@string/msg_pm"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_alarm_time"
+        app:layout_constraintStart_toStartOf="@+id/tv_alarm_time"
+        app:srcCompat="@drawable/ic_dot_black_24dp"
+        app:tint="?android:attr/textColorPrimary"
+        app:tintMode="src_in" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="96dp" />
+        app:layout_constraintGuide_begin="80dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline_top"
@@ -58,6 +79,45 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Longalarmalarmalarmalarmalarmalarm" />
 
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_snoozed"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginEnd="@dimen/summary_text_padding"
+        android:contentDescription="@string/msg_is_snoozed"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_next_date"
+        app:layout_constraintEnd_toStartOf="@+id/tv_next_date"
+        app:layout_constraintStart_toStartOf="@+id/guideline_content"
+        app:layout_constraintTop_toTopOf="@+id/tv_next_date"
+        app:srcCompat="@drawable/ic_arrow_right"
+        app:tint="?attr/colorControlNormal"
+        app:tintMode="src_in" />
+
+    <TextView
+        android:id="@+id/tv_next_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_repeat_pattern"
+        app:layout_constraintEnd_toStartOf="@+id/swc_enable_alarm"
+        app:layout_constraintStart_toEndOf="@+id/iv_snoozed"
+        app:layout_constraintTop_toBottomOf="@+id/tv_alarm_title"
+        tools:text="1月1日周三" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_repeat"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginEnd="2dp"
+        android:contentDescription="@string/msg_is_repeat_alarm"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_repeat_pattern"
+        app:layout_constraintEnd_toStartOf="@+id/tv_repeat_pattern"
+        app:layout_constraintStart_toStartOf="@+id/guideline_content"
+        app:layout_constraintTop_toTopOf="@+id/tv_repeat_pattern"
+        app:srcCompat="@drawable/ic_repeat"
+        app:tint="?attr/colorControlNormal"
+        app:tintMode="src_in" />
+
     <TextView
         android:id="@+id/tv_repeat_pattern"
         android:layout_width="0dp"
@@ -72,17 +132,6 @@
         app:layout_constraintStart_toEndOf="@+id/iv_repeat"
         app:layout_constraintTop_toBottomOf="@+id/tv_next_date"
         tools:text="Every 2 months on day 1, 10, 15, 20" />
-
-    <TextView
-        android:id="@+id/tv_next_date"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_repeat_pattern"
-        app:layout_constraintEnd_toStartOf="@+id/swc_enable_alarm"
-        app:layout_constraintStart_toEndOf="@+id/iv_snoozed"
-        app:layout_constraintTop_toBottomOf="@+id/tv_alarm_title"
-        tools:text="1月1日周三" />
 
     <TextView
         android:id="@+id/tv_countdown"
@@ -129,34 +178,6 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"
         app:layout_constraintTop_toTopOf="@+id/guideline_top" />
-
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/iv_repeat"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:layout_marginEnd="2dp"
-        android:contentDescription="@string/msg_is_repeat_alarm"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_repeat_pattern"
-        app:layout_constraintEnd_toStartOf="@+id/tv_repeat_pattern"
-        app:layout_constraintStart_toStartOf="@+id/guideline_content"
-        app:layout_constraintTop_toTopOf="@+id/tv_repeat_pattern"
-        app:srcCompat="@drawable/ic_repeat"
-        app:tint="?attr/colorControlNormal"
-        app:tintMode="src_in" />
-
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/iv_snoozed"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:layout_marginEnd="@dimen/summary_text_padding"
-        android:contentDescription="@string/msg_is_snoozed"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_next_date"
-        app:layout_constraintEnd_toStartOf="@+id/tv_next_date"
-        app:layout_constraintStart_toStartOf="@+id/guideline_content"
-        app:layout_constraintTop_toTopOf="@+id/tv_next_date"
-        app:srcCompat="@drawable/ic_arrow_right"
-        app:tint="?attr/colorControlNormal"
-        app:tintMode="src_in" />
 
     <android.support.constraint.Group
         android:id="@+id/group_repeat"

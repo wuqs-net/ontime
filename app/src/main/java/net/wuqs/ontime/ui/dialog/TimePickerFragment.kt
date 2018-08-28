@@ -14,6 +14,7 @@ class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener 
 
     private lateinit var mListener: TimeSetListener
 
+    @Suppress("DEPRECATION")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val context = activity!!
         val args = arguments!!

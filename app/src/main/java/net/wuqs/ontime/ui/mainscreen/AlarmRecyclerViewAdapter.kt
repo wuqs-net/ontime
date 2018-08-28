@@ -3,6 +3,7 @@ package net.wuqs.ontime.ui.mainscreen
 
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,7 +63,14 @@ class AlarmRecyclerViewAdapter
 
             updateEnabledDisplay(item.isEnabled)
 
-            tv_alarm_time.text = getTimeString(context, item)
+            tv_alarm_time.text = getTimeString(context, item, false)
+            if (DateFormat.is24HourFormat(context)) {
+                iv_dot_am.visibility = View.GONE
+                iv_dot_pm.visibility = View.GONE
+            } else {
+                iv_dot_am.visibility = if (item.hour < 12) View.VISIBLE else View.GONE
+                iv_dot_pm.visibility = if (item.hour >= 12) View.VISIBLE else View.GONE
+            }
 
             item.title.let {
                 tv_alarm_title.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
@@ -124,6 +132,8 @@ class AlarmRecyclerViewAdapter
 
         private fun updateEnabledDisplay(enabled: Boolean) = mView.run {
             tv_alarm_time.isEnabled = enabled
+            iv_dot_am.isEnabled = enabled
+            iv_dot_pm.isEnabled = enabled
             tv_alarm_title.isEnabled = enabled
             tv_repeat_pattern.isEnabled = enabled
             tv_next_date.isEnabled = enabled

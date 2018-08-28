@@ -9,8 +9,8 @@ import net.wuqs.ontime.R
 import java.util.*
 
 class DelayOptionAdapter(
-        private val mListener: OnListItemClickListener,
-        private val mOptions: List<Pair<Int, Int>>
+    private val mListener: OnListItemClickListener,
+    private val mOptions: List<Pair<Int, Int>>
 ) : RecyclerView.Adapter<DelayOptionAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

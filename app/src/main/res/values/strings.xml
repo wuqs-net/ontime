@@ -51,6 +51,8 @@
 
     <string name="msg_today">Today</string>
     <string name="msg_tomorrow">Tomorrow</string>
+    <string name="msg_am">AM</string>
+    <string name="msg_pm">PM</string>
 
     <string-array name="time_distance">
         <item>less than 1 minute</item>

@@ -18,38 +18,41 @@ const val EDIT_ALARM_REQUEST = 3
 
 private const val MINUTE_IN_MILLIS = 60 * 1000
 
-fun getTimeString(context: Context, alarm: Alarm): String {
+fun getTimeString(context: Context, alarm: Alarm, showAmPm: Boolean = true): String {
     val cal = Calendar.getInstance().apply {
         this[Calendar.HOUR_OF_DAY] = alarm.hour
         this[Calendar.MINUTE] = alarm.minute
         this[Calendar.SECOND] = 0
         this[Calendar.MILLISECOND] = 0
     }
-    return getTimeString(context, cal)
+    return getTimeString(context, cal, showAmPm).replace(' ', '\u200A')
 }
 
-fun getTimeString(context: Context, calendar: Calendar?): String {
+fun getTimeString(context: Context, calendar: Calendar?, showAmPm: Boolean = true): String {
     if (calendar == null) return ""
-    return DateFormat.getTimeFormat(context).format(calendar.time)
+    val skeleton = if (DateFormat.is24HourFormat(context)) {
+        "Hm"
+    } else if (showAmPm) {
+        "hma"
+    } else {
+        "hm"
+    }
+    val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
+    return DateFormat.format(pattern, calendar).toString()
 }
 
-fun getDateString(c: Calendar?, showWeek: Boolean = true, showYear: Boolean = true): String {
-    if (c == null) return ""
+fun getDateString(cal: Calendar?, showWeek: Boolean = true, showYear: Boolean = true): String {
+    if (cal == null) return ""
     val now = Calendar.getInstance()
-//    if (now.sameDayAs(c)) return context.getString(R.string.msg_today)
-//    if (now.apply { add(Calendar.DATE, 1) }.sameDayAs(c)) {
-//        return context.getString(R.string.msg_tomorrow)
-//    }
-//    now.add(Calendar.DATE, -1)
-    var skeleton = if (c[Calendar.YEAR] == now[Calendar.YEAR] || !showYear) {
+    var skeleton = if (cal[Calendar.YEAR] == now[Calendar.YEAR] || !showYear) {
         "MMMd"
     } else {
         "yyyyMMMd"
     }
     if (showWeek) skeleton += "E"
     val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
-    return DateFormat.format(pattern, c).toString()
-//    return DateFormat.getDateFormat(context).format(c.time)
+    return DateFormat.format(pattern, cal).toString()
+//    return DateFormat.getDateFormat(context).format(cal.time)
 }
 
 fun getDateTimeString(ctx: Context, c: Calendar?, showWeek: Boolean = true): String {
