@@ -63,13 +63,13 @@ class AlarmRecyclerViewAdapter
 
             updateEnabledDisplay(item.isEnabled)
 
-            tv_alarm_time.text = getTimeString(context, item, false)
+            tv_alarm_time.text = getTimeString(context, item, false, true)
             if (DateFormat.is24HourFormat(context)) {
-                iv_dot_am.visibility = View.GONE
-                iv_dot_pm.visibility = View.GONE
+                iv_dot_am.visibility = View.INVISIBLE
+                iv_dot_pm.visibility = View.INVISIBLE
             } else {
-                iv_dot_am.visibility = if (item.hour < 12) View.VISIBLE else View.GONE
-                iv_dot_pm.visibility = if (item.hour >= 12) View.VISIBLE else View.GONE
+                iv_dot_am.visibility = if (item.hour < 12) View.VISIBLE else View.INVISIBLE
+                iv_dot_pm.visibility = if (item.hour >= 12) View.VISIBLE else View.INVISIBLE
             }
 
             item.title.let {

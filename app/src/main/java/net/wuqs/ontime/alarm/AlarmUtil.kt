@@ -18,27 +18,34 @@ const val EDIT_ALARM_REQUEST = 3
 
 private const val MINUTE_IN_MILLIS = 60 * 1000
 
-fun getTimeString(context: Context, alarm: Alarm, showAmPm: Boolean = true): String {
+fun getTimeString(
+    context: Context,
+    alarm: Alarm,
+    showAmPm: Boolean = true,
+    hairSpace: Boolean = false
+): String {
     val cal = Calendar.getInstance().apply {
         this[Calendar.HOUR_OF_DAY] = alarm.hour
         this[Calendar.MINUTE] = alarm.minute
         this[Calendar.SECOND] = 0
         this[Calendar.MILLISECOND] = 0
     }
-    return getTimeString(context, cal, showAmPm).replace(' ', '\u200A')
+    return getTimeString(context, cal, showAmPm, hairSpace)
 }
 
-fun getTimeString(context: Context, calendar: Calendar?, showAmPm: Boolean = true): String {
+fun getTimeString(
+    context: Context,
+    calendar: Calendar?,
+    showAmPm: Boolean = true,
+    hairSpace: Boolean = false
+): String {
     if (calendar == null) return ""
-    val skeleton = if (DateFormat.is24HourFormat(context)) {
-        "Hm"
-    } else if (showAmPm) {
-        "hma"
-    } else {
-        "hm"
-    }
-    val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
-    return DateFormat.format(pattern, calendar).toString()
+    val skeleton = if (DateFormat.is24HourFormat(context)) "Hm" else "hm"
+    var pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
+    if (!showAmPm) pattern = pattern.replace("a", "").trim()
+    val str = DateFormat.format(pattern, calendar).toString()
+    if (hairSpace) return str.replace(' ', '\u200A')
+    return str
 }
 
 fun getDateString(cal: Calendar?, showWeek: Boolean = true, showYear: Boolean = true): String {
@@ -52,7 +59,6 @@ fun getDateString(cal: Calendar?, showWeek: Boolean = true, showYear: Boolean = 
     if (showWeek) skeleton += "E"
     val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
     return DateFormat.format(pattern, cal).toString()
-//    return DateFormat.getDateFormat(context).format(cal.time)
 }
 
 fun getDateTimeString(ctx: Context, c: Calendar?, showWeek: Boolean = true): String {
