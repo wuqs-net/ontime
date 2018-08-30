@@ -39,6 +39,7 @@
     <string name="msg_start_date">Start date</string>
     <string name="msg_activate_date">From %1$s</string>
     <string name="msg_next_date">Alarm will go off on %1$s</string>
+    <string name="msg_vibrate">Vibrate</string>
 
     <string name="msg_snoozed_until">Snoozed until %1$s</string>
     <string name="msg_snoozed_time">%1$s (%2$s)</string>

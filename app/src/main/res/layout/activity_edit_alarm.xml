@@ -78,7 +78,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_alarm_time" />
 
         <View
-            android:id="@+id/divider2"
+            android:id="@+id/divider_main"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
@@ -93,8 +93,9 @@
             android:layout_height="wrap_content"
             app:captionText="@string/msg_repeat_mode"
             app:iconImage="@drawable/ic_repeat"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider2"
+            app:layout_constraintTop_toBottomOf="@id/divider_main"
             tools:valueText="Does not repeat" />
 
         <FrameLayout
@@ -106,13 +107,44 @@
             app:layout_constraintTop_toBottomOf="@+id/oiv_repeat_type" />
 
         <View
-            android:id="@+id/divider4"
+            android:id="@+id/divider_repeat"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_repeat" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_vibrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/msg_vibrate"
+            app:layout_constraintBottom_toBottomOf="@+id/cb_vibrate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/cb_vibrate"
+            app:srcCompat="@drawable/ic_vibration_black_24dp"
+            app:tint="?attr/colorControlNormal"
+            app:tintMode="src_in" />
+
+        <CheckBox
+            android:id="@+id/cb_vibrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/content_start_padding"
+            android:layout_marginTop="8dp"
+            android:text="@string/msg_vibrate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider_repeat" />
+
+        <View
+            android:id="@+id/divider_ringtone"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintTop_toBottomOf="@+id/cb_vibrate" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

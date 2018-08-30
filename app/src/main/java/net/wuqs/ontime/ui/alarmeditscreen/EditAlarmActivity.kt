@@ -13,7 +13,6 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.activity_edit_alarm.*
 import net.wuqs.ontime.R
@@ -30,7 +29,6 @@ import net.wuqs.ontime.util.shortToast
 import java.util.*
 
 class EditAlarmActivity : AppCompatActivity(),
-        View.OnClickListener,
         DialogInterface.OnClickListener,
         TimePickerFragment.TimeSetListener,
         SpinnerDialogFragment.SpinnerDialogListener,
@@ -80,18 +78,14 @@ class EditAlarmActivity : AppCompatActivity(),
         }
 
         tv_alarm_time.text = getTimeString(this, alarm)
-        tv_alarm_time.setOnClickListener(this)
-        oiv_repeat_type.setOnClickListener(this)
+        tv_alarm_time.setOnClickListener { showTimePickerDialog() }
+        oiv_repeat_type.setOnClickListener { showRepeatPickerDialog() }
+
+        cb_vibrate.isChecked = alarm.vibrate
+        cb_vibrate.setOnCheckedChangeListener { _, isChecked -> alarm.vibrate = isChecked }
 
         updateNextAlarmDate(alarm.snoozed != 0)
         updateRepeatDisplay()
-    }
-
-    override fun onClick(v: View?) {
-        when (v) {
-            tv_alarm_time -> showTimePickerDialog()
-            oiv_repeat_type -> showRepeatPickerDialog()
-        }
     }
 
     override fun onClick(dialog: DialogInterface?, which: Int) {
