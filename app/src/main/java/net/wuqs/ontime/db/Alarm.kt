@@ -22,6 +22,7 @@ class Alarm(
         @ColumnInfo(name = "minute") var minute: Int = 0,
         @ColumnInfo(name = "title") var title: String? = "",
         @ColumnInfo(name = "ringtone_uri") var ringtoneUri: Uri? = null,
+        @ColumnInfo(name = "vibrate") var vibrate: Boolean = false,
         @ColumnInfo(name = "enabled") var isEnabled: Boolean = true,
         @ColumnInfo(name = "repeat_type") var repeatType: Int = 0,
         @ColumnInfo(name = "repeat_cycle") var repeatCycle: Int = 0,
@@ -72,7 +73,8 @@ class Alarm(
             minute = source.readInt(),
             title = source.readString(),
             ringtoneUri = DTC.toUri(source.readString()),
-            isEnabled = DTC.toBoolean(source.readByte().toInt()),
+            vibrate = DTC.toBoolean(source.readByte()),
+            isEnabled = DTC.toBoolean(source.readByte()),
             repeatType = source.readInt(),
             repeatCycle = source.readInt(),
             repeatIndex = source.readInt(),
@@ -88,6 +90,7 @@ class Alarm(
             minute = another.minute,
             title = another.title,
             ringtoneUri = Uri.parse(another.ringtoneUri!!.toString()),
+            vibrate = another.vibrate,
             isEnabled = another.isEnabled,
             repeatType = another.repeatType,
             repeatCycle = another.repeatCycle,
@@ -105,6 +108,7 @@ class Alarm(
         writeInt(minute)
         writeString(title)
         writeString(DTC.toString(ringtoneUri ?: Uri.EMPTY))
+        writeByte(DTC.toByte(vibrate))
         writeByte(DTC.toByte(isEnabled))
         writeInt(repeatType)
         writeInt(repeatCycle)
@@ -117,6 +121,7 @@ class Alarm(
     override fun toString(): String {
         return "{id=$id, $hour:$minute, " +
                 "title=$title, isEnabled=$isEnabled, " +
+                "ringtone=$ringtoneUri, vibrate=$vibrate" +
                 "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
                 "repeatIndex=${repeatIndex.binString}, " +
                 "activate=${activateDate?.time}, next=${nextTime?.time}, " +
@@ -134,6 +139,7 @@ class Alarm(
         if (minute != other.minute) return false
         if (title != other.title) return false
         if (ringtoneUri != other.ringtoneUri) return false
+        if (vibrate != other.vibrate) return false
         if (isEnabled != other.isEnabled) return false
         if (repeatType != other.repeatType) return false
         if (repeatCycle != other.repeatCycle) return false

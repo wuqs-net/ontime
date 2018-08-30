@@ -8,7 +8,7 @@ import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
-@Database(entities = [Alarm::class], version = 4)
+@Database(entities = [Alarm::class], version = 5)
 @TypeConverters(DataTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -46,22 +46,31 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_4_5 = newMigration(4, 5) {
-            execSQL("CREATE TABLE alarms_new " +
-                    "(id INTEGER PRIMARY KEY, " +
-                    "hour INTEGER NOT NULL, minute INTEGER NOT NULL, " +
-                    "title TEXT, ringtone_uri TEXT, enabled INTEGER NOT NULL, " +
-                    "repeat_type INTEGER NOT NULL, repeat_cycle INTEGER NOT NULL, " +
-                    "repeat_index INTEGER NOT NULL, activate_date INTEGER, " +
-                    "next_occurrence INTEGER, snoozed INTEGER NOT NULL)")
+        val MIGRATION_4_5 = newMigration(4, 5) {
+            execSQL("ALTER TABLE alarms ADD COLUMN vibrate INTEGER NOT NULL DEFAULT 0")
         }
+
+//        private val MIGRATION_4_5 = newMigration(4, 5) {
+//            execSQL("CREATE TABLE alarms_new " +
+//                    "(id INTEGER PRIMARY KEY, " +
+//                    "hour INTEGER NOT NULL, minute INTEGER NOT NULL, " +
+//                    "title TEXT, ringtone_uri TEXT, enabled INTEGER NOT NULL, " +
+//                    "repeat_type INTEGER NOT NULL, repeat_cycle INTEGER NOT NULL, " +
+//                    "repeat_index INTEGER NOT NULL, activate_date INTEGER, " +
+//                    "next_occurrence INTEGER, snoozed INTEGER NOT NULL)")
+//        }
 
         operator fun get(context: Context): AppDatabase? {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
                             AppDatabase::class.java, "alarm-database")
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                            .addMigrations(
+                                    MIGRATION_1_2,
+                                    MIGRATION_2_3,
+                                    MIGRATION_3_4,
+                                    MIGRATION_4_5
+                            )
                             .build()
                 }
             }

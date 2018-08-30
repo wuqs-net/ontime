@@ -2,8 +2,7 @@ package net.wuqs.ontime.db
 
 import android.arch.persistence.room.TypeConverter
 import android.net.Uri
-
-import java.util.Calendar
+import java.util.*
 
 class DataTypeConverter {
 
@@ -20,6 +19,9 @@ class DataTypeConverter {
 
     @TypeConverter
     fun toBoolean(n: Int) = n != 0
+
+    @TypeConverter
+    fun toBoolean(n: Byte) = n != 0.toByte()
 
     @TypeConverter
     fun toLong(calendar: Calendar?): Long? = calendar?.timeInMillis

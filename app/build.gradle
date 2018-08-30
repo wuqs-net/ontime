@@ -51,6 +51,9 @@ android {
     }
     productFlavors {
     }
+    sourceSets {
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
     buildToolsVersion '27.0.3'
 }
 
@@ -71,7 +74,7 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:$room_version"
     testImplementation 'junit:junit:4.12'
     // Test helpers for Room
-    testImplementation "android.arch.persistence.room:testing:$room_version"
+    androidTestImplementation "android.arch.persistence.room:testing:$room_version"
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
