@@ -121,7 +121,7 @@ class Alarm(
     override fun toString(): String {
         return "{id=$id, $hour:$minute, " +
                 "title=$title, isEnabled=$isEnabled, " +
-                "ringtone=$ringtoneUri, vibrate=$vibrate" +
+                "ringtone=$ringtoneUri, vibrate=$vibrate, " +
                 "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
                 "repeatIndex=${repeatIndex.binString}, " +
                 "activate=${activateDate?.time}, next=${nextTime?.time}, " +

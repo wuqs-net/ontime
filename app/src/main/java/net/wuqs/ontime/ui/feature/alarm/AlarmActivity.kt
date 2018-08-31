@@ -93,6 +93,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
         mediaPlayer.isLooping = true
         mediaPlayer.prepare()
         mediaPlayer.start()
+        AlarmRinger.start(this, alarm)
 
         alarm.getNextOccurrence().let {
             alarm.nextTime = it
@@ -118,6 +119,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
     }
 
     private fun stopAlarm() {
+        AlarmRinger.stop(this)
         mediaPlayer.stop()
         mediaPlayer.release()
         mLogger.i("Alarm finished: $alarm")
