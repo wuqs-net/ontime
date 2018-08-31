@@ -11,8 +11,8 @@ import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import net.wuqs.ontime.alarm.*
-import net.wuqs.ontime.ui.alarmeditscreen.binString
-import net.wuqs.ontime.ui.alarmeditscreen.hexString
+import net.wuqs.ontime.ui.feature.editalarm.binString
+import net.wuqs.ontime.ui.feature.editalarm.hexString
 import java.util.*
 
 @Entity(tableName = "alarms")

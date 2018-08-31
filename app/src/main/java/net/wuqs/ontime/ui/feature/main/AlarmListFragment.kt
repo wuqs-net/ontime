@@ -1,4 +1,4 @@
-package net.wuqs.ontime.ui.mainscreen
+package net.wuqs.ontime.ui.feature.main
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer

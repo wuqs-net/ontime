@@ -1,4 +1,4 @@
-package net.wuqs.ontime.ui.alarmscreen
+package net.wuqs.ontime.ui.feature.alarm
 
 import android.annotation.TargetApi
 import android.app.KeyguardManager

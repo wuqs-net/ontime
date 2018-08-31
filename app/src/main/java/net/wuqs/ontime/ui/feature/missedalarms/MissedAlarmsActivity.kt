@@ -1,4 +1,4 @@
-package net.wuqs.ontime.ui.missedalarms
+package net.wuqs.ontime.ui.feature.missedalarms
 
 import android.os.Build
 import android.os.Bundle

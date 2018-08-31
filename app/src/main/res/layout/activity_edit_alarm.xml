@@ -6,7 +6,7 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.alarmeditscreen.EditAlarmActivity">
+    tools:context=".ui.feature.editalarm.EditAlarmActivity">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -87,7 +87,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_next_date" />
 
-        <net.wuqs.ontime.ui.alarmeditscreen.OptionItemView
+        <net.wuqs.ontime.ui.feature.editalarm.OptionItemView
             android:id="@+id/oiv_repeat_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

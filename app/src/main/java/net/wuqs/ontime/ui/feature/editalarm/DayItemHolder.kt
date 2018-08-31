@@ -1,4 +1,4 @@
-package net.wuqs.ontime.ui.alarmeditscreen
+package net.wuqs.ontime.ui.feature.editalarm
 
 import android.support.v7.widget.RecyclerView
 import android.view.View

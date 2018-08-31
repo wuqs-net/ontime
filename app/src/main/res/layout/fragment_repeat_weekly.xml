@@ -32,7 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rv_day_picker" />
 
-    <net.wuqs.ontime.ui.alarmeditscreen.OptionItemView
+    <net.wuqs.ontime.ui.feature.editalarm.OptionItemView
         android:id="@+id/oiv_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

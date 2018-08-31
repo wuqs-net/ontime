@@ -1,4 +1,4 @@
-package net.wuqs.ontime.ui.alarmeditscreen
+package net.wuqs.ontime.ui.feature.editalarm
 
 import android.content.Context
 import android.content.Intent
@@ -19,7 +19,7 @@ import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.ui.dialog.PromptDialogFragment
 import net.wuqs.ontime.ui.dialog.SpinnerDialogFragment
 import net.wuqs.ontime.ui.dialog.TimePickerDialogFragment
-import net.wuqs.ontime.ui.mainscreen.MainActivity
+import net.wuqs.ontime.ui.feature.main.MainActivity
 import net.wuqs.ontime.util.LogUtils
 import net.wuqs.ontime.util.getCustomTaskDescription
 import net.wuqs.ontime.util.hideSoftInput

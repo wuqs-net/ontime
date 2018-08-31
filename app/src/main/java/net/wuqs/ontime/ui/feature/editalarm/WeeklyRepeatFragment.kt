@@ -1,4 +1,4 @@
-package net.wuqs.ontime.ui.alarmeditscreen
+package net.wuqs.ontime.ui.feature.editalarm
 
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager

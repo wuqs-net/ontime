@@ -1,4 +1,4 @@
-package net.wuqs.ontime.ui.alarmeditscreen
+package net.wuqs.ontime.ui.feature.editalarm
 
 import net.wuqs.ontime.R
 

@@ -1,4 +1,4 @@
-package net.wuqs.ontime.ui.mainscreen
+package net.wuqs.ontime.ui.feature.main
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -15,9 +15,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.ui.alarmeditscreen.EditAlarmActivity
 import net.wuqs.ontime.ui.dialog.TimePickerDialogFragment
-import net.wuqs.ontime.ui.missedalarms.MissedAlarmsActivity
+import net.wuqs.ontime.ui.feature.editalarm.EditAlarmActivity
+import net.wuqs.ontime.ui.feature.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.util.LogUtils
 import net.wuqs.ontime.util.getCustomTaskDescription
 import java.util.*

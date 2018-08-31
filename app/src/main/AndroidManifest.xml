@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ui.mainscreen.MainActivity"
+            android:name="net.wuqs.ontime.ui.feature.main.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,15 +23,15 @@
         </activity>
 
         <activity
-            android:name=".ui.alarmscreen.AlarmActivity"
+            android:name="net.wuqs.ontime.ui.feature.alarm.AlarmActivity"
             android:excludeFromRecents="true"
             android:taskAffinity="" />
 
         <activity
-            android:name=".ui.alarmeditscreen.EditAlarmActivity"
-            android:parentActivityName=".ui.mainscreen.MainActivity" />
+            android:name="net.wuqs.ontime.ui.feature.editalarm.EditAlarmActivity"
+            android:parentActivityName="net.wuqs.ontime.ui.feature.main.MainActivity" />
 
-        <activity android:name=".ui.missedalarms.MissedAlarmsActivity" />
+        <activity android:name="net.wuqs.ontime.ui.feature.missedalarms.MissedAlarmsActivity" />
 
         <receiver
             android:name=".alarm.AlarmStateManager"

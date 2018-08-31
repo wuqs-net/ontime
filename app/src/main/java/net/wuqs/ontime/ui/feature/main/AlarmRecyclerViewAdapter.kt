@@ -1,4 +1,4 @@
-package net.wuqs.ontime.ui.mainscreen
+package net.wuqs.ontime.ui.feature.main
 
 
 import android.support.v7.util.DiffUtil
@@ -14,7 +14,7 @@ import net.wuqs.ontime.alarm.getRepeatString
 import net.wuqs.ontime.alarm.getTimeString
 import net.wuqs.ontime.alarm.sameDayAs
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.ui.mainscreen.AlarmListFragment.OnListFragmentActionListener
+import net.wuqs.ontime.ui.feature.main.AlarmListFragment.OnListFragmentActionListener
 import net.wuqs.ontime.util.LogUtils
 import java.util.*
 
