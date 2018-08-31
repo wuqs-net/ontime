@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.feature.main.MainActivity">
+    tools:context=".feature.home.MainActivity">
 
     <TextView
         android:id="@+id/tvNoAlarm"
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="net.wuqs.ontime.ui.feature.main.AlarmListFragment"
+        android:name="net.wuqs.ontime.feature.home.AlarmListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_alarm_list" />

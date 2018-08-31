@@ -11,5 +11,5 @@
     android:scrollbarStyle="outsideOverlay"
     android:scrollbars="vertical"
     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-    tools:context=".ui.feature.main.AlarmListFragment"
+    tools:context=".feature.home.AlarmListFragment"
     tools:listitem="@layout/item_alarm" />

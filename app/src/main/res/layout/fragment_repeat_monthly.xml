@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <net.wuqs.ontime.ui.feature.editalarm.OptionItemView
+    <net.wuqs.ontime.feature.editalarm.OptionItemView
         android:id="@+id/oiv_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

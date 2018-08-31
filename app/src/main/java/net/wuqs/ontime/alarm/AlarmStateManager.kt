@@ -9,7 +9,7 @@ import android.support.v4.content.LocalBroadcastManager
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
 import net.wuqs.ontime.db.updateAlarmToDb
-import net.wuqs.ontime.ui.feature.alarm.AlarmActivity
+import net.wuqs.ontime.feature.currentalarm.AlarmActivity
 import net.wuqs.ontime.util.AlarmWakeLock
 import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.AsyncHandler
