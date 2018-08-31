@@ -99,6 +99,7 @@ class AlarmStateManager : BroadcastReceiver() {
         val db = AppDatabase[context]!!
         val now = Calendar.getInstance()
         alarms.forEach {
+            it.snoozed = 0
             it.nextTime = it.getNextOccurrence(now)
             if (it.nextTime != null) {
                 scheduleAlarm(context, it)
