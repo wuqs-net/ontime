@@ -25,29 +25,29 @@ class MonthlyRepeatFragment : RepeatOptionFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_day_picker.layoutManager = GridLayoutManager(context, 7)
-        rv_day_picker.adapter = MonthDayAdapter(this, mAlarm.repeatIndex)
-        if (mAlarm.repeatIndex == 0) checkDefaultDate()
+        rv_day_picker.adapter = MonthDayAdapter(this, alarm.repeatIndex)
+        if (alarm.repeatIndex == 0) checkDefaultDate()
         mLogger.v("onViewCreated")
     }
 
     override fun onDayClick(which: Int, isChecked: Boolean) {
         val setBit = 1 shl which
-        mAlarm.repeatIndex = if (isChecked) {
-            mAlarm.repeatIndex or setBit
+        alarm.repeatIndex = if (isChecked) {
+            alarm.repeatIndex or setBit
         } else {
-            mAlarm.repeatIndex and setBit.inv()
+            alarm.repeatIndex and setBit.inv()
         }
-        if (mAlarm.repeatIndex == 0) {
+        if (alarm.repeatIndex == 0) {
             checkDefaultDate()
         }
-        mListener?.updateRepeatOption(repeatIndex = mAlarm.repeatIndex)
+        mListener?.updateRepeatOption(repeatIndex = alarm.repeatIndex)
     }
 
     private fun checkDefaultDate() {
-        val defaultDate = mAlarm.activateDate!![Calendar.DATE] - 1
+        val defaultDate = alarm.activateDate!![Calendar.DATE] - 1
         onDayClick(defaultDate, true)
         (rv_day_picker.adapter as MonthDayAdapter).run {
-            dates = mAlarm.repeatIndex
+            dates = alarm.repeatIndex
             notifyItemChanged(defaultDate)
         }
     }

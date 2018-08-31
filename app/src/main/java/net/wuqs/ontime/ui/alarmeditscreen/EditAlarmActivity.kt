@@ -1,7 +1,6 @@
 package net.wuqs.ontime.ui.alarmeditscreen
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.media.AudioManager
 import android.media.RingtoneManager
@@ -9,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.NavUtils
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -18,9 +16,9 @@ import kotlinx.android.synthetic.main.activity_edit_alarm.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.ui.dialog.DeleteDialogFragment
+import net.wuqs.ontime.ui.dialog.PromptDialogFragment
 import net.wuqs.ontime.ui.dialog.SpinnerDialogFragment
-import net.wuqs.ontime.ui.dialog.TimePickerFragment
+import net.wuqs.ontime.ui.dialog.TimePickerDialogFragment
 import net.wuqs.ontime.ui.mainscreen.MainActivity
 import net.wuqs.ontime.util.LogUtils
 import net.wuqs.ontime.util.getCustomTaskDescription
@@ -29,9 +27,9 @@ import net.wuqs.ontime.util.shortToast
 import java.util.*
 
 class EditAlarmActivity : AppCompatActivity(),
-        DialogInterface.OnClickListener,
-        TimePickerFragment.TimeSetListener,
-        SpinnerDialogFragment.SpinnerDialogListener,
+        PromptDialogFragment.OnClickListener,
+        TimePickerDialogFragment.OnTimeSetListener,
+        SpinnerDialogFragment.OptionListener,
         RepeatOptionFragment.OnRepeatIndexPickListener {
 
     private lateinit var alarm: Alarm
@@ -88,17 +86,27 @@ class EditAlarmActivity : AppCompatActivity(),
         updateRepeatDisplay()
     }
 
-    override fun onClick(dialog: DialogInterface?, which: Int) {
-        if (which == DialogInterface.BUTTON_POSITIVE) {
-            val data = Intent(this, MainActivity::class.java)
-                    .putExtra(ALARM_INSTANCE, alarm)
-            setResult(MainActivity.RESULT_DELETE, data)
-            finish()
+    override fun onDialogPositiveClick(dialogFragment: DialogFragment) {
+        when (dialogFragment.tag) {
+            TAG_DELETE_ALARM -> {
+                val data = Intent(this, MainActivity::class.java)
+                        .putExtra(ALARM_INSTANCE, alarm)
+                setResult(MainActivity.RESULT_DELETE, data)
+                finish()
+            }
         }
     }
 
-    override fun onTimeSet(fragment: TimePickerFragment, hourOfDay: Int, minute: Int) {
-        if (fragment.tag == TimePickerFragment.EDIT_ALARM) {
+    override fun onDialogNegativeClick(dialogFragment: DialogFragment) {
+        when (dialogFragment.tag) {
+            TAG_DISCARD_CHANGES -> {
+                NavUtils.navigateUpFromSameTask(this@EditAlarmActivity)
+            }
+        }
+    }
+
+    override fun onTimeSet(fragment: TimePickerDialogFragment, hourOfDay: Int, minute: Int) {
+        if (fragment.tag == TAG_EDIT_ALARM) {
             mAlarmEdited = true
             mLogger.v("Alarm changes made: time")
             alarm.hour = hourOfDay
@@ -209,7 +217,13 @@ class EditAlarmActivity : AppCompatActivity(),
     }
 
     private fun promptDelete() {
-        DeleteDialogFragment().show(supportFragmentManager, DeleteDialogFragment.TAG_DELETE_ALARM)
+        PromptDialogFragment.show(
+                this,
+                R.string.prompt_delete_alarm,
+                R.string.action_delete,
+                R.string.action_cancel,
+                TAG_DELETE_ALARM
+        )
     }
 
     private fun promptDiscard() {
@@ -218,24 +232,25 @@ class EditAlarmActivity : AppCompatActivity(),
             NavUtils.navigateUpFromSameTask(this)
             return
         }
-        AlertDialog.Builder(this).apply {
-            if (alarm.id == Alarm.INVALID_ID) setMessage(R.string.prompt_discard_new_alarm)
-            else setMessage(R.string.prompt_discard_changes)
-            setPositiveButton(R.string.action_keep_editing, null)
-            setNegativeButton(R.string.action_discard) { _, _ ->
-                NavUtils.navigateUpFromSameTask(this@EditAlarmActivity)
-            }
-        }.create().show()
+        PromptDialogFragment.show(
+                this,
+                if (alarm.id == Alarm.INVALID_ID) {
+                    R.string.prompt_discard_new_alarm
+                } else {
+                    R.string.prompt_discard_changes
+                },
+                R.string.action_keep_editing,
+                R.string.action_discard,
+                TAG_DISCARD_CHANGES
+        )
     }
 
     private fun showTimePickerDialog() {
-        TimePickerFragment.newInstance(alarm.hour, alarm.minute)
-                .show(supportFragmentManager, TimePickerFragment.EDIT_ALARM)
+        TimePickerDialogFragment.show(this, alarm.hour, alarm.minute, TAG_EDIT_ALARM)
     }
 
     private fun showRepeatPickerDialog() {
-        SpinnerDialogFragment.newInstance(R.array.repeat_types)
-                .show(supportFragmentManager, SpinnerDialogFragment.CHOOSE_REPEAT_TYPE)
+        SpinnerDialogFragment.show(this, R.array.repeat_types, TAG_REPEAT_TYPE)
     }
 
     private fun updateRepeatDisplay() {
@@ -276,3 +291,8 @@ class EditAlarmActivity : AppCompatActivity(),
     private val mLogger = LogUtils.Logger("EditAlarmActivity")
 
 }
+
+private const val TAG_EDIT_ALARM = "EDIT_ALARM"
+private const val TAG_DELETE_ALARM = "DELETE_ALARM"
+private const val TAG_DISCARD_CHANGES = "DISCARD_CHANGES"
+private const val TAG_REPEAT_TYPE = "REPEAT_TYPE"

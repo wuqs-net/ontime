@@ -12,7 +12,7 @@ class WeeklyRepeatFragment : RepeatOptionFragment(), WeekDayAdapter.OnDayClickLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mAlarm.repeatIndex = (mAlarm.repeatIndex and 0b1111111) + (Calendar.getInstance().firstDayOfWeek shl 8)
+        alarm.repeatIndex = (alarm.repeatIndex and 0b1111111) + (Calendar.getInstance().firstDayOfWeek shl 8)
 
         // TODO: Update next date display / notify user first day of week is changed
     }
@@ -20,7 +20,7 @@ class WeeklyRepeatFragment : RepeatOptionFragment(), WeekDayAdapter.OnDayClickLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_day_picker.layoutManager = GridLayoutManager(context, 7)
-        rv_day_picker.adapter = WeekDayAdapter(this, mAlarm.repeatIndex)
+        rv_day_picker.adapter = WeekDayAdapter(this, alarm.repeatIndex)
         tv_advanced.setOnClickListener {
             //            if (group_advanced.visibility == View.VISIBLE) {
 //                group_advanced.visibility = View.GONE
@@ -31,13 +31,13 @@ class WeeklyRepeatFragment : RepeatOptionFragment(), WeekDayAdapter.OnDayClickLi
 //                iv_advanced.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp)
 //            }
         }
-        if (mAlarm.repeatCycle != 1 || mAlarm.activateDate!!.after(Calendar.getInstance())) {
+        if (alarm.repeatCycle != 1 || alarm.activateDate!!.after(Calendar.getInstance())) {
             tv_advanced.callOnClick()
         }
     }
 
     override fun onDayClick(calendarDay: Int, isChecked: Boolean) {
-        mAlarm.repeatIndex = mAlarm.repeatIndex.setBit(calendarDay - 1, isChecked)
+        alarm.repeatIndex = alarm.repeatIndex.setBit(calendarDay - 1, isChecked)
         mListener?.updateRepeatOption()
     }
 }

@@ -15,22 +15,21 @@ import net.wuqs.ontime.alarm.getDateString
 import net.wuqs.ontime.alarm.getRepeatCycleText
 import net.wuqs.ontime.alarm.setMidnight
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.ui.dialog.DatePickerFragment
-import net.wuqs.ontime.ui.dialog.TAG_ACTIVATE_DATE
+import net.wuqs.ontime.ui.dialog.DatePickerDialogFragment
 import net.wuqs.ontime.util.LogUtils
 
-abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragment.DateSetListener {
+abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerDialogFragment.OnDateSetListener {
 
     protected var mListener: OnRepeatIndexPickListener? = null
 
     protected abstract val mLayout: Int
 
-    protected lateinit var mAlarm: Alarm
+    protected lateinit var alarm: Alarm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            mAlarm = it.getParcelable(ARG_ALARM)
+            alarm = it.getParcelable(ARG_ALARM)
         }
         mLogger.v("onCreate")
     }
@@ -42,11 +41,11 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         et_repeatCycle?.apply {
-            setText(mAlarm.repeatCycle.toString())
+            setText(alarm.repeatCycle.toString())
             addTextChangedListener(this@RepeatOptionFragment)
         }
         oiv_date?.apply {
-            valueText = getDateString(mAlarm.activateDate)
+            valueText = getDateString(alarm.activateDate)
             setOnClickListener { editActivateDate() }
         }
         showRepeatCycle()
@@ -71,14 +70,14 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
         s.toString().toIntOrNull()?.let {
             if (it < 1) {
                 s?.replace(0, s.length, "1")
-                mAlarm.repeatCycle = 1
+                alarm.repeatCycle = 1
             } else {
-                mAlarm.repeatCycle = it
+                alarm.repeatCycle = it
             }
         }
-        et_repeatCycle.hint = mAlarm.repeatCycle.toString()
+        et_repeatCycle.hint = alarm.repeatCycle.toString()
         showRepeatCycle()
-        mListener?.updateRepeatOption(repeatCycle = mAlarm.repeatCycle)
+        mListener?.updateRepeatOption(repeatCycle = alarm.repeatCycle)
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -87,8 +86,8 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
     }
 
-    override fun onDateSet(fragment: DatePickerFragment, year: Int, month: Int, dayOfMonth: Int) {
-        mAlarm.activateDate!!.let {
+    override fun onDateSet(fragment: DatePickerDialogFragment, year: Int, month: Int, dayOfMonth: Int) {
+        alarm.activateDate!!.let {
             it.setMidnight(year, month, dayOfMonth)
             mLogger.v(it.time.toString())
             oiv_date.valueText = getDateString(it)
@@ -97,13 +96,11 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
     }
 
     protected open fun editActivateDate() {
-        DatePickerFragment.newInstance(mAlarm.activateDate!!).apply {
-            setTargetFragment(this@RepeatOptionFragment, 0)
-        }.show(fragmentManager, TAG_ACTIVATE_DATE)
+        DatePickerDialogFragment.show(this, alarm.activateDate!!, TAG_ACTIVATE_DATE)
     }
 
     private fun showRepeatCycle() {
-        tv_repeatCycle?.text = getString(R.string.msg_every_x_cycles_2, mAlarm.getRepeatCycleText(resources))
+        tv_repeatCycle?.text = getString(R.string.msg_every_x_cycles_2, alarm.getRepeatCycleText(resources))
     }
 
     interface OnRepeatIndexPickListener {
@@ -130,7 +127,10 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerFragmen
         }
 
         const val ARG_ALARM = "alarm"
+
     }
 
     protected val mLogger = LogUtils.Logger("RepeatOptionFragment")
 }
+
+const val TAG_ACTIVATE_DATE = "activateDate"

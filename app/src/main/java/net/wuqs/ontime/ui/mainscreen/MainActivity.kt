@@ -16,7 +16,7 @@ import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.ui.alarmeditscreen.EditAlarmActivity
-import net.wuqs.ontime.ui.dialog.TimePickerFragment
+import net.wuqs.ontime.ui.dialog.TimePickerDialogFragment
 import net.wuqs.ontime.ui.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.util.LogUtils
 import net.wuqs.ontime.util.getCustomTaskDescription
@@ -25,7 +25,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(),
         AlarmListFragment.OnListFragmentActionListener,
-        TimePickerFragment.TimeSetListener {
+        TimePickerDialogFragment.OnTimeSetListener {
 
     private lateinit var mAlarmUpdateHandler: AlarmUpdateHandler
 
@@ -88,8 +88,8 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun onTimeSet(fragment: TimePickerFragment, hourOfDay: Int, minute: Int) {
-        if (fragment.tag == TimePickerFragment.NEW_ALARM) {
+    override fun onTimeSet(fragment: TimePickerDialogFragment, hourOfDay: Int, minute: Int) {
+        if (fragment.tag == TAG_NEW_ALARM) {
             val alarm = Alarm(hour = hourOfDay, minute = minute)
             // TODO: automatically change start date if alarm time is before now
             val editAlarmIntent = EditAlarmActivity.createIntent(this)
@@ -117,12 +117,13 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun onFabCreateAlarmClick() {
-        val hour = Calendar.getInstance().let {
-            it[Calendar.HOUR_OF_DAY] + if (it[Calendar.MINUTE] < 50) 1 else 2
+        val calendar = Calendar.getInstance().apply {
+            add(Calendar.HOUR_OF_DAY, if (this[Calendar.MINUTE] < 50) 1 else 2)
+            this[Calendar.MINUTE] = 0
         }
-        val minute = 0
-        TimePickerFragment.newInstance(hour, minute)
-                .show(supportFragmentManager, TimePickerFragment.NEW_ALARM)
+        val hour = calendar[Calendar.HOUR_OF_DAY]
+        val minute = calendar[Calendar.MINUTE]
+        TimePickerDialogFragment.show(this, hour, minute, TAG_NEW_ALARM)
     }
 
     override fun onDestroy() {
@@ -138,3 +139,5 @@ class MainActivity : AppCompatActivity(),
 
     private val logger = LogUtils.Logger("MainActivity")
 }
+
+private const val TAG_NEW_ALARM = "NEW_ALARM"

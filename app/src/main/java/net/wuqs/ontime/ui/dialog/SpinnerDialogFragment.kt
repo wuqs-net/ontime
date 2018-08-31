@@ -2,47 +2,50 @@ package net.wuqs.ontime.ui.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
+import android.support.annotation.ArrayRes
 import android.support.v4.app.DialogFragment
+import android.support.v4.app.FragmentActivity
 
 class SpinnerDialogFragment : DialogFragment() {
 
-    private lateinit var mListener: SpinnerDialogListener
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val listener = activity as OptionListener
         val itemsId = arguments?.getInt(ARG_ITEMS_ID)!!
-        val builder = AlertDialog.Builder(activity).apply {
-            setItems(itemsId) { dialog, which ->
-                mListener.onOptionClick(this@SpinnerDialogFragment, which)
+        return AlertDialog.Builder(activity).run {
+            setItems(itemsId) { _, which ->
+                listener.onOptionClick(this@SpinnerDialogFragment, which)
             }
-        }
-        return builder.create()
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        mListener = if (context is SpinnerDialogListener) {
-            context
-        } else {
-            throw RuntimeException("$context must implement SpinnerDialogListener")
+            create()
         }
     }
 
-    interface SpinnerDialogListener {
+    interface OptionListener {
         fun onOptionClick(dialog: DialogFragment, which: Int)
     }
 
     companion object {
+        /**
+         * Shows a dialog with a list of options.
+         *
+         * @param parentActivity the [FragmentActivity] for this fragment to associate with.
+         * @param itemsId the resource id of the list of options, should be an array type
+         * (`R.array.*`).
+         * @param tag the tag for this fragment.
+         */
         @JvmStatic
-        fun newInstance(itemsId: Int) =
-                SpinnerDialogFragment().apply {
-                    arguments = Bundle().apply {
-                        putInt(ARG_ITEMS_ID, itemsId)
-                    }
+        fun show(parentActivity: FragmentActivity, @ArrayRes itemsId: Int, tag: String?) {
+            if (parentActivity !is OptionListener) {
+                throw IllegalArgumentException("$parentActivity must implement OptionListener")
+            }
+            SpinnerDialogFragment().run {
+                arguments = Bundle().apply {
+                    putInt(ARG_ITEMS_ID, itemsId)
                 }
+                show(parentActivity.supportFragmentManager, tag)
+            }
+        }
 
-        const val CHOOSE_REPEAT_TYPE = "CHOOSE_REPEAT_TYPE"
     }
 }
 
