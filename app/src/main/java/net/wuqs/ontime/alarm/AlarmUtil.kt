@@ -264,3 +264,9 @@ fun getShortWeekDays(pattern: String = "ccccc"): ArrayMap<Int, String> {
 }
 
 private val shortWeekDays = ArrayMap<String, ArrayMap<Int, String>>()
+
+fun Alarm.isNonRepeat() = repeatType == 0
+fun Alarm.isDaily() = repeatType and 0xF == 1
+fun Alarm.isWeekly() = repeatType and 0xF == 2
+fun Alarm.isMonthly() = repeatType and 0xF == 3
+fun Alarm.isYearly() = repeatType and 0xF == 4

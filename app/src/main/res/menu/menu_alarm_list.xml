@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/item_filter"
+        android:icon="@drawable/ic_filter_list_black_24dp"
+        android:title="@string/action_filter"
+        app:showAsAction="ifRoom">
+        <menu>
+            <group
+                android:id="@+id/group_filter"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/item_all_alarms"
+                    android:checked="true"
+                    android:title="@string/option_all_alarms" />
+                <item
+                    android:id="@+id/item_today_alarms"
+                    android:title="@string/option_today_alarms" />
+                <item
+                    android:id="@+id/item_daily_alarms"
+                    android:title="@string/option_repeat_daily" />
+                <item
+                    android:id="@+id/item_weekly_alarms"
+                    android:title="@string/option_repeat_weekly" />
+                <item
+                    android:id="@+id/item_monthly_alarms"
+                    android:title="@string/option_repeat_monthly" />
+                <item
+                    android:id="@+id/item_history"
+                    android:title="@string/option_history" />
+            </group>
+        </menu>
+    </item>
+</menu>

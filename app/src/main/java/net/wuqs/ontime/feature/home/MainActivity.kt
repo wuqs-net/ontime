@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import net.wuqs.ontime.R
@@ -109,11 +108,6 @@ class MainActivity : AppCompatActivity(),
     override fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean) {
         item.isEnabled = isChecked
         mAlarmUpdateHandler.asyncUpdateAlarm(item, true)
-    }
-
-    override fun onRecyclerViewUpdate(itemCount: Int) {
-        tvNoAlarm.visibility = if (itemCount == 0) View.VISIBLE else View.GONE
-        logger.d("RecyclerView updated, item count: $itemCount")
     }
 
     private fun onFabCreateAlarmClick() {

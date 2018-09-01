@@ -1,7 +1,8 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">OnTime</string>
     <string name="new_alarm">Create new alarm</string>
-    <string name="hint_click_add">Click the \"Add\" button below to create new alarm</string>
+    <string name="msg_no_history">No history</string>
+    <string name="msg_click_add">Click the \"Add\" button below to create new alarm</string>
     <string name="action_save">Save</string>
     <string name="action_discard">Discard</string>
     <string name="action_keep_editing">Keep editing</string>
@@ -13,6 +14,18 @@
     <string name="title_missed_alarms">Missed alarms</string>
     <string name="hint_alarm_title">Name</string>
     <string name="action_more_options">More options</string>
+
+    <string name="action_filter">Filter</string>
+    <string name="action_sort">Sort</string>
+    <string name="option_all_alarms">All alarms</string>
+    <string name="option_today_alarms">Today\'s alarms</string>
+    <string name="option_history">History</string>
+
+    <string name="option_non_repeat">Does not repeat</string>
+    <string name="option_repeat_daily">Repeats daily</string>
+    <string name="option_repeat_weekly">Repeats weekly</string>
+    <string name="option_repeat_monthly">Repeats monthly</string>
+    <string name="option_repeat_yearly">Repeats yearly</string>
 
     <string name="msg_alarm_disabled">Disabled alarm</string>
     <string name="msg_is_repeat_alarm">This alarm will repeat</string>
@@ -67,11 +80,11 @@
     </string-array>
 
     <string-array name="repeat_types">
-        <item>Does not repeat</item>
-        <item>Repeats daily</item>
-        <item>Repeats weekly</item>
-        <item>Repeats monthly</item>
-        <item>Repeats yearly</item>
+        <item>@string/option_non_repeat</item>
+        <item>@string/option_repeat_daily</item>
+        <item>@string/option_repeat_weekly</item>
+        <item>@string/option_repeat_monthly</item>
+        <item>@string/option_repeat_yearly</item>
     </string-array>
 
     <plurals name="msg_times">

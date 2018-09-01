@@ -8,9 +8,9 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import kotlinx.android.synthetic.main.fragment_alarm_list.*
+import kotlinx.android.synthetic.main.fragment_alarm_list.view.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AlarmDataModel
@@ -29,12 +29,15 @@ class AlarmListFragment : Fragment() {
     private var mAdapter: AlarmRecyclerViewAdapter? = null
 
     // Data
+    private lateinit var alarmDataModel: AlarmDataModel
     private lateinit var mAlarms: LiveData<List<Alarm>>
     private lateinit var mAlarmsObserver: Observer<List<Alarm>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mAlarms = ViewModelProviders.of(this)[AlarmDataModel::class.java].alarms
+        setHasOptionsMenu(true)
+        alarmDataModel = ViewModelProviders.of(this)[AlarmDataModel::class.java]
+        mAlarms = alarmDataModel.alarms
         mAlarmsObserver = Observer { onDataChange(it!!) }
         mAlarms.observe(this, mAlarmsObserver)
         mLogger.v("onCreate")
@@ -45,19 +48,19 @@ class AlarmListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_alarm_list, container, false)
         mAdapter = AlarmRecyclerViewAdapter(mutableListOf(), mListener)
 
-        mRecyclerView = view as RecyclerView
-        // Set the adapter
-        return view.apply {
+        mRecyclerView = (view.rv_alarm_list as RecyclerView).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
         }
+        return view
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mListener = when (context) {
-            is OnListFragmentActionListener -> context
-            else -> throw RuntimeException("$context must implement OnListFragmentActionListener")
+        mListener = if (context is OnListFragmentActionListener) {
+            context
+        } else {
+            throw RuntimeException("$context must implement OnListFragmentActionListener")
         }
     }
 
@@ -66,8 +69,48 @@ class AlarmListFragment : Fragment() {
         mListener = null
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.menu_alarm_list, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        item?.let {
+            if (it.groupId == R.id.group_filter) {
+                it.isChecked = true
+                alarmDataModel.dataState = when (item.itemId) {
+                    R.id.item_all_alarms -> AlarmDataModel.ALARMS_ALL
+                    R.id.item_today_alarms -> AlarmDataModel.ALARMS_TODAY
+                    R.id.item_daily_alarms -> AlarmDataModel.ALARMS_DAILY
+                    R.id.item_weekly_alarms -> AlarmDataModel.ALARMS_WEEKLY
+                    R.id.item_monthly_alarms -> AlarmDataModel.ALARMS_MONTHLY
+                    R.id.item_history -> AlarmDataModel.ALARMS_HISTORY
+                    else -> throw IllegalArgumentException("Illegal filter type")
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun onDataChange(data: List<Alarm>) {
         mAdapter?.setAlarms(data)
+        if (data.isEmpty()) {
+            rv_alarm_list.visibility = View.INVISIBLE
+            tv_hint_add_alarm.visibility = View.VISIBLE
+            when (alarmDataModel.dataState) {
+                AlarmDataModel.ALARMS_ALL -> {
+                    tv_hint_add_alarm.setText(R.string.msg_click_add)
+                }
+                AlarmDataModel.ALARMS_HISTORY -> {
+                    tv_hint_add_alarm.setText(R.string.msg_no_history)
+                }
+                else -> {
+                    tv_hint_add_alarm.setText(R.string.msg_click_add)
+                }
+            }
+        } else {
+            rv_alarm_list.visibility = View.VISIBLE
+            tv_hint_add_alarm.visibility = View.GONE
+        }
     }
 
     /**
@@ -92,13 +135,6 @@ class AlarmListFragment : Fragment() {
          * @param isChecked whether the switch is checked.
          */
         fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean)
-
-        /**
-         * Called when the [RecyclerView] is updated.
-         *
-         * @param itemCount the number of items in the [RecyclerView].
-         */
-        fun onRecyclerViewUpdate(itemCount: Int)
     }
 
     private val mLogger = LogUtils.Logger("AlarmListFragment")

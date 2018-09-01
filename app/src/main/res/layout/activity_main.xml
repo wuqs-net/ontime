@@ -6,16 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".feature.home.MainActivity">
 
-    <TextView
-        android:id="@+id/tvNoAlarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:text="@string/hint_click_add"
-        android:visibility="gone" />
-
     <fragment
         android:id="@+id/fragment"
         android:name="net.wuqs.ontime.feature.home.AlarmListFragment"

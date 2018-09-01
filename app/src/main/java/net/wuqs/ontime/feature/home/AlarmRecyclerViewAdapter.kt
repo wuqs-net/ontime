@@ -43,7 +43,6 @@ class AlarmRecyclerViewAdapter
         val diff = DiffUtil.calculateDiff(AlarmDiffCallback(data, models))
         data.clear()
         data.addAll(models)
-        mListener?.onRecyclerViewUpdate(itemCount)
         diff.dispatchUpdatesTo(this)
     }
 
@@ -79,9 +78,8 @@ class AlarmRecyclerViewAdapter
 
             // Display information about snooze and next alarm
             item.nextTime.let {
-                tv_next_date.visibility = if (it == null) View.GONE else View.VISIBLE
                 tv_next_date.text = when {
-                    it == null -> ""
+                    it == null -> getDateString(item.activateDate)
                     item.snoozed <= 0 -> getDateString(it)
                     else -> context.getString(
                             R.string.msg_snoozed_time,

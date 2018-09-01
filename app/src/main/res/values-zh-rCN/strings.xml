@@ -2,7 +2,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">OnTime</string>
     <string name="new_alarm">新建闹钟</string>
-    <string name="hint_click_add">要新建闹钟，请点击下方的“添加”按钮</string>
+    <string name="msg_click_add">要新建闹钟，请点击下方的“添加”按钮</string>
+    <string name="msg_no_history">没有历史记录</string>
     <string name="action_save">保存</string>
     <string name="action_discard">舍弃</string>
     <string name="action_keep_editing">继续修改</string>
@@ -14,6 +15,18 @@
     <string name="title_missed_alarms">错过闹钟</string>
     <string name="hint_alarm_title">闹钟名称</string>
     <string name="action_more_options">更多选项</string>
+
+    <string name="action_filter">过滤</string>
+    <string name="action_sort">排序</string>
+    <string name="option_all_alarms">全部闹钟</string>
+    <string name="option_today_alarms">今日闹钟</string>
+    <string name="option_history">历史记录</string>
+
+    <string name="option_non_repeat">单次</string>
+    <string name="option_repeat_daily">按天重复</string>
+    <string name="option_repeat_weekly">按周重复</string>
+    <string name="option_repeat_monthly">按月重复</string>
+    <string name="option_repeat_yearly">按年重复</string>
 
     <string name="msg_alarm_disabled">闹钟已禁用</string>
     <string name="msg_is_repeat_alarm">重复闹钟</string>
@@ -68,11 +81,11 @@
     </string-array>
 
     <string-array name="repeat_types">
-        <item>单次</item>
-        <item>按天重复</item>
-        <item>按周重复</item>
-        <item>按月重复</item>
-        <item>按年重复</item>
+        <item>@string/option_non_repeat</item>
+        <item>@string/option_repeat_daily</item>
+        <item>@string/option_repeat_weekly</item>
+        <item>@string/option_repeat_monthly</item>
+        <item>@string/option_repeat_yearly</item>
     </string-array>
 
     <plurals name="msg_times">
