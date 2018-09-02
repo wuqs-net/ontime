@@ -11,8 +11,8 @@ import java.util.*
  * @return the [Alarm] saved to database, with its id updated.
  */
 fun addAlarmToDb(db: AppDatabase, alarm: Alarm): Alarm {
-//    alarm.id = generateId()
-    alarm.id = db.alarmDao.insert(alarm)
+    alarm.id = generateId()
+    db.alarmDao.insert(alarm)
     mLogger.i("Alarm added to database: $alarm")
     return alarm
 }
