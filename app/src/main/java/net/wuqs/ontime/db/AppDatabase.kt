@@ -65,6 +65,26 @@ abstract class AppDatabase : RoomDatabase() {
 //                    "repeat_index INTEGER NOT NULL, activate_date INTEGER, " +
 //                    "next_occurrence INTEGER, snoozed INTEGER NOT NULL)")
 //        }
+        val MIGRATION_6_7 = newMigration(5, 6) {
+            execSQL("CREATE TABLE alarms_new (" +
+                    "id INTEGER PRIMARY KEY NOT NULL, " +
+                    "hour INTEGER NOT NULL, " +
+                    "minute INTEGER NOT NULL, " +
+                    "title TEXT, " +
+                    "ringtone_uri TEXT, " +
+                    "vibrate INTEGER NOT NULL, " +
+                    "enabled INTEGER NOT NULL, " +
+                    "repeat_type INTEGER NOT NULL, " +
+                    "repeat_cycle INTEGER NOT NULL, " +
+                    "repeat_index INTEGER NOT NULL, " +
+                    "activate_date INTEGER, " +
+                    "next_occurrence INTEGER, " +
+                    "snoozed INTEGER NOT NULL," +
+                    "notes TEXT NOT NULL)")
+            execSQL("INSERT INTO alarms_new SELECT * FROM alarms")
+            execSQL("DROP TABLE alarms")
+            execSQL("ALTER TABLE alarms_new RENAME TO alarms")
+        }
 
         fun getInstance(context: Context): AppDatabase? {
             if (INSTANCE == null) {

@@ -36,10 +36,10 @@ interface AlarmDao {
     fun getAlarm(id: Int): LiveData<Alarm>
 
     @Insert(onConflict = REPLACE)
-    fun insertAll(vararg alarms: Alarm): LongArray
+    fun insertAll(vararg alarms: Alarm)
 
     @Insert(onConflict = REPLACE)
-    fun insert(alarm: Alarm): Long
+    fun insert(alarm: Alarm)
 
     @Update
     fun update(alarm: Alarm): Int
