@@ -83,9 +83,13 @@ class AlarmStateManager : BroadcastReceiver() {
         val (notMissed, missed) = alarms.partition { it.nextTime!!.after(now) }
         LOGGER.d("Not missed: ${notMissed.joinToString()}")
         LOGGER.d("Missed: ${missed.joinToString()}")
-        notMissed.forEach {
-            if (it.snoozed != 0 && it.nextTime == it.getNextOccurrence()) it.snoozed = 0
-            scheduleAlarm(context, it)
+        notMissed.forEach { alarm ->
+            if (alarm.snoozed == 0) {
+                alarm.nextTime = alarm.getNextOccurrence()
+            } else if (alarm.snoozed != 0 && alarm.nextTime == alarm.getNextOccurrence()) {
+                alarm.snoozed = 0
+            }
+            scheduleAlarm(context, alarm)
         }
         LOGGER.i("Finished scheduling all alarms")
 

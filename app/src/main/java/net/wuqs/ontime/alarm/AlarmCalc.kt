@@ -4,6 +4,9 @@ import net.wuqs.ontime.db.Alarm
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+/**
+ * Finds the next time this non-repeat alarm will go off.
+ */
 fun Alarm.nextTimeNonRepeat(now: Calendar = Calendar.getInstance()): Calendar? {
     val next = activateDate!!.let {
         GregorianCalendar(it[Calendar.YEAR], it[Calendar.MONTH], it[Calendar.DAY_OF_MONTH],
@@ -45,7 +48,7 @@ fun Alarm.nextTimeWeekly(now: Calendar = Calendar.getInstance()): Calendar? {
     println(next.time)
 
     for (i in weekDays) {
-        if (repeatIndex.isWeekdaySet(i) && next.after(now)) return next
+        if (repeatIndex.isWeekdaySet(i) && next.after(now) && next.after(activateDate)) return next
         next.add(Calendar.DAY_OF_WEEK, 1)
     }
 
