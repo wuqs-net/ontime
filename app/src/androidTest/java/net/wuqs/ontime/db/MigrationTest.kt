@@ -105,7 +105,7 @@ class MigrationTest {
         )
     }
 
-    fun randomAlarm(id: Long): Alarm {
+    private fun randomAlarm(id: Long): Alarm {
         val r = Random()
         val repeatTypes = arrayOf(Alarm.NON_REPEAT, Alarm.REPEAT_DAILY, Alarm.REPEAT_WEEKLY,
                 Alarm.REPEAT_MONTHLY_BY_DATE, Alarm.REPEAT_YEARLY_BY_DATE)
@@ -131,11 +131,7 @@ class MigrationTest {
                 else -> 0
             }
             activateDate = Calendar.getInstance().apply {
-                timeInMillis = r.longs(
-                        1,
-                        this.timeInMillis - 1000000000,
-                        this.timeInMillis + 1000000000
-                ).sum()
+                timeInMillis = timeInMillis - 1000000000 + r.nextInt(2000000000)
             }
             nextTime = getNextOccurrence()
             if (nextTime != null) {
@@ -145,6 +141,7 @@ class MigrationTest {
                 }
             } else {
                 snoozed = 0
+                isEnabled = false
             }
         }
     }
