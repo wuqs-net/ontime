@@ -17,7 +17,7 @@ import java.util.*
 
 @Entity(tableName = "alarms")
 class Alarm(
-        @PrimaryKey(autoGenerate = true) var id: Long = INVALID_ID,
+        @PrimaryKey var id: Long = INVALID_ID,
         @ColumnInfo(name = "hour") var hour: Int = 0,
         @ColumnInfo(name = "minute") var minute: Int = 0,
         @ColumnInfo(name = "title") var title: String? = "",
