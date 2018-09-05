@@ -125,7 +125,11 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
         mLogger.i("Alarm finished: $alarm")
         mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
         AlarmWakeLock.releaseCpuLock()
-        finish()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            finishAndRemoveTask()
+        } else {
+            finish()
+        }
     }
 
     /**

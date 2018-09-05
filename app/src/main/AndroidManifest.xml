@@ -25,7 +25,6 @@
 
         <activity
             android:name="net.wuqs.ontime.feature.currentalarm.AlarmActivity"
-            android:excludeFromRecents="true"
             android:taskAffinity="" />
 
         <activity
