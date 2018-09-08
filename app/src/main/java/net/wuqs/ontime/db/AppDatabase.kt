@@ -8,7 +8,7 @@ import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
-@Database(entities = [Alarm::class], version = 5)
+@Database(entities = [Alarm::class], version = 6)
 @TypeConverters(DataTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -50,6 +50,10 @@ abstract class AppDatabase : RoomDatabase() {
             execSQL("ALTER TABLE alarms ADD COLUMN vibrate INTEGER NOT NULL DEFAULT 0")
         }
 
+        val MIGRATION_5_6 = newMigration(5, 6) {
+            execSQL("ALTER TABLE alarms ADD COLUMN notes TEXT NOT NULL DEFAULT ''")
+        }
+
 //        private val MIGRATION_4_5 = newMigration(4, 5) {
 //            execSQL("CREATE TABLE alarms_new " +
 //                    "(id INTEGER PRIMARY KEY, " +
@@ -69,7 +73,8 @@ abstract class AppDatabase : RoomDatabase() {
                                     MIGRATION_1_2,
                                     MIGRATION_2_3,
                                     MIGRATION_3_4,
-                                    MIGRATION_4_5
+                                    MIGRATION_4_5,
+                                    MIGRATION_5_6
                             )
                             .build()
                 }
@@ -87,8 +92,10 @@ private fun newMigration(
     startVersion: Int,
     endVersion: Int,
     migrate: SupportSQLiteDatabase.() -> Unit
-) = object : Migration(startVersion, endVersion) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.migrate()
+): Migration {
+    return object : Migration(startVersion, endVersion) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.migrate()
+        }
     }
 }

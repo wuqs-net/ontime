@@ -29,7 +29,8 @@ class Alarm(
         @ColumnInfo(name = "repeat_index") var repeatIndex: Int = 0,
         @ColumnInfo(name = "activate_date") var activateDate: Calendar? = Calendar.getInstance(),
         @ColumnInfo(name = "next_occurrence") var nextTime: Calendar? = null,
-        @ColumnInfo(name = "snoozed") var snoozed: Int = 0
+        @ColumnInfo(name = "snoozed") var snoozed: Int = 0,
+        @ColumnInfo(name = "notes") var notes: String = ""
 ) : Parcelable {
 
     // TODO: new primary key using hashcode/md5
@@ -80,7 +81,8 @@ class Alarm(
             repeatIndex = source.readInt(),
             activateDate = DTC.toCalendar(source.readLong()),
             nextTime = DTC.toCalendar(source.readLong().takeIf { it != 0L }),
-            snoozed = source.readInt()
+            snoozed = source.readInt(),
+            notes = source.readString()
     )
 
     @Ignore
@@ -97,7 +99,8 @@ class Alarm(
             repeatIndex = another.repeatIndex,
             activateDate = another.activateDate!!.clone() as Calendar,
             nextTime = another.nextTime?.clone() as Calendar?,
-            snoozed = another.snoozed
+            snoozed = another.snoozed,
+            notes = another.notes
     )
 
     override fun describeContents() = 0
@@ -116,6 +119,7 @@ class Alarm(
         writeLong(DTC.toLong(activateDate)!!)
         writeLong(DTC.toLong(nextTime) ?: 0L)
         writeInt(snoozed)
+        writeString(notes)
     }
 
     override fun toString(): String {
@@ -125,7 +129,7 @@ class Alarm(
                 "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
                 "repeatIndex=${repeatIndex.binString}, " +
                 "activate=${activateDate?.time}, next=${nextTime?.time}, " +
-                "snoozed=$snoozed}"
+                "snoozed=$snoozed, notes=$notes}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -147,6 +151,7 @@ class Alarm(
         if (activateDate != other.activateDate) return false
         if (nextTime != other.nextTime) return false
         if (snoozed != other.snoozed) return false
+        if (notes != other.notes) return false
 
         return true
     }
