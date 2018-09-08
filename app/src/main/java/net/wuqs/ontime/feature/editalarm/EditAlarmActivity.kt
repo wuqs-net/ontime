@@ -82,6 +82,8 @@ class EditAlarmActivity : AppCompatActivity(),
         cb_vibrate.isChecked = alarm.vibrate
         cb_vibrate.setOnCheckedChangeListener { _, isChecked -> alarm.vibrate = isChecked }
 
+        et_notes.setText(alarm.notes)
+
         updateNextAlarmDate(alarm.snoozed != 0)
         updateRepeatDisplay()
     }
@@ -192,6 +194,7 @@ class EditAlarmActivity : AppCompatActivity(),
                     return true
                 }
                 alarm.title = et_alarm_title.text.toString()
+                alarm.notes = et_notes.text.toString()
                 alarm.isEnabled = true
                 if (alarm.repeatType == Alarm.NON_REPEAT) alarm.repeatCycle = 0
                 val data = Intent(this, MainActivity::class.java)
@@ -228,6 +231,7 @@ class EditAlarmActivity : AppCompatActivity(),
 
     private fun promptDiscard() {
         if (et_alarm_title.text.toString() != alarm.title) mAlarmEdited = true
+        if (et_notes.text.toString() != alarm.notes) mAlarmEdited = true
         if (!mAlarmEdited) {
             NavUtils.navigateUpFromSameTask(this)
             return

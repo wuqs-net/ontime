@@ -13,6 +13,7 @@
     <string name="title_edit_alarm">Edit alarm</string>
     <string name="title_missed_alarms">Missed alarms</string>
     <string name="hint_alarm_title">Name</string>
+    <string name="hint_alarm_notes">Notes</string>
     <string name="action_more_options">More options</string>
 
     <string name="action_filter">Filter</string>

@@ -19,12 +19,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            app:tintMode="src_in"
-            app:tint="?attr/colorControlNormal"
             app:layout_constraintBottom_toBottomOf="@+id/tv_alarm_time"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tv_alarm_time"
-            app:srcCompat="@drawable/ic_schedule" />
+            app:srcCompat="@drawable/ic_schedule"
+            app:tint="?attr/colorControlNormal"
+            app:tintMode="src_in" />
 
         <TextView
             android:id="@+id/tv_alarm_time"
@@ -55,12 +55,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            app:tint="?attr/colorControlNormal"
-            app:tintMode="src_in"
             app:layout_constraintBottom_toBottomOf="@+id/et_alarm_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/et_alarm_title"
-            app:srcCompat="@drawable/ic_title" />
+            app:srcCompat="@drawable/ic_title"
+            app:tint="?attr/colorControlNormal"
+            app:tintMode="src_in" />
 
         <EditText
             android:id="@+id/et_alarm_title"
@@ -133,8 +133,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/content_start_padding"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/msg_vibrate"
+            android:textAppearance="@style/TextAppearance.AppCompat.Menu"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider_repeat" />
 
@@ -142,9 +143,44 @@
             android:id="@+id/divider_ringtone"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:background="?android:attr/listDivider"
             app:layout_constraintTop_toBottomOf="@+id/cb_vibrate" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/boundary_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_notes"
+            app:srcCompat="@drawable/ic_note_black_24dp"
+            app:tint="?attr/colorControlNormal"
+            app:tintMode="src_in" />
+
+        <EditText
+            android:id="@+id/et_notes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/boundary_margin"
+            android:layout_marginStart="@dimen/content_start_padding"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:hint="@string/hint_alarm_notes"
+            android:inputType="textMultiLine"
+            android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider_ringtone" />
+
+        <View
+            android:id="@+id/divider_notes"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintTop_toBottomOf="@+id/et_notes" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
