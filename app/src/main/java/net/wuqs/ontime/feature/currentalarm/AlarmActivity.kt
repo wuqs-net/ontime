@@ -56,6 +56,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
         btn_delay.setOnClickListener { delayAlarm() }
         btn_dismiss.setOnClickListener { dismissAlarm() }
         tv_alarm_title.text = alarm.title
+        tv_alarm_notes.text = alarm.notes
     }
 
     // Prevent quit by pressing Back

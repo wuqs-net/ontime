@@ -7,31 +7,6 @@
     tools:context=".feature.currentalarm.AlarmActivity">
 
     <TextView
-        android:id="@+id/tv_next_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_dismiss"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="@string/msg_next_date" />
-
-    <TextClock
-        android:id="@+id/clock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_alarm_title"
-        tools:text="下午11:55" />
-
-    <TextView
         android:id="@+id/tv_alarm_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -45,6 +20,43 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Get up" />
+
+    <TextClock
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_alarm_title"
+        tools:text="下午11:55" />
+
+    <TextView
+        android:id="@+id/tv_alarm_notes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_next_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clock"
+        tools:text="Notes" />
+
+    <TextView
+        android:id="@+id/tv_next_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_dismiss"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@string/msg_next_date" />
 
     <ImageButton
         android:id="@+id/btn_dismiss"
