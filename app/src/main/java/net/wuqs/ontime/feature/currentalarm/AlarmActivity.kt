@@ -20,6 +20,7 @@ import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.util.AlarmWakeLock
 import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.getCustomTaskDescription
 import java.util.*
 
 class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickListener {
@@ -33,6 +34,11 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setTaskDescription(getCustomTaskDescription())
+        }
+
         mLogger.v("onCreate")
 
         AlarmWakeLock.acquireCpuWakeLock(this)
