@@ -23,6 +23,13 @@
     <string name="option_today_alarms">今日闹钟</string>
     <string name="option_history">历史记录</string>
 
+    <string name="action_backup">备份</string>
+    <string name="action_restore">还原</string>
+    <string name="msg_backup_successful">备份成功</string>
+    <string name="msg_backup_failed">备份失败</string>
+    <string name="msg_restore_successful">还原成功，请重新启动应用</string>
+    <string name="msg_restore_failed">还原失败</string>
+
     <string name="option_non_repeat">单次</string>
     <string name="option_repeat_daily">按天重复</string>
     <string name="option_repeat_weekly">按周重复</string>

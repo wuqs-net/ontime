@@ -77,7 +77,7 @@ class AlarmStateManager : BroadcastReceiver() {
      * Schedules all alarms in AlarmManager.
      */
     private fun scheduleAllAlarms(context: Context, onBoot: Boolean) {
-        val db = AppDatabase[context]!!
+        val db = AppDatabase.getInstance(context)!!
         val alarms = db.alarmDao.alarmsHasNextTime
         val now = Calendar.getInstance()
         val (notMissed, missed) = alarms.partition { it.nextTime!!.after(now) }
@@ -103,7 +103,7 @@ class AlarmStateManager : BroadcastReceiver() {
     }
 
     private fun dismissAllMissedAlarms(context: Context, alarms: List<Alarm>) {
-        val db = AppDatabase[context]!!
+        val db = AppDatabase.getInstance(context)!!
         val now = Calendar.getInstance()
         alarms.forEach {
             it.snoozed = 0

@@ -12,11 +12,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import net.wuqs.ontime.R
 
-fun Context.shortToast(resId: Int) {
+fun Context.shortToast(@StringRes resId: Int) {
     Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
 }
 
-fun Context.longToast(resId: Int) {
+fun Context.longToast(@StringRes resId: Int) {
     Toast.makeText(this, resId, Toast.LENGTH_LONG).show()
 }
 

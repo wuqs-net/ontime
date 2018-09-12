@@ -10,7 +10,7 @@ import net.wuqs.ontime.alarm.sameDayAs
 import java.util.*
 
 class AlarmDataModel(application: Application) : AndroidViewModel(application) {
-    private val dao = AppDatabase[application]!!.alarmDao
+    private val dao = AppDatabase.getInstance(application)!!.alarmDao
     val alarms = MediatorLiveData<List<Alarm>>()
 
     var dataState: Int = ALARMS_ALL

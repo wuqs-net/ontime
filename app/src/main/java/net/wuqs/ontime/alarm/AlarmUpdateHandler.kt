@@ -14,7 +14,7 @@ import net.wuqs.ontime.util.LogUtils
 class AlarmUpdateHandler(context: Context,
                          private val snackbarAnchor: View? = null) {
     private val context = context.applicationContext
-    private val db = AppDatabase[this.context]!!
+    private val db = AppDatabase.getInstance(this.context)!!
 
     fun asyncAddAlarm(alarm: Alarm, showSnackbar: Boolean = false) {
         AddAlarmTask(this, alarm, showSnackbar).execute()

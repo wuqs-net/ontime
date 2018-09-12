@@ -1,19 +1,27 @@
 package net.wuqs.ontime.feature.home
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.db.BackupDbTask
+import net.wuqs.ontime.db.RestoreDbTask
 import net.wuqs.ontime.feature.editalarm.EditAlarmActivity
 import net.wuqs.ontime.feature.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.feature.shared.dialog.TimePickerDialogFragment
@@ -47,7 +55,6 @@ class MainActivity : AppCompatActivity(),
         }
 
     }
-    // TODO: display missed alarm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +94,38 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // TODO: Hide backup/restore options
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.mi_backup -> backupDb()
+            R.id.mi_restore -> restoreDb()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSION_REQUEST_BACKUP_DB -> {
+                if (grantResults.isNotEmpty() && grantResults[0]
+                        == PackageManager.PERMISSION_GRANTED) {
+                    backupDb()
+                }
+            }
+            PERMISSION_REQUEST_RESTORE_DB -> {
+                if (grantResults.isNotEmpty() && grantResults[0]
+                        == PackageManager.PERMISSION_GRANTED) {
+                    restoreDb()
+                }
+            }
+        }
+    }
+
     override fun onTimeSet(fragment: TimePickerDialogFragment, hourOfDay: Int, minute: Int) {
         if (fragment.tag == TAG_NEW_ALARM) {
             val alarm = Alarm(hour = hourOfDay, minute = minute)
@@ -120,6 +159,29 @@ class MainActivity : AppCompatActivity(),
         TimePickerDialogFragment.show(this, hour, minute, TAG_NEW_ALARM)
     }
 
+    private fun backupDb() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_BACKUP_DB)
+        } else {
+            BackupDbTask(this).execute()
+        }
+    }
+
+    private fun restoreDb() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_RESTORE_DB)
+        } else {
+            RestoreDbTask(this).execute()
+        }
+    }
+
+
     override fun onDestroy() {
         val lbm = LocalBroadcastManager.getInstance(this)
         lbm.unregisterReceiver(receiver)
@@ -135,3 +197,6 @@ class MainActivity : AppCompatActivity(),
 }
 
 private const val TAG_NEW_ALARM = "NEW_ALARM"
+
+private const val PERMISSION_REQUEST_BACKUP_DB = 1
+private const val PERMISSION_REQUEST_RESTORE_DB = 2

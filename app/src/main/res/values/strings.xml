@@ -22,6 +22,13 @@
     <string name="option_today_alarms">Today\'s alarms</string>
     <string name="option_history">History</string>
 
+    <string name="action_backup">Backup</string>
+    <string name="action_restore">Restore</string>
+    <string name="msg_backup_successful">Backup successful</string>
+    <string name="msg_backup_failed">Backup failed</string>
+    <string name="msg_restore_successful">Restore successful. Please restart the application</string>
+    <string name="msg_restore_failed">Restore failed</string>
+
     <string name="option_non_repeat">Does not repeat</string>
     <string name="option_repeat_daily">Repeats daily</string>
     <string name="option_repeat_weekly">Repeats weekly</string>

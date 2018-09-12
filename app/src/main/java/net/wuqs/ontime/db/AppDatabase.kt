@@ -18,6 +18,8 @@ abstract class AppDatabase : RoomDatabase() {
 
         private var INSTANCE: AppDatabase? = null
 
+        const val ALARM_DATABASE_NAME = "alarm-database"
+
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 with(database) {
@@ -64,11 +66,11 @@ abstract class AppDatabase : RoomDatabase() {
 //                    "next_occurrence INTEGER, snoozed INTEGER NOT NULL)")
 //        }
 
-        operator fun get(context: Context): AppDatabase? {
+        fun getInstance(context: Context): AppDatabase? {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
-                            AppDatabase::class.java, "alarm-database")
+                            AppDatabase::class.java, ALARM_DATABASE_NAME)
                             .addMigrations(
                                     MIGRATION_1_2,
                                     MIGRATION_2_3,
@@ -83,6 +85,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         fun destroyInstance() {
+            INSTANCE?.close()
             INSTANCE = null
         }
     }
