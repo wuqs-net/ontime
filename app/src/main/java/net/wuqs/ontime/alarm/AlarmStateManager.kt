@@ -47,6 +47,7 @@ class AlarmStateManager : BroadcastReceiver() {
                 val alarm = intent.getBundleExtra(ALARM_INSTANCE).getParcelable<Alarm>(ALARM_INSTANCE)
                 if (alarm.isEnabled) {
                     LOGGER.i("Alarm started: $alarm")
+                    // TODO: Multiple alarms go off at the same time
                     val myIntent = Intent(context, AlarmActivity::class.java).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         putExtra(ALARM_INSTANCE, alarm)
@@ -136,17 +137,23 @@ class AlarmStateManager : BroadcastReceiver() {
 //                    .apply {
 //                        addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
 //                    }
-            val operation = PendingIntent.getBroadcast(context, alarm.hashCode(),
-                    startAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    alarm.hashCode(),
+                    startAlarmIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            )
 
-//            if (ApiUtil.isLOrLater()) {
-//                val viewIntent = PendingIntent.getActivity(context, alarm.hashCode(),
-//                        alarm.createIntent(context, MainActivity::class.java), 0)
-//                val info = AlarmManager.AlarmClockInfo(alarm.nextTime!!.timeInMillis, viewIntent)
-//                am.setAlarmClock(info, operation)
-//            } else {
-            am.setExact(AlarmManager.RTC_WAKEUP, alarm.nextTime!!.timeInMillis, operation)
-//            }
+            if (ApiUtil.isMOrLater()) {
+                // Ensure the alarm fires even if the device is dozing.
+                am.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        alarm.nextTime!!.timeInMillis,
+                        pendingIntent
+                )
+            } else {
+                am.setExact(AlarmManager.RTC_WAKEUP, alarm.nextTime!!.timeInMillis, pendingIntent)
+            }
             LOGGER.d("Alarm registered: $alarm")
         }
 
