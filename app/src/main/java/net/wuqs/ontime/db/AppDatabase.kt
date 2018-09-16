@@ -8,7 +8,7 @@ import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
-@Database(entities = [Alarm::class], version = 6)
+@Database(entities = [Alarm::class], version = 7)
 @TypeConverters(DataTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -65,7 +65,7 @@ abstract class AppDatabase : RoomDatabase() {
 //                    "repeat_index INTEGER NOT NULL, activate_date INTEGER, " +
 //                    "next_occurrence INTEGER, snoozed INTEGER NOT NULL)")
 //        }
-        val MIGRATION_6_7 = newMigration(5, 6) {
+        val MIGRATION_6_7 = newMigration(6, 7) {
             execSQL("CREATE TABLE alarms_new (" +
                     "id INTEGER PRIMARY KEY NOT NULL, " +
                     "hour INTEGER NOT NULL, " +
@@ -96,7 +96,8 @@ abstract class AppDatabase : RoomDatabase() {
                                     MIGRATION_2_3,
                                     MIGRATION_3_4,
                                     MIGRATION_4_5,
-                                    MIGRATION_5_6
+                                    MIGRATION_5_6,
+                                    MIGRATION_6_7
                             )
                             .build()
                 }
