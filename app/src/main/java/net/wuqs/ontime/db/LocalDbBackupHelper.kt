@@ -1,5 +1,6 @@
 package net.wuqs.ontime.db
 
+import android.app.Activity
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Environment
@@ -9,6 +10,7 @@ import net.wuqs.ontime.util.shortToast
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.IOException
 import java.lang.ref.WeakReference
 
 /**
@@ -20,27 +22,30 @@ fun isExternalStorageWritable(): Boolean {
 
 fun getExternalDbDir(): File {
     val file = File(Environment.getExternalStorageDirectory(), "OnTime")
-    if (!file.mkdir()) logger.e("Directory not created")
+    if (!file.mkdir() && !file.exists()) logger.e("Directory not created")
     return file
 }
 
 class BackupDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
 
-    private val contextRef = WeakReference(context.applicationContext)
+    private val contextRef = WeakReference(context)
 
     override fun doInBackground(vararg params: Unit?): Boolean? {
         try {
             val context = contextRef.get() ?: return false
+
+            val externalDir = getExternalDbDir()
+
             val currentDb = context.getDatabasePath(AppDatabase.ALARM_DATABASE_NAME)
-            val backupDb = File(getExternalDbDir(), BACKUP_DB_NAME)
+            val currentDbDir = currentDb.parentFile
+            val backupDb = File(externalDir, AppDatabase.ALARM_DATABASE_NAME)
+            copy(currentDb, backupDb)
 
-            val srcChannel = FileInputStream(currentDb).channel
-            val dstChannel = FileOutputStream(backupDb).channel
-
-            dstChannel.transferFrom(srcChannel, 0, srcChannel.size())
-            srcChannel.close()
-            dstChannel.close()
+            val currentWal = File(currentDbDir, "${AppDatabase.ALARM_DATABASE_NAME}-wal")
+            val backupWal = File(externalDir, "${AppDatabase.ALARM_DATABASE_NAME}-wal")
+            copy(currentWal, backupWal)
         } catch (e: Exception) {
+            e.printStackTrace()
             return false
         }
         return true
@@ -56,22 +61,21 @@ class BackupDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
 
 class RestoreDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
 
-    private val contextRef = WeakReference(context.applicationContext)
+    private val contextRef = WeakReference(context)
 
     override fun doInBackground(vararg params: Unit?): Boolean? {
         try {
             val context = contextRef.get() ?: return false
-            AppDatabase.destroyInstance()
+            val externalDir = getExternalDbDir()
+
             val currentDb = context.getDatabasePath(AppDatabase.ALARM_DATABASE_NAME)
-            val backupDb = File(getExternalDbDir(), BACKUP_DB_NAME)
+            val currentDbDir = currentDb.parentFile
+            val backupDb = File(externalDir, AppDatabase.ALARM_DATABASE_NAME)
+            copy(backupDb, currentDb)
 
-            val srcChannel = FileInputStream(backupDb).channel
-            val dstChannel = FileOutputStream(currentDb).channel
-
-            dstChannel.transferFrom(srcChannel, 0, srcChannel.size())
-            srcChannel.close()
-            dstChannel.close()
-
+            val currentWal = File(currentDbDir, "${AppDatabase.ALARM_DATABASE_NAME}-wal")
+            val backupWal = File(externalDir, "${AppDatabase.ALARM_DATABASE_NAME}-wal")
+            copy(backupWal, currentWal)
         } catch (e: Exception) {
             return false
         }
@@ -83,10 +87,23 @@ class RestoreDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
 
         if (result) {
             context.shortToast(R.string.msg_restore_successful)
+            AppDatabase.destroyInstance()
+            (context as? Activity)?.finishAffinity()
         } else {
             context.shortToast(R.string.msg_restore_failed)
         }
     }
+}
+
+@Throws(IOException::class)
+private fun copy(from: File, to: File) {
+    val src = FileInputStream(from).channel
+    val dst = FileOutputStream(to).channel
+
+    dst.transferFrom(src, 0, src.size())
+
+    src.close()
+    dst.close()
 }
 
 private const val BACKUP_DB_NAME = "alarms-backup.db"
