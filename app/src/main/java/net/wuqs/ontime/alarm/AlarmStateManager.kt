@@ -86,7 +86,7 @@ class AlarmStateManager : BroadcastReceiver() {
         notMissed.forEach { alarm ->
             if (alarm.snoozed == 0) {
                 alarm.nextTime = alarm.getNextOccurrence()
-            } else if (alarm.snoozed != 0 && alarm.nextTime == alarm.getNextOccurrence()) {
+            } else if (alarm.nextTime == alarm.getNextOccurrence()) {
                 alarm.snoozed = 0
             }
             scheduleAlarm(context, alarm)
@@ -94,8 +94,12 @@ class AlarmStateManager : BroadcastReceiver() {
         LOGGER.i("Finished scheduling all alarms")
 
         if (missed.isEmpty()) return
+        val (enabled, disabled) = missed.partition { it.isEnabled }
+        dismissAllMissedAlarms(context, disabled)   // Ignore disabled alarms
+
+        if (enabled.isEmpty()) return
         val intent = Intent(ACTION_SHOW_MISSED_ALARMS).apply {
-            putParcelableArrayListExtra(EXTRA_MISSED_ALARMS, ArrayList(missed))
+            putParcelableArrayListExtra(EXTRA_MISSED_ALARMS, ArrayList(enabled))
             putExtra(EXTRA_ON_BOOT, onBoot)
         }
         val lbm = LocalBroadcastManager.getInstance(context)
