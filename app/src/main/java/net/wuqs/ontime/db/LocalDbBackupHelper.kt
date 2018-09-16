@@ -44,6 +44,10 @@ class BackupDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
             val currentWal = File(currentDbDir, "${AppDatabase.ALARM_DATABASE_NAME}-wal")
             val backupWal = File(externalDir, "${AppDatabase.ALARM_DATABASE_NAME}-wal")
             copy(currentWal, backupWal)
+
+            val currentShm = File(currentDbDir, "${AppDatabase.ALARM_DATABASE_NAME}-shm")
+            val backupShm = File(externalDir, "${AppDatabase.ALARM_DATABASE_NAME}-shm")
+            copy(currentShm, backupShm)
         } catch (e: Exception) {
             e.printStackTrace()
             return false
@@ -53,9 +57,12 @@ class BackupDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
 
     override fun onPostExecute(result: Boolean) {
         val context = contextRef.get() ?: return
-        context.shortToast(
-                if (result) R.string.msg_backup_successful else R.string.msg_backup_failed
-        )
+
+        if (result) {
+            context.shortToast(R.string.msg_backup_successful)
+        } else {
+            context.shortToast(R.string.msg_backup_failed)
+        }
     }
 }
 
@@ -76,6 +83,10 @@ class RestoreDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
             val currentWal = File(currentDbDir, "${AppDatabase.ALARM_DATABASE_NAME}-wal")
             val backupWal = File(externalDir, "${AppDatabase.ALARM_DATABASE_NAME}-wal")
             copy(backupWal, currentWal)
+
+            val currentShm = File(currentDbDir, "${AppDatabase.ALARM_DATABASE_NAME}-shm")
+            val backupShm = File(externalDir, "${AppDatabase.ALARM_DATABASE_NAME}-shm")
+            copy(backupShm, currentShm)
         } catch (e: Exception) {
             return false
         }
@@ -87,7 +98,6 @@ class RestoreDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
 
         if (result) {
             context.shortToast(R.string.msg_restore_successful)
-            AppDatabase.destroyInstance()
             (context as? Activity)?.finishAffinity()
         } else {
             context.shortToast(R.string.msg_restore_failed)
@@ -105,7 +115,5 @@ private fun copy(from: File, to: File) {
     src.close()
     dst.close()
 }
-
-private const val BACKUP_DB_NAME = "alarms-backup.db"
 
 private val logger = LogUtils.Logger("LocalDbBackupHelper")

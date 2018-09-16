@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.db.AppDatabase
 import net.wuqs.ontime.db.BackupDbTask
 import net.wuqs.ontime.db.RestoreDbTask
 import net.wuqs.ontime.feature.editalarm.EditAlarmActivity
@@ -185,6 +186,7 @@ class MainActivity : AppCompatActivity(),
     override fun onDestroy() {
         val lbm = LocalBroadcastManager.getInstance(this)
         lbm.unregisterReceiver(receiver)
+        AppDatabase.destroyInstance()
         super.onDestroy()
     }
 
