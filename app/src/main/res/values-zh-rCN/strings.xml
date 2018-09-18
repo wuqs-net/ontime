@@ -77,6 +77,11 @@
     <string name="msg_am">上午</string>
     <string name="msg_pm">下午</string>
 
+    <!--About-->
+    <string name="title_about">关于</string>
+    <string name="action_rate">去应用商店评分</string>
+    <string name="action_feedback">建议与反馈</string>
+
     <string-array name="time_distance">
         <item>不到1分钟</item>
         <item><xliff:g id="minute">%3$s</xliff:g></item>

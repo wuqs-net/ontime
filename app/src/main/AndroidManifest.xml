@@ -14,25 +14,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
-            android:name="net.wuqs.ontime.feature.home.MainActivity"
+            android:name=".feature.home.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="net.wuqs.ontime.feature.currentalarm.AlarmActivity"
+            android:name=".feature.currentalarm.AlarmActivity"
             android:taskAffinity="" />
-
         <activity
-            android:name="net.wuqs.ontime.feature.editalarm.EditAlarmActivity"
-            android:parentActivityName="net.wuqs.ontime.feature.home.MainActivity" />
-
-        <activity android:name="net.wuqs.ontime.feature.missedalarms.MissedAlarmsActivity" />
+            android:name=".feature.editalarm.EditAlarmActivity"
+            android:parentActivityName=".feature.home.MainActivity" />
+        <activity android:name=".feature.missedalarms.MissedAlarmsActivity" />
 
         <receiver
             android:name=".alarm.AlarmStateManager"
@@ -47,6 +44,10 @@
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name=".feature.about.AboutActivity"
+            android:label="@string/title_about"
+            android:parentActivityName=".feature.home.MainActivity" />
     </application>
 
 </manifest>
