@@ -128,6 +128,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
     private fun stopAlarm() {
         AlarmRinger.stop(this)
         mediaPlayer.stop()
+        mediaPlayer.reset()
         mediaPlayer.release()
         mLogger.i("Alarm finished: $alarm")
         mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
