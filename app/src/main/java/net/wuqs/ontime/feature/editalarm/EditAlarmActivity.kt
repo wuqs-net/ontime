@@ -32,11 +32,11 @@ class EditAlarmActivity : AppCompatActivity(),
         SpinnerDialogFragment.OptionListener,
         RepeatOptionFragment.OnRepeatIndexPickListener {
 
-    private lateinit var alarm: Alarm
-
     private lateinit var mAlarmUpdateHandler: AlarmUpdateHandler
 
-    private var mAlarmEdited = false
+    private lateinit var alarm: Alarm
+
+    private var alarmEdited = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +57,7 @@ class EditAlarmActivity : AppCompatActivity(),
         if (alarm.id == Alarm.INVALID_ID) {
             title = getString(R.string.title_new_alarm)
             alarm.ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            mAlarmEdited = true
+            alarmEdited = true
             mLogger.v("Alarm changes made: new alarm")
         } else {
             title = getString(R.string.title_edit_alarm)
@@ -80,7 +80,6 @@ class EditAlarmActivity : AppCompatActivity(),
         oiv_repeat_type.setOnClickListener { showRepeatPickerDialog() }
 
         cb_vibrate.isChecked = alarm.vibrate
-        cb_vibrate.setOnCheckedChangeListener { _, isChecked -> alarm.vibrate = isChecked }
 
         et_notes.setText(alarm.notes)
 
@@ -109,7 +108,7 @@ class EditAlarmActivity : AppCompatActivity(),
 
     override fun onTimeSet(fragment: TimePickerDialogFragment, hourOfDay: Int, minute: Int) {
         if (fragment.tag == TAG_EDIT_ALARM) {
-            mAlarmEdited = true
+            alarmEdited = true
             mLogger.v("Alarm changes made: time")
             alarm.hour = hourOfDay
             alarm.minute = minute
@@ -120,13 +119,13 @@ class EditAlarmActivity : AppCompatActivity(),
     }
 
     override fun updateRepeatOption(repeatType: Int?, repeatCycle: Int?, repeatIndex: Int?) {
-        mAlarmEdited = true
+        alarmEdited = true
         mLogger.v("Alarm changes made: repeat option")
         updateNextAlarmDate()
     }
 
     override fun updateActivateDate(year: Int, month: Int, dayOfMonth: Int) {
-        mAlarmEdited = true
+        alarmEdited = true
         mLogger.v("Alarm changes made: date")
         alarm.activateDate!!.setMidnight(year, month, dayOfMonth)
         updateNextAlarmDate()
@@ -165,7 +164,7 @@ class EditAlarmActivity : AppCompatActivity(),
                 }
             }
             alarm.repeatType = it
-            mAlarmEdited = true
+            alarmEdited = true
             mLogger.v("Alarm changes made: repeat type")
         }
         updateRepeatDisplay()
@@ -195,6 +194,7 @@ class EditAlarmActivity : AppCompatActivity(),
                 }
                 alarm.title = et_alarm_title.text.toString()
                 alarm.notes = et_notes.text.toString()
+                alarm.vibrate = cb_vibrate.isChecked
                 alarm.isEnabled = true
                 if (alarm.repeatType == Alarm.NON_REPEAT) alarm.repeatCycle = 0
                 val data = Intent(this, MainActivity::class.java)
@@ -230,9 +230,10 @@ class EditAlarmActivity : AppCompatActivity(),
     }
 
     private fun promptDiscard() {
-        if (et_alarm_title.text.toString() != alarm.title) mAlarmEdited = true
-        if (et_notes.text.toString() != alarm.notes) mAlarmEdited = true
-        if (!mAlarmEdited) {
+        if (et_alarm_title.text.toString() != alarm.title) alarmEdited = true
+        if (et_notes.text.toString() != alarm.notes) alarmEdited = true
+        if (cb_vibrate.isChecked != alarm.vibrate) alarmEdited = true
+        if (!alarmEdited) {
             NavUtils.navigateUpFromSameTask(this)
             return
         }
