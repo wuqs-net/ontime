@@ -95,7 +95,7 @@
         app:layout_constraintStart_toStartOf="@+id/guideline_content"
         app:layout_constraintTop_toTopOf="@+id/tv_next_date"
         app:srcCompat="@drawable/ic_arrow_right"
-        app:tint="?attr/colorControlNormal"
+        app:tint="?android:attr/textColorTertiary"
         app:tintMode="src_in" />
 
     <TextView
@@ -120,7 +120,7 @@
         app:layout_constraintStart_toStartOf="@+id/guideline_content"
         app:layout_constraintTop_toTopOf="@+id/tv_repeat_pattern"
         app:srcCompat="@drawable/ic_repeat"
-        app:tint="?attr/colorControlNormal"
+        app:tint="?android:attr/textColorTertiary"
         app:tintMode="src_in" />
 
     <TextView
