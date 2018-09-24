@@ -139,7 +139,6 @@ class MainActivity : AppCompatActivity(),
             if (alarm.isSetTimeEarlierThanNow()) {
                 alarm.activateDate!!.add(Calendar.DAY_OF_MONTH, 1)
             }
-            // TODO: automatically change start date if alarm time is before now
             val editAlarmIntent = EditAlarmActivity.createIntent(this)
                     .putExtra(ALARM_INSTANCE, alarm)
             startActivityForResult(editAlarmIntent, CREATE_ALARM_REQUEST)
