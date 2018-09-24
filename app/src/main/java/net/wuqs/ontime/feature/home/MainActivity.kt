@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity(),
             logger.d("onReceive(): ${intent?.action}")
             when (intent!!.action) {
                 ACTION_SHOW_MISSED_ALARMS -> {
+                    // Start the activity to show missed alarms.
                     if (!intent.hasExtra(EXTRA_MISSED_ALARMS)) return
                     logger.i("Show missed alarms")
                     val missedAlarmsIntent = Intent(
@@ -81,14 +82,14 @@ class MainActivity : AppCompatActivity(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             CREATE_ALARM_REQUEST, EDIT_ALARM_REQUEST -> {
-                if (resultCode == RESULT_SAVE) {
+                if (resultCode == RESULT_SAVE_ALARM) {
                     val alarm = data!!.getParcelableExtra<Alarm>(ALARM_INSTANCE)
                     if (alarm.id == Alarm.INVALID_ID) {
                         mAlarmUpdateHandler.asyncAddAlarm(alarm, true)
                     } else {
                         mAlarmUpdateHandler.asyncUpdateAlarm(alarm, true)
                     }
-                } else if (resultCode == RESULT_DELETE) {
+                } else if (resultCode == RESULT_DELETE_ALARM) {
                     val alarm = data!!.getParcelableExtra<Alarm>(ALARM_INSTANCE)
                     mAlarmUpdateHandler.asyncDeleteAlarm(alarm)
                 }
@@ -129,9 +130,15 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * Called when the user set a time using the TimePicker when creating a new alarm.
+     */
     override fun onTimeSet(fragment: TimePickerDialogFragment, hourOfDay: Int, minute: Int) {
         if (fragment.tag == TAG_NEW_ALARM) {
             val alarm = Alarm(hour = hourOfDay, minute = minute)
+            if (alarm.isSetTimeEarlierThanNow()) {
+                alarm.activateDate!!.add(Calendar.DAY_OF_MONTH, 1)
+            }
             // TODO: automatically change start date if alarm time is before now
             val editAlarmIntent = EditAlarmActivity.createIntent(this)
                     .putExtra(ALARM_INSTANCE, alarm)
@@ -139,6 +146,9 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * Called when an alarm in the list is clicked.
+     */
     override fun onListItemClick(item: Alarm) {
         Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show()
         logger.v("onListItemClick: $item")
@@ -147,11 +157,17 @@ class MainActivity : AppCompatActivity(),
         startActivityForResult(editAlarmIntent, EDIT_ALARM_REQUEST)
     }
 
+    /**
+     * Called when the switch of an alarm in the list is clicked.
+     */
     override fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean) {
         item.isEnabled = isChecked
         mAlarmUpdateHandler.asyncUpdateAlarm(item, true)
     }
 
+    /**
+     * Called when the create alarm button is clicked.
+     */
     private fun onFabCreateAlarmClick() {
         val calendar = Calendar.getInstance().apply {
             add(Calendar.HOUR_OF_DAY, if (this[Calendar.MINUTE] < 50) 1 else 2)
@@ -162,6 +178,11 @@ class MainActivity : AppCompatActivity(),
         TimePickerDialogFragment.show(this, hour, minute, TAG_NEW_ALARM)
     }
 
+    /**
+     * Backup database.
+     *
+     * This function is NOT for production use.
+     */
     private fun backupDb() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -173,6 +194,11 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * Restore database.
+     *
+     * This function is NOT for production use.
+     */
     private fun restoreDb() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -184,7 +210,6 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-
     override fun onDestroy() {
         val lbm = LocalBroadcastManager.getInstance(this)
         lbm.unregisterReceiver(receiver)
@@ -192,15 +217,13 @@ class MainActivity : AppCompatActivity(),
         super.onDestroy()
     }
 
-    companion object {
-        const val RESULT_SAVE = 1
-        const val RESULT_DELETE = 2
-    }
-
     private val logger = LogUtils.Logger("MainActivity")
 }
 
 private const val TAG_NEW_ALARM = "NEW_ALARM"
+
+const val RESULT_SAVE_ALARM = 1
+const val RESULT_DELETE_ALARM = 2
 
 private const val PERMISSION_REQUEST_BACKUP_DB = 1
 private const val PERMISSION_REQUEST_RESTORE_DB = 2

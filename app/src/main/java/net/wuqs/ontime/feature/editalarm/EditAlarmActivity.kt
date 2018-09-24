@@ -17,6 +17,8 @@ import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.feature.home.MainActivity
+import net.wuqs.ontime.feature.home.RESULT_DELETE_ALARM
+import net.wuqs.ontime.feature.home.RESULT_SAVE_ALARM
 import net.wuqs.ontime.feature.shared.dialog.PromptDialogFragment
 import net.wuqs.ontime.feature.shared.dialog.SpinnerDialogFragment
 import net.wuqs.ontime.feature.shared.dialog.TimePickerDialogFragment
@@ -92,7 +94,7 @@ class EditAlarmActivity : AppCompatActivity(),
             TAG_DELETE_ALARM -> {
                 val data = Intent(this, MainActivity::class.java)
                         .putExtra(ALARM_INSTANCE, alarm)
-                setResult(MainActivity.RESULT_DELETE, data)
+                setResult(RESULT_DELETE_ALARM, data)
                 finish()
             }
         }
@@ -199,7 +201,7 @@ class EditAlarmActivity : AppCompatActivity(),
                 if (alarm.repeatType == Alarm.NON_REPEAT) alarm.repeatCycle = 0
                 val data = Intent(this, MainActivity::class.java)
                         .putExtra(ALARM_INSTANCE, alarm)
-                setResult(MainActivity.RESULT_SAVE, data)
+                setResult(RESULT_SAVE_ALARM, data)
                 finish()
                 return true
             }

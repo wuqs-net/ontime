@@ -123,6 +123,15 @@ fun Alarm.nextTimeYearlyByDate(now: Calendar = Calendar.getInstance()): Calendar
 }
 
 /**
+ * Determines if the time set for this alarm is earlier than now. For example, it is 11:00 now, an
+ * alarm set for 10:00 calling this function will return `true`.
+ */
+fun Alarm.isSetTimeEarlierThanNow(): Boolean {
+    val now = Calendar.getInstance()
+    return hour * 60 + minute <= now[Calendar.HOUR_OF_DAY] * 60 + now[Calendar.MINUTE]
+}
+
+/**
  * Checks if the day of week specified by [calendarDay] is set to `on`.
  *
  * @receiver an Integer representing the weekly repeat pattern.
