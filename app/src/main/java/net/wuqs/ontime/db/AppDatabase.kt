@@ -56,15 +56,6 @@ abstract class AppDatabase : RoomDatabase() {
             execSQL("ALTER TABLE alarms ADD COLUMN notes TEXT NOT NULL DEFAULT ''")
         }
 
-//        private val MIGRATION_4_5 = newMigration(4, 5) {
-//            execSQL("CREATE TABLE alarms_new " +
-//                    "(id INTEGER PRIMARY KEY, " +
-//                    "hour INTEGER NOT NULL, minute INTEGER NOT NULL, " +
-//                    "title TEXT, ringtone_uri TEXT, enabled INTEGER NOT NULL, " +
-//                    "repeat_type INTEGER NOT NULL, repeat_cycle INTEGER NOT NULL, " +
-//                    "repeat_index INTEGER NOT NULL, activate_date INTEGER, " +
-//                    "next_occurrence INTEGER, snoozed INTEGER NOT NULL)")
-//        }
         val MIGRATION_6_7 = newMigration(6, 7) {
             execSQL("CREATE TABLE alarms_new (" +
                     "id INTEGER PRIMARY KEY NOT NULL, " +
@@ -81,7 +72,15 @@ abstract class AppDatabase : RoomDatabase() {
                     "next_occurrence INTEGER, " +
                     "snoozed INTEGER NOT NULL," +
                     "notes TEXT NOT NULL)")
-            execSQL("INSERT INTO alarms_new SELECT * FROM alarms")
+            execSQL("INSERT INTO alarms_new (" +
+                    "id, hour, minute, title, ringtone_uri, vibrate, enabled, " +
+                    "repeat_type, repeat_cycle, repeat_index, activate_date, " +
+                    "next_occurrence, snoozed, notes" +
+                    ") SELECT " +
+                    "id, hour, minute, title, ringtone_uri, vibrate, enabled, " +
+                    "repeat_type, repeat_cycle, repeat_index, activate_date, " +
+                    "next_occurrence, snoozed, notes" +
+                    " FROM alarms")
             execSQL("DROP TABLE alarms")
             execSQL("ALTER TABLE alarms_new RENAME TO alarms")
         }

@@ -45,7 +45,6 @@ fun Alarm.nextTimeWeekly(now: Calendar = Calendar.getInstance()): Calendar? {
     next.add(Calendar.DAY_OF_WEEK, -weekDays.indexOf(next[Calendar.DAY_OF_WEEK]))
     val week = (now dayDiff next) / (7 * repeatCycle)
     next.add(Calendar.DAY_OF_YEAR, week.toInt() * 7 * repeatCycle)
-    println(next.time)
 
     for (i in weekDays) {
         if (repeatIndex.isWeekdaySet(i) && next.after(now) && next.after(activateDate)) return next

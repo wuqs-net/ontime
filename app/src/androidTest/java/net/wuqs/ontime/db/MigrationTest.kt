@@ -42,15 +42,15 @@ class MigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun migrate5To6() {
-        var db = helper.createDatabase(TEST_DB, 5)
+    fun migrate6To7() {
+        var db = helper.createDatabase(TEST_DB, 6)
 
         // Insert some data
         val alarms = Array(1000) { randomAlarm((it + 1).toLong()) }
         for (alarm in alarms) db.insert(alarm)
         db.close()
 
-        db = helper.runMigrationsAndValidate(TEST_DB, 6, true, AppDatabase.MIGRATION_5_6)
+        db = helper.runMigrationsAndValidate(TEST_DB, 7, true, AppDatabase.MIGRATION_6_7)
         val cursor = db.query("SELECT * FROM '$TEST_DB'")
 
         while (cursor.moveToNext()) {
@@ -75,6 +75,7 @@ class MigrationTest {
             put("activate_date", alarm.activateDate!!.timeInMillis)
             put("next_occurrence", alarm.nextTime?.timeInMillis)
             put("snoozed", alarm.snoozed)
+            put("notes", alarm.notes)
         }
         insert("alarms", SQLiteDatabase.CONFLICT_NONE, values)
     }
@@ -101,7 +102,8 @@ class MigrationTest {
                         timeInMillis = getLong(getColumnIndexOrThrow("next_occurrence"))
                     }
                 },
-                getInt(getColumnIndexOrThrow("snoozed"))
+                getInt(getColumnIndexOrThrow("snoozed")),
+                getString(getColumnIndexOrThrow("notes"))
         )
     }
 
@@ -143,6 +145,7 @@ class MigrationTest {
                 snoozed = 0
                 isEnabled = false
             }
+            notes = title
         }
     }
 
