@@ -19,7 +19,6 @@
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -48,6 +47,10 @@
             android:name=".feature.about.AboutActivity"
             android:label="@string/title_about"
             android:parentActivityName=".feature.home.MainActivity" />
+        <service
+            android:name=".alarm.AlarmService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

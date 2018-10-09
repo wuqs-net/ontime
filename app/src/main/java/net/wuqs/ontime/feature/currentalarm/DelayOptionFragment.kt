@@ -2,9 +2,11 @@ package net.wuqs.ontime.feature.currentalarm
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.BottomSheetDialogFragment
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -13,6 +15,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import kotlinx.android.synthetic.main.fragment_delay_option.view.*
 import net.wuqs.ontime.R
+import net.wuqs.ontime.alarm.ACTION_ALARM_SNOOZE
+import net.wuqs.ontime.alarm.EXTRA_SNOOZE_INTERVAL
 import java.util.*
 
 class DelayOptionFragment
@@ -74,7 +78,17 @@ class DelayOptionFragment
 
     override fun onDelayOptionClick(quantity: Int, unit: Int) {
         dismiss()
-        mListener.onDelayOptionPick(quantity, unit)
+
+        val interval = if (unit == Calendar.WEEK_OF_YEAR) {
+            (7 * quantity) to Calendar.DATE
+        } else {
+            quantity to unit
+        }
+        val context = this.context!!
+        val intent = Intent(ACTION_ALARM_SNOOZE).apply {
+            putExtra(EXTRA_SNOOZE_INTERVAL, interval)
+        }
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 
     interface DelayOptionPickListener {
@@ -82,7 +96,8 @@ class DelayOptionFragment
     }
 
     companion object {
-        @JvmStatic fun newInstance(nextTime: Calendar?) = DelayOptionFragment().apply {
+        @JvmStatic
+        fun newInstance(nextTime: Calendar?) = DelayOptionFragment().apply {
             arguments = Bundle().apply {
                 nextTime?.let { putLong(ARG_NEXT_TIME, it.timeInMillis) }
             }

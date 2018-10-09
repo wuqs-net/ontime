@@ -2,23 +2,22 @@ package net.wuqs.ontime.feature.currentalarm
 
 import android.annotation.TargetApi
 import android.app.KeyguardManager
+import android.content.BroadcastReceiver
 import android.content.Context
-import android.media.AudioAttributes
+import android.content.Intent
+import android.content.IntentFilter
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager.LayoutParams
 import kotlinx.android.synthetic.main.activity_alarm.*
 import net.wuqs.ontime.R
-import net.wuqs.ontime.alarm.ALARM_INSTANCE
-import net.wuqs.ontime.alarm.AlarmUpdateHandler
-import net.wuqs.ontime.alarm.getDateString
+import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.util.AlarmWakeLock
-import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.LogUtils
 import net.wuqs.ontime.util.getCustomTaskDescription
 import java.util.*
@@ -31,6 +30,16 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
 
     private lateinit var mAlarmUpdateHandler: AlarmUpdateHandler
 
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent == null) return
+            mLogger.v("onReceive() ${intent.action}")
+            when (intent.action) {
+                ACTION_ALARM_SNOOZE -> stopAlarm()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm)
@@ -41,7 +50,12 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
 
         mLogger.v("onCreate")
 
-        AlarmWakeLock.acquireCpuWakeLock(this)
+        val filter = IntentFilter().apply {
+            addAction(ACTION_ALARM_DISMISS)
+            addAction(ACTION_ALARM_SNOOZE)
+        }
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
+
         volumeControlStream = AudioManager.STREAM_ALARM
 
         mAlarmUpdateHandler = AlarmUpdateHandler(applicationContext)
@@ -69,38 +83,20 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
     override fun onBackPressed() {
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+    }
+
     override fun onDelayOptionPick(quantity: Int, unit: Int) {
-        val newQuantity: Int
-        val newUnit: Int
-        if (unit == Calendar.WEEK_OF_YEAR) {
-            newQuantity = 7 * quantity
-            newUnit = Calendar.DATE
-        } else {
-            newQuantity = quantity
-            newUnit = unit
-        }
-        alarm.nextTime = Calendar.getInstance().apply { add(newUnit, newQuantity) }
+        alarm.nextTime = Calendar.getInstance().apply { add(quantity, unit) }
         alarm.snoozed += 1
         alarm.isEnabled = true
         stopAlarm()
     }
 
     private fun startAlarm() {
-        if (ApiUtil.isLOrLater()) {
-            val audioAttributes = AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .build()
-            mediaPlayer.setAudioAttributes(audioAttributes)
-        } else {
-            @Suppress("DEPRECATION")
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM)
-        }
-        mediaPlayer.setDataSource(applicationContext, alarm.ringtoneUri)
-        mediaPlayer.isLooping = true
-        mediaPlayer.prepare()
-        mediaPlayer.start()
-        AlarmRinger.start(this, alarm)
 
         alarm.getNextOccurrence().let {
             alarm.nextTime = it
@@ -121,18 +117,13 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
     }
 
     private fun dismissAlarm() {
-        alarm.snoozed = 0
         stopAlarm()
+        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ACTION_ALARM_DISMISS))
     }
 
     private fun stopAlarm() {
-        AlarmRinger.stop(this)
-        mediaPlayer.stop()
-        mediaPlayer.reset()
-        mediaPlayer.release()
         mLogger.i("Alarm finished: $alarm")
         mAlarmUpdateHandler.asyncUpdateAlarm(alarm)
-        AlarmWakeLock.releaseCpuLock()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             finishAndRemoveTask()
         } else {

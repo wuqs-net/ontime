@@ -35,11 +35,7 @@ class AlarmUpdateHandler(context: Context,
 
         override fun doInBackground(vararg params: Unit?): Alarm = with(handler) {
             addAlarmToDb(db, alarm)
-            if (alarm.isEnabled) {
-                AlarmStateManager.scheduleAlarm(context, alarm)
-            } else {
-                AlarmStateManager.cancelAlarm(context, alarm)
-            }
+            AlarmStateManager.scheduleAlarm(context, alarm)
             return alarm
         }
 

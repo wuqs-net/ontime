@@ -5,11 +5,11 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.support.v4.content.LocalBroadcastManager
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
 import net.wuqs.ontime.db.updateAlarmToDb
-import net.wuqs.ontime.feature.currentalarm.AlarmActivity
 import net.wuqs.ontime.util.AlarmWakeLock
 import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.AsyncHandler
@@ -133,16 +133,26 @@ class AlarmStateManager : BroadcastReceiver() {
         fun scheduleAlarm(context: Context, alarm: Alarm) {
             val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-            val startAlarmIntent = alarm.createAlarmStartIntent(context)
-//                    .apply {
-//                        addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
-//                    }
-            val pendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    alarm.hashCode(),
-                    startAlarmIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            )
+            val startAlarmIntent = alarm.createAlarmStartIntent(context).apply {
+                addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
+            }
+            LOGGER.v(startAlarmIntent.toString())
+            val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // getForeground
+                PendingIntent.getService(
+                        context,
+                        alarm.hashCode(),
+                        startAlarmIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            } else {
+                PendingIntent.getService(
+                        context,
+                        alarm.hashCode(),
+                        startAlarmIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            }
 
             if (ApiUtil.isMOrLater()) {
                 // Ensure the alarm fires even if the device is dozing.
@@ -158,7 +168,7 @@ class AlarmStateManager : BroadcastReceiver() {
         }
 
         fun cancelAlarm(context: Context, alarm: Alarm) {
-            val operation = PendingIntent.getBroadcast(context, alarm.hashCode(),
+            val operation = PendingIntent.getService(context, alarm.hashCode(),
                     alarm.createAlarmStartIntent(context), PendingIntent.FLAG_NO_CREATE)
             operation?.let {
                 val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -174,7 +184,6 @@ class AlarmStateManager : BroadcastReceiver() {
 
 private const val EXTRA_ON_BOOT = "net.wuqs.ontime.extra.ON_BOOT"
 const val EXTRA_MISSED_ALARMS = "net.wuqs.ontime.extra.MISSED_ALARMS"
-const val ACTION_ALARM_START = "net.wuqs.ontime.action.ALARM_START"
 const val ACTION_DISMISS_ALL_MISSED_ALARMS = "net.wuqs.ontime.action.DISMISS_ALL_MISSED_ALARMS"
 const val ACTION_SCHEDULE_ALL_ALARMS = "net.wuqs.ontime.action.SCHEDULE_ALL_ALARMS"
 const val ACTION_SHOW_MISSED_ALARMS = "net.wuqs.ontime.action.SHOW_MISSED_ALARMS"

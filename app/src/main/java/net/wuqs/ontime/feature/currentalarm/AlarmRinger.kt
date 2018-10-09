@@ -2,11 +2,14 @@ package net.wuqs.ontime.feature.currentalarm
 
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.support.annotation.RequiresApi
 import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.LogUtils
 
 object AlarmRinger {
@@ -15,10 +18,29 @@ object AlarmRinger {
 
     private var isStarted = false
 
+    private var mediaPlayer: MediaPlayer? = null
+
     fun start(context: Context, alarm: Alarm) {
-        stop(context)
+        if (isStarted) stop(context)
+        mediaPlayer = MediaPlayer()
+        if (ApiUtil.isLOrLater()) {
+            val audioAttributes = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build()
+            mediaPlayer!!.setAudioAttributes(audioAttributes)
+        } else {
+            @Suppress("DEPRECATION")
+            mediaPlayer!!.setAudioStreamType(AudioManager.STREAM_ALARM)
+        }
+        mediaPlayer?.isLooping = true
+
         logger.v("start(), ringtone=${alarm.ringtoneUri}, vibrate=${alarm.vibrate}")
         isStarted = true
+
+        mediaPlayer!!.setDataSource(context, alarm.ringtoneUri)
+        mediaPlayer!!.prepare()
+        mediaPlayer!!.start()
 
         if (alarm.vibrate) {
             val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -35,11 +57,18 @@ object AlarmRinger {
     fun stop(context: Context) {
         if (isStarted) {
             logger.v("stop()")
+            mediaPlayer!!.run {
+                stop()
+                reset()
+                release()
+            }
+            mediaPlayer = null
             val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             vibrator.cancel()
             isStarted = false
         }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun vibrateO(vibrator: Vibrator) {
