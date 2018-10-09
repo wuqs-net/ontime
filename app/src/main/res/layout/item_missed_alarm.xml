@@ -25,14 +25,16 @@
 
     <TextView
         android:id="@+id/tv_alarm_time"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_alarm_title"
         app:layout_constraintVertical_chainStyle="spread_inside"
-        tools:text="Aug 25, 16:00 &#2022; Next: Aug 25, 2019, 16:00" />
+        tools:text="Aug 25, 16:00 &#8226; Next: Aug 25, 2019, 16:00" />
 
     <View
         android:id="@+id/divider_botom"
