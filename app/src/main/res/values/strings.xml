@@ -149,6 +149,11 @@
         <item quantity="other">Every %1$d days</item>
     </plurals>
 
+    <string name="msg_days_for_repeat_single">Daily</string>
+    <string name="msg_weeks_for_repeat_single">%2$s</string>
+    <string name="msg_months_for_repeat_single">Monthly on day %2$s</string>
+    <string name="msg_years_for_repeat_single">Yearly on %2$s</string>
+
     <plurals name="minutes_with_quan">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>

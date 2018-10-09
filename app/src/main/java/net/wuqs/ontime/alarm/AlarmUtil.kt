@@ -2,7 +2,6 @@ package net.wuqs.ontime.alarm
 
 import android.content.Context
 import android.content.res.Resources
-import android.content.res.Resources.NotFoundException
 import android.support.v4.util.ArrayMap
 import android.text.format.DateFormat
 import android.text.format.DateUtils
@@ -152,11 +151,7 @@ fun getRepeatString(ctx: Context, alarm: Alarm): String {
                     alarm.repeatCycle
             )
             if (alarm.repeatCycle == 1) {
-                return try {
-                    ctx.getString(R.string.msg_days_for_repeat_single)
-                } catch (e: NotFoundException) {
-                    str
-                }
+                return ctx.getString(R.string.msg_days_for_repeat_single)
             }
             return str
         }
@@ -174,11 +169,7 @@ fun getRepeatString(ctx: Context, alarm: Alarm): String {
             val str = ctx.resources.getQuantityString(R.plurals.weeks_for_repeat,
                     alarm.repeatCycle, alarm.repeatCycle, indexStr)
             if (alarm.repeatCycle == 1) {
-                return try {
-                    ctx.getString(R.string.msg_weeks_for_repeat_single, null, indexStr)
-                } catch (e: NotFoundException) {
-                    str
-                }
+                return ctx.getString(R.string.msg_weeks_for_repeat_single, null, indexStr)
             }
             return str
         }
@@ -193,11 +184,7 @@ fun getRepeatString(ctx: Context, alarm: Alarm): String {
             val str = ctx.resources.getQuantityString(R.plurals.months_for_repeat,
                     alarm.repeatCycle, alarm.repeatCycle, indexStr)
             if (alarm.repeatCycle == 1) {
-                return try {
-                    ctx.getString(R.string.msg_months_for_repeat_single, null, indexStr)
-                } catch (e: NotFoundException) {
-                    str
-                }
+                return ctx.getString(R.string.msg_months_for_repeat_single, null, indexStr)
             }
             return str
         }
@@ -206,11 +193,7 @@ fun getRepeatString(ctx: Context, alarm: Alarm): String {
             val str = ctx.resources.getQuantityString(R.plurals.years_for_repeat,
                     alarm.repeatCycle, alarm.repeatCycle, date)
             if (alarm.repeatCycle == 1) {
-                return try {
-                    ctx.getString(R.string.msg_years_for_repeat, null, date)
-                } catch (e: NotFoundException) {
-                    str
-                }
+                return ctx.getString(R.string.msg_years_for_repeat_single, null, date)
             }
             return str
         }

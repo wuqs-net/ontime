@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">OnTime</string>
     <string name="new_alarm">新建闹钟</string>
     <string name="msg_click_add">要新建闹钟，请点击下方的“添加”按钮</string>
@@ -137,10 +137,10 @@
         <item quantity="other">每%1$d年的%2$s</item>
     </plurals>
 
-    <string name="msg_days_for_repeat_single" tools:ignore="ExtraTranslation">每天</string>
-    <string name="msg_weeks_for_repeat_single" tools:ignore="ExtraTranslation">每周%2$s</string>
-    <string name="msg_months_for_repeat_single" tools:ignore="ExtraTranslation">每月的%2$s日</string>
-    <string name="msg_years_for_repeat" tools:ignore="ExtraTranslation">每年%2$s</string>
+    <string name="msg_days_for_repeat_single">每天</string>
+    <string name="msg_weeks_for_repeat_single">每周%2$s</string>
+    <string name="msg_months_for_repeat_single">每月的%2$s日</string>
+    <string name="msg_years_for_repeat_single">每年%2$s</string>
 
     <plurals name="minutes_with_quan">
         <item quantity="other">%d分钟</item>
