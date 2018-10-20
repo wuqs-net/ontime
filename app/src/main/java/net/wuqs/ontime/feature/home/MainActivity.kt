@@ -17,6 +17,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import net.wuqs.ontime.BuildConfig
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
@@ -149,7 +150,10 @@ class MainActivity : AppCompatActivity(),
      * Called when an alarm in the list is clicked.
      */
     override fun onListItemClick(item: Alarm) {
-        Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show()
+        if (BuildConfig.DEBUG) {
+            // Show alarm info in debug builds.
+            Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show()
+        }
         logger.v("onListItemClick: $item")
         val editAlarmIntent = EditAlarmActivity.createIntent(this)
                 .putExtra(ALARM_INSTANCE, item)
