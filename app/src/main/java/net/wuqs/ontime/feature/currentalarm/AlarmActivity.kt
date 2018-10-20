@@ -155,22 +155,23 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionPickLi
      * Turns on the screen. Used on Android versions prior to O_MR1.
      */
     @Suppress("DEPRECATION")
-    private fun turnScreenOnPreOMR1() = window.run {
-        addFlags(LayoutParams.FLAG_TURN_SCREEN_ON
+    private fun turnScreenOnPreOMR1() {
+        window.addFlags(LayoutParams.FLAG_TURN_SCREEN_ON
                 or LayoutParams.FLAG_KEEP_SCREEN_ON
                 or LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 or LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
     }
 
+
     @TargetApi(Build.VERSION_CODES.O)
     private fun dismissKeyguardO() {
-        val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        keyguardManager.requestDismissKeyguard(this, null)
+        val km = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        km.requestDismissKeyguard(this, null)
     }
 
     @Suppress("DEPRECATION")
-    private fun dismissKeyguardPreO() = window.run {
-        addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD)
+    private fun dismissKeyguardPreO() {
+        window.addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD)
     }
 
     private val mLogger = LogUtils.Logger("AlarmActivity")

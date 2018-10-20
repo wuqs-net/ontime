@@ -69,7 +69,7 @@ dependencies {
     implementation 'com.android.support:support-vector-drawable:27.1.1'
     // ViewModel and LiveData
     implementation 'android.arch.lifecycle:extensions:1.1.1'
-    // Room (use 1.1.0-beta3 for latest beta)
+    // Room
     implementation "android.arch.persistence.room:runtime:$room_version"
     kapt "android.arch.persistence.room:compiler:$room_version"
     testImplementation 'junit:junit:4.12'

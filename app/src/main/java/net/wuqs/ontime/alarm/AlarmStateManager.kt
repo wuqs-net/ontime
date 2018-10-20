@@ -49,7 +49,7 @@ class AlarmStateManager : BroadcastReceiver() {
                     LOGGER.i("Alarm started: $alarm")
                     // TODO: Multiple alarms go off at the same time
                     val myIntent = Intent(context, AlarmActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
                         putExtra(ALARM_INSTANCE, alarm)
                     }
                     context.startActivity(myIntent)

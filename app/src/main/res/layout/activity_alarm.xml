@@ -10,9 +10,9 @@
         android:id="@+id/tv_alarm_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -36,10 +36,10 @@
         android:id="@+id/tv_alarm_notes"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_next_date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,33 +50,36 @@
         android:id="@+id/tv_next_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_dismiss"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/msg_next_date" />
 
-    <ImageButton
+    <Button
         android:id="@+id/btn_dismiss"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:contentDescription="@string/action_dismiss_alarm"
+        android:layout_height="64dp"
+        android:drawableStart="@drawable/ic_alarm_off_black_24dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="0dp"
+        android:text="@string/action_dismiss_alarm"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_delay"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_alarm_off_black_24dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageButton
+    <Button
         android:id="@+id/btn_delay"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:contentDescription="@string/action_delay_alarm"
-        android:tint="?android:attr/colorForeground"
+        android:layout_height="64dp"
+        android:drawableStart="@drawable/ic_arrow_right"
+        android:paddingStart="32dp"
+        android:paddingEnd="0dp"
+        android:text="@string/action_delay_alarm"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_dismiss"
-        app:srcCompat="@drawable/ic_arrow_right" />
+        app:layout_constraintStart_toEndOf="@+id/btn_dismiss" />
 
 </android.support.constraint.ConstraintLayout>
