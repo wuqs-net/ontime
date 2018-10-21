@@ -1,5 +1,6 @@
 package net.wuqs.ontime.feature.editalarm
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
@@ -81,6 +82,10 @@ class EditAlarmActivity : AppCompatActivity(),
         tv_alarm_time.setOnClickListener { showTimePickerDialog() }
         oiv_repeat_type.setOnClickListener { showRepeatPickerDialog() }
 
+        val ringtone = RingtoneManager.getRingtone(this, alarm.ringtoneUri)
+        oiv_ringtone.valueText = ringtone.getTitle(this)
+        oiv_ringtone.setOnClickListener { showRingtonePicker() }
+
         cb_vibrate.isChecked = alarm.vibrate
 
         et_notes.setText(alarm.notes)
@@ -114,7 +119,6 @@ class EditAlarmActivity : AppCompatActivity(),
             mLogger.v("Alarm changes made: time")
             alarm.hour = hourOfDay
             alarm.minute = minute
-            alarm.ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             tv_alarm_time.text = getTimeString(this, alarm)
             updateNextAlarmDate()
         }
@@ -217,6 +221,17 @@ class EditAlarmActivity : AppCompatActivity(),
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            data?.let {
+                alarm.ringtoneUri = it.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                val ringtone = RingtoneManager.getRingtone(this, alarm.ringtoneUri)
+                oiv_ringtone.valueText = ringtone.getTitle(this)
+                alarmEdited = true
+            }
+        }
+    }
+
     override fun onBackPressed() {
         promptDiscard()
     }
@@ -258,6 +273,16 @@ class EditAlarmActivity : AppCompatActivity(),
 
     private fun showRepeatPickerDialog() {
         SpinnerDialogFragment.show(this, R.array.repeat_types, TAG_REPEAT_TYPE)
+    }
+
+    private fun showRingtonePicker() {
+        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarm.ringtoneUri)
+        }
+        startActivityForResult(intent, 1)
     }
 
     private fun updateRepeatDisplay() {
