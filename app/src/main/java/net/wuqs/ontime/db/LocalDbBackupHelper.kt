@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.AsyncTask
 import android.os.Environment
 import net.wuqs.ontime.R
-import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.Logger
 import net.wuqs.ontime.util.shortToast
 import java.io.File
 import java.io.FileInputStream
@@ -116,4 +116,4 @@ private fun copy(from: File, to: File) {
     dst.close()
 }
 
-private val logger = LogUtils.Logger("LocalDbBackupHelper")
+private val logger = Logger("LocalDbBackupHelper")

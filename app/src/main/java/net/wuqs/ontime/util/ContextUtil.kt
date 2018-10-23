@@ -5,8 +5,8 @@ import android.app.ActivityManager
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.support.annotation.RequiresApi
 import android.support.annotation.StringRes
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -25,16 +25,10 @@ fun Context.hideSoftInput(view: View) {
     imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun Activity.getCustomTaskDescription(
-        @StringRes labelId: Int = R.string.app_name
-): ActivityManager.TaskDescription {
-    val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
-    val color = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        getColor(R.color.colorPrimaryDark)
-    } else {
-        @Suppress("DEPRECATION")
-        resources.getColor(R.color.colorPrimaryDark)
+fun Activity.changeTaskDescription(@StringRes labelId: Int = R.string.app_name) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+        val color = ContextCompat.getColor(this, R.color.colorPrimaryDark)
+        setTaskDescription(ActivityManager.TaskDescription(getString(labelId), bitmap, color))
     }
-    return ActivityManager.TaskDescription(getString(labelId), bitmap, color)
 }

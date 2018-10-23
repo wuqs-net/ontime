@@ -2,13 +2,13 @@ package net.wuqs.ontime.feature.shared.dialog
 
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import android.widget.DatePicker
-import net.wuqs.ontime.util.ApiUtil
 import java.util.*
 
 class DatePickerDialogFragment : DialogFragment() {
@@ -25,16 +25,14 @@ class DatePickerDialogFragment : DialogFragment() {
         val m = args.getInt(ARG_MONTH)
         val d = args.getInt(ARG_DAY_OF_MONTH)
         val minDate = args[ARG_MIN_DATE] as? Long
-        return if (ApiUtil.isLOrLater()) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             DatePickerDialog(
                     context,
                     { _, year, month, dayOfMonth ->
                         listener.onDateSet(this@DatePickerDialogFragment, year,
                                 month, dayOfMonth)
                     },
-                    y,
-                    m,
-                    d
+                    y, m, d
             ).apply {
                 minDate?.let { datePicker.minDate = it }
             }

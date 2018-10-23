@@ -9,7 +9,7 @@ import net.wuqs.ontime.R
 import java.util.*
 
 class DelayOptionAdapter(
-    private val mListener: OnListItemClickListener,
+    private val mListener: DelayOptionFragment.DelayOptionListener,
     private val mOptions: List<Pair<Int, Int>>
 ) : RecyclerView.Adapter<DelayOptionAdapter.ViewHolder>() {
 
@@ -40,16 +40,14 @@ class DelayOptionAdapter(
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
-    interface OnListItemClickListener {
-        fun onDelayOptionClick(quantity: Int, unit: Int)
-    }
+
 
     companion object {
         val ALL_INTERVALS = listOf(
                 3 to Calendar.MINUTE,
                 10 to Calendar.MINUTE,
-                1 to Calendar.HOUR_OF_DAY,
                 30 to Calendar.MINUTE,
+                1 to Calendar.HOUR_OF_DAY,
                 3 to Calendar.HOUR_OF_DAY,
                 6 to Calendar.HOUR_OF_DAY,
                 1 to Calendar.DATE,

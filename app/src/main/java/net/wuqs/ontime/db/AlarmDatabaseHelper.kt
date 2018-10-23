@@ -1,6 +1,6 @@
 package net.wuqs.ontime.db
 
-import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.Logger
 import java.security.MessageDigest
 import java.util.*
 
@@ -49,4 +49,4 @@ fun generateId(): Long {
     return (System.currentTimeMillis() shl 17) + Random().nextInt(1 shl 17)
 }
 
-private val mLogger = LogUtils.Logger("AlarmDatabaseHelper")
+private val mLogger = Logger("AlarmDatabaseHelper")

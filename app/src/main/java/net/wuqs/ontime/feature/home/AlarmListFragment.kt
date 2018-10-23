@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_alarm_list.view.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AlarmDataModel
-import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.Logger
 
 /**
  * A fragment representing a list of Items.
@@ -137,5 +137,5 @@ class AlarmListFragment : Fragment() {
         fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean)
     }
 
-    private val mLogger = LogUtils.Logger("AlarmListFragment")
+    private val mLogger = Logger("AlarmListFragment")
 }

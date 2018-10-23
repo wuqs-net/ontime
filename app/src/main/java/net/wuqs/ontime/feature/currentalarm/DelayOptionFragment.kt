@@ -2,11 +2,9 @@ package net.wuqs.ontime.feature.currentalarm
 
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -15,14 +13,12 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import kotlinx.android.synthetic.main.fragment_delay_option.view.*
 import net.wuqs.ontime.R
-import net.wuqs.ontime.alarm.ACTION_ALARM_SNOOZE
-import net.wuqs.ontime.alarm.EXTRA_SNOOZE_INTERVAL
 import java.util.*
 
 class DelayOptionFragment
-    : BottomSheetDialogFragment(), DelayOptionAdapter.OnListItemClickListener {
+    : BottomSheetDialogFragment() {
 
-    private lateinit var mListener: DelayOptionPickListener
+    private lateinit var listener: DelayOptionListener
 
     private var mNextTime: Calendar? = null
 
@@ -63,36 +59,21 @@ class DelayOptionFragment
         }
         (view.rv_delay_options as RecyclerView).apply {
             layoutManager = GridLayoutManager(context, 3)
-            adapter = DelayOptionAdapter(this@DelayOptionFragment, options)
+            adapter = DelayOptionAdapter(listener, options)
         }
     }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is DelayOptionPickListener) {
-            mListener = context
+        if (context is DelayOptionListener) {
+            listener = context
         } else {
-            throw RuntimeException("$context must implement DelayOptionPickListener")
+            throw RuntimeException("$context must implement DelayOptionListener")
         }
     }
 
-    override fun onDelayOptionClick(quantity: Int, unit: Int) {
-        dismiss()
-
-        val interval = if (unit == Calendar.WEEK_OF_YEAR) {
-            (7 * quantity) to Calendar.DATE
-        } else {
-            quantity to unit
-        }
-        val context = this.context!!
-        val intent = Intent(ACTION_ALARM_SNOOZE).apply {
-            putExtra(EXTRA_SNOOZE_INTERVAL, interval)
-        }
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
-    }
-
-    interface DelayOptionPickListener {
-        fun onDelayOptionPick(quantity: Int, unit: Int)
+    interface DelayOptionListener {
+        fun onDelayOptionClick(quantity: Int, unit: Int)
     }
 
     companion object {

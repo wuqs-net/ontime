@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.AudioManager
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -28,8 +27,8 @@ import net.wuqs.ontime.feature.about.AboutActivity
 import net.wuqs.ontime.feature.editalarm.EditAlarmActivity
 import net.wuqs.ontime.feature.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.feature.shared.dialog.TimePickerDialogFragment
-import net.wuqs.ontime.util.LogUtils
-import net.wuqs.ontime.util.getCustomTaskDescription
+import net.wuqs.ontime.util.Logger
+import net.wuqs.ontime.util.changeTaskDescription
 import java.util.*
 
 
@@ -37,7 +36,7 @@ class MainActivity : AppCompatActivity(),
         AlarmListFragment.OnListFragmentActionListener,
         TimePickerDialogFragment.OnTimeSetListener {
 
-    private lateinit var mAlarmUpdateHandler: AlarmUpdateHandler
+    private lateinit var alarmUpdateHandler: AlarmUpdateHandler
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -65,11 +64,11 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         logger.v("onCreate")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setTaskDescription(getCustomTaskDescription())
-        }
+        createAlarmNotificationChannel()
 
-        mAlarmUpdateHandler = AlarmUpdateHandler(this, fabCreateAlarm)
+        changeTaskDescription()
+
+        alarmUpdateHandler = AlarmUpdateHandler(this, fabCreateAlarm)
 
         val filter = IntentFilter(ACTION_SHOW_MISSED_ALARMS)
         val lbm = LocalBroadcastManager.getInstance(this)
@@ -86,13 +85,13 @@ class MainActivity : AppCompatActivity(),
                 if (resultCode == RESULT_SAVE_ALARM) {
                     val alarm = data!!.getParcelableExtra<Alarm>(ALARM_INSTANCE)
                     if (alarm.id == Alarm.INVALID_ID) {
-                        mAlarmUpdateHandler.asyncAddAlarm(alarm, true)
+                        alarmUpdateHandler.asyncAddAlarm(alarm, true)
                     } else {
-                        mAlarmUpdateHandler.asyncUpdateAlarm(alarm, true)
+                        alarmUpdateHandler.asyncUpdateAlarm(alarm, true)
                     }
                 } else if (resultCode == RESULT_DELETE_ALARM) {
                     val alarm = data!!.getParcelableExtra<Alarm>(ALARM_INSTANCE)
-                    mAlarmUpdateHandler.asyncDeleteAlarm(alarm)
+                    alarmUpdateHandler.asyncDeleteAlarm(alarm)
                 }
             }
         }
@@ -165,7 +164,7 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean) {
         item.isEnabled = isChecked
-        mAlarmUpdateHandler.asyncUpdateAlarm(item, true)
+        alarmUpdateHandler.asyncUpdateAlarm(item, true)
     }
 
     /**
@@ -220,7 +219,7 @@ class MainActivity : AppCompatActivity(),
         super.onDestroy()
     }
 
-    private val logger = LogUtils.Logger("MainActivity")
+    private val logger = Logger("MainActivity")
 }
 
 private const val TAG_NEW_ALARM = "NEW_ALARM"

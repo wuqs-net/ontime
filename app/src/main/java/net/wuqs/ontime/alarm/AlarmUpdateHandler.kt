@@ -6,7 +6,7 @@ import android.support.design.widget.Snackbar
 import android.view.View
 import net.wuqs.ontime.R
 import net.wuqs.ontime.db.*
-import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.Logger
 
 /**
  * API for asynchronously updating a single [Alarm].
@@ -86,5 +86,5 @@ class AlarmUpdateHandler(context: Context,
         Snackbar.make(anchor, msg, Snackbar.LENGTH_SHORT).show()
     }
 
-    private val mLogger = LogUtils.Logger("AlarmUpdateHandler")
+    private val mLogger = Logger("AlarmUpdateHandler")
 }

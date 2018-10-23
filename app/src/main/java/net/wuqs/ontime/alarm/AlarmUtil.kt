@@ -124,6 +124,14 @@ fun getTimeDistanceString(context: Context, alarmTime: Long): String {
     return formats[index].format(dayStr, hourStr, minuteStr)
 }
 
+fun Alarm.getTitleOrDefault(context: Context): String {
+    return if (title.isNullOrBlank()) {
+        context.getString(R.string.msg_default_alarm_title)
+    } else {
+        title!!
+    }
+}
+
 fun Alarm.getRepeatTypeText(resources: Resources): CharSequence {
     val index = when (repeatType) {
         Alarm.NON_REPEAT -> 0

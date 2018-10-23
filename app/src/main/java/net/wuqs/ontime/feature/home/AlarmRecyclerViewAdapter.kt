@@ -15,7 +15,7 @@ import net.wuqs.ontime.alarm.getTimeString
 import net.wuqs.ontime.alarm.sameDayAs
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.feature.home.AlarmListFragment.OnListFragmentActionListener
-import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.Logger
 import java.util.*
 
 /**
@@ -140,6 +140,6 @@ class AlarmRecyclerViewAdapter
         }
     }
 
-    private val mLogger = LogUtils.Logger("AlarmAdapter")
+    private val mLogger = Logger("AlarmAdapter")
 
 }

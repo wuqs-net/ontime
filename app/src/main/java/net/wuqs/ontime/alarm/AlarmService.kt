@@ -9,10 +9,9 @@ import android.os.Binder
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
 import net.wuqs.ontime.db.Alarm
-import net.wuqs.ontime.feature.currentalarm.AlarmActivity
 import net.wuqs.ontime.feature.currentalarm.AlarmRinger
 import net.wuqs.ontime.util.AlarmWakeLock
-import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.Logger
 import java.util.*
 
 const val ACTION_ALARM_START = "net.wuqs.ontime.action.ALARM_START"
@@ -21,8 +20,11 @@ const val ACTION_ALARM_SNOOZE = "net.wuqs.ontime.action.ALARM_SNOOZE"
 
 const val EXTRA_SNOOZE_INTERVAL = "net.wuqs.ontime.extra.SNOOZE_INTERVAL"
 
-
 class AlarmService : Service() {
+
+    companion object {
+        private val logger = Logger("AlarmService")
+    }
 
     private val binder = Binder()
 
@@ -32,15 +34,7 @@ class AlarmService : Service() {
 
     private val pendingAlarms = arrayListOf<Alarm>()
 
-    override fun onBind(intent: Intent): IBinder {
-        isBound = true
-        return binder
-    }
-
-    override fun onUnbind(intent: Intent?): Boolean {
-        isBound = false
-        return super.onUnbind(intent)
-    }
+    private lateinit var alarmUpdateHandler: AlarmUpdateHandler
 
     private fun startAlarm(alarm: Alarm) {
         logger.i("Alarm started: $alarm")
@@ -49,31 +43,53 @@ class AlarmService : Service() {
         if (!alarm.isEnabled) {
             logger.i("Disabled alarm triggered: $alarm")
             alarm.snoozed = 0
-            alarm.nextTime = alarm.getNextOccurrence()
-            AlarmUpdateHandler(this).asyncUpdateAlarm(alarm)
+            alarm.nextTime = alarm.getNextOccurrence().also {
+                if (it == null) alarm.isEnabled = false
+            }
+            alarmUpdateHandler.asyncUpdateAlarm(alarm)
             return
         }
 
         AlarmWakeLock.acquireCpuWakeLock(this)
         if (currentAlarm == null) {
-            currentAlarm = alarm
-            val myIntent = Intent(this, AlarmActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        or Intent.FLAG_ACTIVITY_NO_USER_ACTION)
-                putExtra(ALARM_INSTANCE, alarm)
+            alarm.nextTime = alarm.getNextOccurrence().also {
+                if (it == null) alarm.isEnabled = false
             }
-            startActivity(myIntent)
+            currentAlarm = alarm
+
+            // Show notification.
+            showAlarmStartNotification(this, alarm)
+
             AlarmRinger.start(this, alarm)
         } else {
             pendingAlarms += alarm
         }
 
+        logger.i("Current: $currentAlarm")
+        logger.i("Pending: ${pendingAlarms.joinToString()}")
+    }
+
+    private fun dismissCurrentAlarm() {
+        currentAlarm!!.snoozed = 0
+        stopCurrentAlarm()
+    }
+
+    private fun snoozeCurrentAlarm(quantity: Int, unit: Int) {
+        currentAlarm!!.let {
+            it.nextTime = Calendar.getInstance().apply { add(unit, quantity) }
+            it.snoozed += 1
+            it.isEnabled = true
+        }
+        stopCurrentAlarm()
     }
 
     private fun stopCurrentAlarm() {
         logger.i("Alarm stopped: $currentAlarm")
+        stopForeground(true)
 
+        alarmUpdateHandler.asyncUpdateAlarm(currentAlarm!!)
         AlarmRinger.stop(this)
+
         currentAlarm = null
 
         if (pendingAlarms.isEmpty()) {
@@ -81,20 +97,6 @@ class AlarmService : Service() {
         } else {
             startAlarm(pendingAlarms.removeAt(0))
         }
-    }
-
-    private fun dismissCurrentAlarm() {
-        currentAlarm?.snoozed = 0
-        stopCurrentAlarm()
-    }
-
-    private fun snoozeCurrentAlarm(quantity: Int, unit: Int) {
-        currentAlarm!!.let {
-            it.nextTime = Calendar.getInstance().apply { add(quantity, unit) }
-            it.snoozed += 1
-            it.isEnabled = true
-        }
-        stopCurrentAlarm()
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -111,10 +113,8 @@ class AlarmService : Service() {
                     dismissCurrentAlarm()
                 }
                 ACTION_ALARM_SNOOZE -> {
-                    (intent.getSerializableExtra(EXTRA_SNOOZE_INTERVAL) as Pair<*, *>).let {
-                        val (quantity, unit) = it
-                        snoozeCurrentAlarm(quantity as Int, unit as Int)
-                    }
+                    val (quantity, unit) = intent.getIntArrayExtra(EXTRA_SNOOZE_INTERVAL)
+                    snoozeCurrentAlarm(quantity, unit)
                 }
             }
         }
@@ -127,6 +127,9 @@ class AlarmService : Service() {
             addAction(ACTION_ALARM_DISMISS)
             addAction(ACTION_ALARM_SNOOZE)
         }
+
+        alarmUpdateHandler = AlarmUpdateHandler(this)
+
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
     }
 
@@ -139,16 +142,26 @@ class AlarmService : Service() {
                         .getParcelable<Alarm>(ALARM_INSTANCE)
                 startAlarm(alarm)
             }
+            ACTION_ALARM_DISMISS -> dismissCurrentAlarm()
         }
 
         return Service.START_NOT_STICKY
     }
 
+    override fun onBind(intent: Intent): IBinder {
+        isBound = true
+        return binder
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        isBound = false
+        return super.onUnbind(intent)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         logger.v("onDestroy()")
+        AlarmRinger.release()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
-
-    private val logger = LogUtils.Logger("AlarmService")
 }

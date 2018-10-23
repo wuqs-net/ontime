@@ -16,7 +16,7 @@ import net.wuqs.ontime.alarm.getRepeatCycleText
 import net.wuqs.ontime.alarm.setMidnight
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.feature.shared.dialog.DatePickerDialogFragment
-import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.Logger
 
 abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerDialogFragment.OnDateSetListener {
 
@@ -130,7 +130,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerDialogF
 
     }
 
-    protected val mLogger = LogUtils.Logger("RepeatOptionFragment")
+    protected val mLogger = Logger("RepeatOptionFragment")
 }
 
 const val TAG_ACTIVATE_DATE = "activateDate"

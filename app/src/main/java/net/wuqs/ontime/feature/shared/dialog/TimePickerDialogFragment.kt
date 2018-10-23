@@ -2,13 +2,13 @@ package net.wuqs.ontime.feature.shared.dialog
 
 import android.app.Dialog
 import android.app.TimePickerDialog
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import android.text.format.DateFormat
 import android.widget.TimePicker
-import net.wuqs.ontime.util.ApiUtil
 
 class TimePickerDialogFragment : DialogFragment() {
 
@@ -20,7 +20,7 @@ class TimePickerDialogFragment : DialogFragment() {
         val h = args.getInt(ARG_HOUR)
         val m = args.getInt(ARG_MINUTE)
         val is24HourView = DateFormat.is24HourFormat(activity)
-        return if (ApiUtil.isLOrLater()) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TimePickerDialog(
                     activity,
                     { _, hourOfDay, minute ->

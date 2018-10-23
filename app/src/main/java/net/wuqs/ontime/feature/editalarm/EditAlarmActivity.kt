@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.media.RingtoneManager
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.NavUtils
@@ -23,8 +22,8 @@ import net.wuqs.ontime.feature.home.RESULT_SAVE_ALARM
 import net.wuqs.ontime.feature.shared.dialog.PromptDialogFragment
 import net.wuqs.ontime.feature.shared.dialog.SpinnerDialogFragment
 import net.wuqs.ontime.feature.shared.dialog.TimePickerDialogFragment
-import net.wuqs.ontime.util.LogUtils
-import net.wuqs.ontime.util.getCustomTaskDescription
+import net.wuqs.ontime.util.Logger
+import net.wuqs.ontime.util.changeTaskDescription
 import net.wuqs.ontime.util.hideSoftInput
 import net.wuqs.ontime.util.shortToast
 import java.util.*
@@ -45,9 +44,7 @@ class EditAlarmActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_alarm)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setTaskDescription(getCustomTaskDescription())
-        }
+        changeTaskDescription()
 
         volumeControlStream = AudioManager.STREAM_ALARM
 
@@ -320,7 +317,7 @@ class EditAlarmActivity : AppCompatActivity(),
         fun createIntent(context: Context) = Intent(context, EditAlarmActivity::class.java)
     }
 
-    private val mLogger = LogUtils.Logger("EditAlarmActivity")
+    private val mLogger = Logger("EditAlarmActivity")
 
 }
 

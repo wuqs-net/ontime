@@ -64,6 +64,9 @@
     <string name="msg_ringtone">铃声</string>
     <string name="msg_vibrate">振动</string>
 
+    <string name="msg_default_alarm_title">OnTime 闹钟</string>
+    <string name="channel_name_alarm">正在响铃的闹钟</string>
+    <string name="msg_click_for_more_options">%1$s &#8226; 点击以查看详情</string>
     <string name="msg_snoozed_until">推迟至%1$s</string>
     <string name="msg_snoozed_time">%1$s（%2$s）</string>
     <string name="action_dismiss_alarm">关闭</string>

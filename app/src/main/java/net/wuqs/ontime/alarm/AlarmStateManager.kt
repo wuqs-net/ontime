@@ -10,25 +10,19 @@ import android.support.v4.content.LocalBroadcastManager
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
 import net.wuqs.ontime.db.updateAlarmToDb
+import net.wuqs.ontime.feature.currentalarm.AlarmActivity
 import net.wuqs.ontime.util.AlarmWakeLock
-import net.wuqs.ontime.util.ApiUtil
 import net.wuqs.ontime.util.AsyncHandler
-import net.wuqs.ontime.util.LogUtils
+import net.wuqs.ontime.util.Logger
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class AlarmStateManager : BroadcastReceiver() {
 
-    private val ACTION_BOOT_COMPLETED = if (ApiUtil.isNOrLater()) {
-        Intent.ACTION_LOCKED_BOOT_COMPLETED
-    } else {
-        Intent.ACTION_BOOT_COMPLETED
-    }
-
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
-        LOGGER.i("Received intent: ${intent.action}")
+        logger.i("Received intent: ${intent.action}")
         val result = goAsync()
         val wl = AlarmWakeLock.createPartialWakeLock(context)
         wl.acquire()
@@ -36,89 +30,6 @@ class AlarmStateManager : BroadcastReceiver() {
             handleIntent(context, intent)
             result.finish()
             wl.release()
-        }
-    }
-
-    private fun handleIntent(context: Context, intent: Intent) {
-        when (intent.action) {
-            ACTION_BOOT_COMPLETED -> scheduleAllAlarms(context, true)
-            ACTION_SCHEDULE_ALL_ALARMS -> scheduleAllAlarms(context, false)
-            ACTION_ALARM_START -> {
-                val alarm = intent.getBundleExtra(ALARM_INSTANCE).getParcelable<Alarm>(ALARM_INSTANCE)
-                if (alarm.isEnabled) {
-                    LOGGER.i("Alarm started: $alarm")
-                    // TODO: Multiple alarms go off at the same time
-                    val myIntent = Intent(context, AlarmActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
-                        putExtra(ALARM_INSTANCE, alarm)
-                    }
-                    context.startActivity(myIntent)
-                } else {
-                    LOGGER.i("Disabled alarm triggered: $alarm")
-                    alarm.snoozed = 0
-                    alarm.nextTime = alarm.getNextOccurrence()
-                    AlarmUpdateHandler(context).asyncUpdateAlarm(alarm)
-                }
-            }
-//            ACTION_SHOW_MISSED_ALARMS -> {
-//                LOGGER.i("Show missed alarms")
-//                val mIntent = Intent(context, MissedAlarmsActivity::class.java).apply {
-//                    putExtras(intent)
-//                }
-//                context.startActivity(mIntent)
-//            }
-            ACTION_DISMISS_ALL_MISSED_ALARMS -> {
-                dismissAllMissedAlarms(context,
-                        intent.getParcelableArrayListExtra(EXTRA_MISSED_ALARMS))
-            }
-        }
-    }
-
-    /**
-     * Schedules all alarms in AlarmManager.
-     */
-    private fun scheduleAllAlarms(context: Context, onBoot: Boolean) {
-        val db = AppDatabase.getInstance(context)!!
-        val alarms = db.alarmDao.alarmsHasNextTime
-        val now = Calendar.getInstance()
-        val (notMissed, missed) = alarms.partition { it.nextTime!!.after(now) }
-        LOGGER.d("Not missed: ${notMissed.joinToString()}")
-        LOGGER.d("Missed: ${missed.joinToString()}")
-        notMissed.forEach { alarm ->
-            if (alarm.snoozed == 0) {
-                alarm.nextTime = alarm.getNextOccurrence()
-            } else if (alarm.nextTime == alarm.getNextOccurrence()) {
-                alarm.snoozed = 0
-            }
-            scheduleAlarm(context, alarm)
-        }
-        LOGGER.i("Finished scheduling all alarms")
-
-        if (missed.isEmpty()) return
-        val (enabled, disabled) = missed.partition { it.isEnabled }
-        dismissAllMissedAlarms(context, disabled)   // Ignore disabled alarms
-
-        if (enabled.isEmpty()) return
-        val intent = Intent(ACTION_SHOW_MISSED_ALARMS).apply {
-            putParcelableArrayListExtra(EXTRA_MISSED_ALARMS, ArrayList(enabled))
-            putExtra(EXTRA_ON_BOOT, onBoot)
-        }
-        val lbm = LocalBroadcastManager.getInstance(context)
-        lbm.sendBroadcast(intent)
-    }
-
-    private fun dismissAllMissedAlarms(context: Context, alarms: List<Alarm>) {
-        val db = AppDatabase.getInstance(context)!!
-        val now = Calendar.getInstance()
-        alarms.forEach {
-            it.snoozed = 0
-            it.nextTime = it.getNextOccurrence(now)
-            if (it.nextTime != null) {
-                scheduleAlarm(context, it)
-            } else {
-                it.isEnabled = false
-            }
-            updateAlarmToDb(db, it)
         }
     }
 
@@ -136,26 +47,17 @@ class AlarmStateManager : BroadcastReceiver() {
             val startAlarmIntent = alarm.createAlarmStartIntent(context).apply {
                 addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
             }
-            LOGGER.v(startAlarmIntent.toString())
             val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 // getForeground
-                PendingIntent.getService(
-                        context,
-                        alarm.hashCode(),
-                        startAlarmIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                )
+                PendingIntent.getForegroundService(context, alarm.hashCode(), startAlarmIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT)
             } else {
-                PendingIntent.getService(
-                        context,
-                        alarm.hashCode(),
-                        startAlarmIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                )
+                PendingIntent.getService(context, alarm.hashCode(), startAlarmIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT)
             }
 
-            if (ApiUtil.isMOrLater()) {
-                // Ensure the alarm fires even if the device is dozing.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Make sure the alarm fires even if the device is dozing.
                 am.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         alarm.nextTime!!.timeInMillis,
@@ -164,7 +66,7 @@ class AlarmStateManager : BroadcastReceiver() {
             } else {
                 am.setExact(AlarmManager.RTC_WAKEUP, alarm.nextTime!!.timeInMillis, pendingIntent)
             }
-            LOGGER.d("Alarm registered: $alarm")
+            logger.d("Alarm registered: $alarm")
         }
 
         fun cancelAlarm(context: Context, alarm: Alarm) {
@@ -174,11 +76,100 @@ class AlarmStateManager : BroadcastReceiver() {
                 val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 am.cancel(it)
                 it.cancel()
-                LOGGER.d("Alarm cancelled: $alarm")
+                logger.d("Alarm cancelled: $alarm")
             }
         }
 
-        private val LOGGER = LogUtils.Logger("AlarmStateManager")
+        fun handleIntent(context: Context, intent: Intent) {
+            when (intent.action) {
+                ACTION_BOOT_COMPLETED -> scheduleAllAlarms(context, true)
+                ACTION_SCHEDULE_ALL_ALARMS -> scheduleAllAlarms(context, false)
+                ACTION_ALARM_START -> {
+                    val alarm = intent.getBundleExtra(ALARM_INSTANCE).getParcelable<Alarm>(ALARM_INSTANCE)
+                    if (alarm.isEnabled) {
+                        logger.i("Alarm started: $alarm")
+                        // TODO: Multiple alarms go off at the same time
+                        val myIntent = Intent(context, AlarmActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                            putExtra(ALARM_INSTANCE, alarm)
+                        }
+                        context.startActivity(myIntent)
+                    } else {
+                        logger.i("Disabled alarm triggered: $alarm")
+                        alarm.snoozed = 0
+                        alarm.nextTime = alarm.getNextOccurrence()
+                        AlarmUpdateHandler(context).asyncUpdateAlarm(alarm)
+                    }
+                }
+    //            ACTION_SHOW_MISSED_ALARMS -> {
+    //                logger.i("Show missed alarms")
+    //                val mIntent = Intent(context, MissedAlarmsActivity::class.java).apply {
+    //                    putExtras(intent)
+    //                }
+    //                context.startActivity(mIntent)
+    //            }
+                ACTION_DISMISS_ALL_MISSED_ALARMS -> {
+                    dismissAllMissedAlarms(context,
+                            intent.getParcelableArrayListExtra(EXTRA_MISSED_ALARMS))
+                }
+            }
+        }
+
+        private val ACTION_BOOT_COMPLETED = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Intent.ACTION_LOCKED_BOOT_COMPLETED
+        } else {
+            Intent.ACTION_BOOT_COMPLETED
+        }
+
+        /**
+         * Schedules all alarms in AlarmManager.
+         */
+        private fun scheduleAllAlarms(context: Context, onBoot: Boolean) {
+            val db = AppDatabase.getInstance(context)!!
+            val alarms = db.alarmDao.alarmsHasNextTime
+            val now = Calendar.getInstance()
+            val (notMissed, missed) = alarms.partition { it.nextTime!!.after(now) }
+            logger.d("Not missed: ${notMissed.joinToString()}")
+            logger.d("Missed: ${missed.joinToString()}")
+            notMissed.forEach { alarm ->
+                if (alarm.snoozed == 0) {
+                    alarm.nextTime = alarm.getNextOccurrence()
+                } else if (alarm.nextTime == alarm.getNextOccurrence()) {
+                    alarm.snoozed = 0
+                }
+                scheduleAlarm(context, alarm)
+            }
+            logger.i("Finished scheduling all alarms")
+
+            if (missed.isEmpty()) return
+            val (enabled, disabled) = missed.partition { it.isEnabled }
+            dismissAllMissedAlarms(context, disabled)   // Ignore disabled alarms
+
+            if (enabled.isEmpty()) return
+            val intent = Intent(ACTION_SHOW_MISSED_ALARMS).apply {
+                putParcelableArrayListExtra(EXTRA_MISSED_ALARMS, ArrayList(enabled))
+                putExtra(EXTRA_ON_BOOT, onBoot)
+            }
+            val lbm = LocalBroadcastManager.getInstance(context)
+            lbm.sendBroadcast(intent)
+        }
+
+        private fun dismissAllMissedAlarms(context: Context, alarms: List<Alarm>) {
+            val db = AppDatabase.getInstance(context)!!
+            val now = Calendar.getInstance()
+            alarms.forEach {
+                it.snoozed = 0
+                it.nextTime = it.getNextOccurrence(now)
+                if (it.nextTime != null) {
+                    scheduleAlarm(context, it)
+                } else {
+                    it.isEnabled = false
+                }
+                updateAlarmToDb(db, it)
+            }
+        }
+
+        private val logger = Logger("AlarmStateManager")
     }
 }
 
