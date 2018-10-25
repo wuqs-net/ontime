@@ -2,8 +2,10 @@ package net.wuqs.ontime.feature.currentalarm
 
 import android.annotation.TargetApi
 import android.app.KeyguardManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
@@ -15,12 +17,24 @@ import kotlinx.android.synthetic.main.activity_alarm.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.util.Logger
 import net.wuqs.ontime.util.changeTaskDescription
 import java.util.*
 
 class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListener {
 
     private lateinit var alarm: Alarm
+
+    private val logger = Logger("AlarmActivity")
+
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            logger.v("onReceive(action=${intent?.action})")
+            when (intent?.action) {
+                ACTION_ALARM_DONE -> finishAlarm()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,10 +68,12 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
                 tv_next_date.text = getString(R.string.msg_next_date, it.createDateString(false))
             }
         }
+
+        val intentFilter = IntentFilter(ACTION_ALARM_DONE)
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     }
 
     override fun onDelayOptionClick(quantity: Int, unit: Int) {
-        finishAlarm()
         val interval = if (unit == Calendar.WEEK_OF_YEAR) {
             intArrayOf((7 * quantity), Calendar.DATE)
         } else {
@@ -74,21 +90,17 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
     }
 
     private fun dismissAlarm() {
-        finishAlarm()
         val intent = Intent(ACTION_ALARM_DISMISS)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
     private fun finishAlarm() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            finishAndRemoveTask()
-        } else {
-            finish()
-        }
+        // TODO: Add animations.
+        finish()
     }
 
     /**
-     * Turns on the screen. Used on Android versions from O_MR1.
+     * Turns on the screen. Used on Android versions from O MR1.
      */
     @TargetApi(Build.VERSION_CODES.O_MR1)
     private fun turnScreenOnOMR1() {
@@ -123,5 +135,11 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
 
     // Prevent quit by pressing Back
     override fun onBackPressed() {
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 }

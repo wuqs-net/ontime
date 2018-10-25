@@ -17,6 +17,7 @@ import java.util.*
 const val ACTION_ALARM_START = "net.wuqs.ontime.action.ALARM_START"
 const val ACTION_ALARM_DISMISS = "net.wuqs.ontime.action.ALARM_DISMISS"
 const val ACTION_ALARM_SNOOZE = "net.wuqs.ontime.action.ALARM_SNOOZE"
+const val ACTION_ALARM_DONE = "net.wuqs.ontime.action.ALARM_DONE"
 
 const val EXTRA_SNOOZE_INTERVAL = "net.wuqs.ontime.extra.SNOOZE_INTERVAL"
 
@@ -83,11 +84,12 @@ class AlarmService : Service() {
 
     private fun stopCurrentAlarm() {
         logger.i("Alarm stopped: $currentAlarm")
-        stopForeground(true)
 
         alarmUpdateHandler.asyncUpdateAlarm(currentAlarm!!)
         AlarmRinger.stop(this)
 
+        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ACTION_ALARM_DONE))
+        stopForeground(true)
         currentAlarm = null
 
         if (pendingAlarms.isEmpty()) {

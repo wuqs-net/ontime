@@ -83,5 +83,6 @@ fun showAlarmStartNotification(service: Service, alarm: Alarm) {
         setFullScreenIntent(PendingIntent.getActivity(service, NOTIFICATION_ID_ALARM,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT), true)
     }.build()
+
     service.startForeground(NOTIFICATION_ID_ALARM, notification)
 }
