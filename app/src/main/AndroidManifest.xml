@@ -24,6 +24,7 @@
         </activity>
         <activity
             android:name=".feature.currentalarm.AlarmActivity"
+            android:excludeFromRecents="true"
             android:taskAffinity="" />
         <activity
             android:name=".feature.editalarm.EditAlarmActivity"
