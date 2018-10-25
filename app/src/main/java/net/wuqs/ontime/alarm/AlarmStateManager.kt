@@ -17,6 +17,11 @@ import net.wuqs.ontime.util.Logger
 import java.util.*
 import kotlin.collections.ArrayList
 
+private const val EXTRA_ON_BOOT = "net.wuqs.ontime.extra.ON_BOOT"
+const val EXTRA_MISSED_ALARMS = "net.wuqs.ontime.extra.MISSED_ALARMS"
+const val ACTION_DISMISS_ALL_MISSED_ALARMS = "net.wuqs.ontime.action.DISMISS_ALL_MISSED_ALARMS"
+const val ACTION_SCHEDULE_ALL_ALARMS = "net.wuqs.ontime.action.SCHEDULE_ALL_ALARMS"
+const val ACTION_SHOW_MISSED_ALARMS = "net.wuqs.ontime.action.SHOW_MISSED_ALARMS"
 
 class AlarmStateManager : BroadcastReceiver() {
 
@@ -85,13 +90,13 @@ class AlarmStateManager : BroadcastReceiver() {
                 ACTION_BOOT_COMPLETED -> scheduleAllAlarms(context, true)
                 ACTION_SCHEDULE_ALL_ALARMS -> scheduleAllAlarms(context, false)
                 ACTION_ALARM_START -> {
-                    val alarm = intent.getBundleExtra(ALARM_INSTANCE).getParcelable<Alarm>(ALARM_INSTANCE)
+                    val alarm = intent.getBundleExtra(EXTRA_ALARM_INSTANCE).getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)
                     if (alarm.isEnabled) {
                         logger.i("Alarm started: $alarm")
                         // TODO: Multiple alarms go off at the same time
                         val myIntent = Intent(context, AlarmActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
-                            putExtra(ALARM_INSTANCE, alarm)
+                            putExtra(EXTRA_ALARM_INSTANCE, alarm)
                         }
                         context.startActivity(myIntent)
                     } else {
@@ -172,9 +177,3 @@ class AlarmStateManager : BroadcastReceiver() {
         private val logger = Logger("AlarmStateManager")
     }
 }
-
-private const val EXTRA_ON_BOOT = "net.wuqs.ontime.extra.ON_BOOT"
-const val EXTRA_MISSED_ALARMS = "net.wuqs.ontime.extra.MISSED_ALARMS"
-const val ACTION_DISMISS_ALL_MISSED_ALARMS = "net.wuqs.ontime.action.DISMISS_ALL_MISSED_ALARMS"
-const val ACTION_SCHEDULE_ALL_ALARMS = "net.wuqs.ontime.action.SCHEDULE_ALL_ALARMS"
-const val ACTION_SHOW_MISSED_ALARMS = "net.wuqs.ontime.action.SHOW_MISSED_ALARMS"

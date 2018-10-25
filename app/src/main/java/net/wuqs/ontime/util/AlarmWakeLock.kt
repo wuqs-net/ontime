@@ -5,7 +5,7 @@ import android.os.PowerManager
 
 object AlarmWakeLock {
 
-    private const val TAG = "AlarmWakeLock"
+    private const val TAG = "net.wuqs.ontime:AlarmWakeLock"
 
     private var cpuWakeLock: PowerManager.WakeLock? = null
 

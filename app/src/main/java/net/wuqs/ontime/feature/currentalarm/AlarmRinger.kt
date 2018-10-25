@@ -19,12 +19,15 @@ object AlarmRinger {
 
     private var mediaPlayer: MediaPlayer? = null
 
+    private val logger = Logger("AlarmRinger")
+
     /**
      * Start the ringtone and vibration of an Alarm.
      *
      * @param context to start the ringtone and vibration
      * @param alarm for which to play the ringtone and vibrate
      */
+    @JvmStatic
     fun start(context: Context, alarm: Alarm) {
         if (isStarted) stop(context)
         if (mediaPlayer == null) mediaPlayer = MediaPlayer()
@@ -62,6 +65,7 @@ object AlarmRinger {
      *
      * @param context to stop the ringtone and vibration
      */
+    @JvmStatic
     fun stop(context: Context) {
         if (isStarted) {
             logger.v("stop()")
@@ -78,11 +82,13 @@ object AlarmRinger {
     /**
      * Releases the MediaPlayer. This is called when `AlarmService` is destroyed.
      */
+    @JvmStatic
     fun release() {
         mediaPlayer!!.release()
         mediaPlayer = null
     }
 
+    @JvmStatic
     @RequiresApi(Build.VERSION_CODES.O)
     private fun vibrateO(vibrator: Vibrator) {
         val vibe = VibrationEffect.createWaveform(VIBRATE_TIMINGS, 0)
@@ -95,6 +101,7 @@ object AlarmRinger {
     }
 
     @Suppress("DEPRECATION")
+    @JvmStatic
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun vibrateL(vibrator: Vibrator) {
         val attrs = AudioAttributes.Builder().run {
@@ -106,9 +113,8 @@ object AlarmRinger {
     }
 
     @Suppress("DEPRECATION")
+    @JvmStatic
     private fun vibrateK(vibrator: Vibrator) {
         vibrator.vibrate(VIBRATE_TIMINGS, 0)
     }
-
-    private val logger = Logger("AlarmRinger")
 }

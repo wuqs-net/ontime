@@ -52,7 +52,7 @@ class EditAlarmActivity : AppCompatActivity(),
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        alarm = intent.getParcelableExtra(ALARM_INSTANCE)
+        alarm = intent.getParcelableExtra(EXTRA_ALARM_INSTANCE)
         mLogger.v("Edit alarm: $alarm")
         if (alarm.id == Alarm.INVALID_ID) {
             title = getString(R.string.title_new_alarm)
@@ -75,7 +75,7 @@ class EditAlarmActivity : AppCompatActivity(),
             }
         }
 
-        tv_alarm_time.text = getTimeString(this, alarm)
+        tv_alarm_time.text = alarm.createTimeString(this)
         tv_alarm_time.setOnClickListener { showTimePickerDialog() }
         oiv_repeat_type.setOnClickListener { showRepeatPickerDialog() }
 
@@ -95,7 +95,7 @@ class EditAlarmActivity : AppCompatActivity(),
         when (dialogFragment.tag) {
             TAG_DELETE_ALARM -> {
                 val data = Intent(this, MainActivity::class.java)
-                        .putExtra(ALARM_INSTANCE, alarm)
+                        .putExtra(EXTRA_ALARM_INSTANCE, alarm)
                 setResult(RESULT_DELETE_ALARM, data)
                 finish()
             }
@@ -116,7 +116,7 @@ class EditAlarmActivity : AppCompatActivity(),
             mLogger.v("Alarm changes made: time")
             alarm.hour = hourOfDay
             alarm.minute = minute
-            tv_alarm_time.text = getTimeString(this, alarm)
+            tv_alarm_time.text = alarm.createTimeString(this)
             updateNextAlarmDate()
         }
     }
@@ -201,7 +201,7 @@ class EditAlarmActivity : AppCompatActivity(),
                 alarm.isEnabled = true
                 if (alarm.repeatType == Alarm.NON_REPEAT) alarm.repeatCycle = 0
                 val data = Intent(this, MainActivity::class.java)
-                        .putExtra(ALARM_INSTANCE, alarm)
+                        .putExtra(EXTRA_ALARM_INSTANCE, alarm)
                 setResult(RESULT_SAVE_ALARM, data)
                 finish()
                 return true
@@ -292,13 +292,13 @@ class EditAlarmActivity : AppCompatActivity(),
 
     private fun updateNextAlarmDate(snoozed: Boolean = false) {
         if (snoozed) {
-            val dateTime = getDateTimeString(this, alarm.nextTime)
+            val dateTime = alarm.nextTime.createDateTimeString(this)
             tv_next_date.text = getString(R.string.msg_snoozed_until, dateTime)
             return
         }
         alarm.getNextOccurrence().let {
             tv_next_date.text = if (it != null) {
-                getString(R.string.msg_next_date, getDateString(it))
+                getString(R.string.msg_next_date, it.createDateString())
             } else {
                 if (alarm.repeatType == Alarm.NON_REPEAT) {
                     getString(R.string.msg_cannot_set_past_time)

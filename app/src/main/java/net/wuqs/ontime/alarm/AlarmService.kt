@@ -22,9 +22,7 @@ const val EXTRA_SNOOZE_INTERVAL = "net.wuqs.ontime.extra.SNOOZE_INTERVAL"
 
 class AlarmService : Service() {
 
-    companion object {
-        private val logger = Logger("AlarmService")
-    }
+    private val logger = Logger("AlarmService")
 
     private val binder = Binder()
 
@@ -105,8 +103,8 @@ class AlarmService : Service() {
             logger.v("onReceive() ${intent.action}")
             when (intent.action) {
                 ACTION_ALARM_START -> {
-                    val alarm = intent.getBundleExtra(ALARM_INSTANCE)
-                            .getParcelable<Alarm>(ALARM_INSTANCE)
+                    val alarm = intent.getBundleExtra(EXTRA_ALARM_INSTANCE)
+                            .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)
                     startAlarm(alarm)
                 }
                 ACTION_ALARM_DISMISS -> {
@@ -138,8 +136,8 @@ class AlarmService : Service() {
 
         when (intent.action) {
             ACTION_ALARM_START -> {
-                val alarm = intent.getBundleExtra(ALARM_INSTANCE)
-                        .getParcelable<Alarm>(ALARM_INSTANCE)
+                val alarm = intent.getBundleExtra(EXTRA_ALARM_INSTANCE)
+                        .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)
                 startAlarm(alarm)
             }
             ACTION_ALARM_DISMISS -> dismissCurrentAlarm()

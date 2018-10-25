@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_non_repeat.*
 import kotlinx.android.synthetic.main.partial_edit_cycle_number.*
 import net.wuqs.ontime.R
-import net.wuqs.ontime.alarm.getDateString
+import net.wuqs.ontime.alarm.createDateString
 import net.wuqs.ontime.alarm.getRepeatCycleText
 import net.wuqs.ontime.alarm.setMidnight
 import net.wuqs.ontime.db.Alarm
@@ -45,7 +45,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerDialogF
             addTextChangedListener(this@RepeatOptionFragment)
         }
         oiv_date?.apply {
-            valueText = getDateString(alarm.activateDate)
+            valueText = alarm.activateDate.createDateString()
             setOnClickListener { editActivateDate() }
         }
         showRepeatCycle()
@@ -90,7 +90,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerDialogF
         alarm.activateDate!!.let {
             it.setMidnight(year, month, dayOfMonth)
             mLogger.v(it.time.toString())
-            oiv_date.valueText = getDateString(it)
+            oiv_date.valueText = it.createDateString()
         }
         mListener?.updateActivateDate(year, month, dayOfMonth)
     }

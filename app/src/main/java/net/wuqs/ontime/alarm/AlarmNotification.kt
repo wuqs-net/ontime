@@ -43,7 +43,7 @@ fun showAlarmStartNotification(service: Service, alarm: Alarm) {
         setSmallIcon(R.drawable.ic_stat_alarm)
         setContentTitle(alarm.getTitleOrDefault(service))
         setContentText(service.getString(R.string.msg_click_for_more_options,
-                getTimeString(service, alarm)))
+                alarm.createTimeString(service)))
         setOngoing(true)
         setAutoCancel(false)
         setShowWhen(false)
@@ -54,7 +54,7 @@ fun showAlarmStartNotification(service: Service, alarm: Alarm) {
         priority = NotificationCompat.PRIORITY_HIGH
 
         val contentIntent = Intent(service, AlarmActivity::class.java).apply {
-            putExtra(ALARM_INSTANCE, alarm)
+            putExtra(EXTRA_ALARM_INSTANCE, alarm)
         }
         val contentPendingIntent = PendingIntent.getActivity(service, NOTIFICATION_ID_ALARM,
                 contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -78,7 +78,7 @@ fun showAlarmStartNotification(service: Service, alarm: Alarm) {
 
         val fullScreenIntent = Intent(service, AlarmActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
-            putExtra(ALARM_INSTANCE, alarm)
+            putExtra(EXTRA_ALARM_INSTANCE, alarm)
         }
         setFullScreenIntent(PendingIntent.getActivity(service, NOTIFICATION_ID_ALARM,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT), true)

@@ -10,67 +10,90 @@ import net.wuqs.ontime.db.Alarm
 import java.text.SimpleDateFormat
 import java.util.*
 
-const val ALARM_INSTANCE = "net.wuqs.ontime.extra.ALARM_INSTANCE"
+const val EXTRA_ALARM_INSTANCE = "net.wuqs.ontime.extra.ALARM_INSTANCE"
 
 const val CREATE_ALARM_REQUEST = 2
 const val EDIT_ALARM_REQUEST = 3
 
 private const val MINUTE_IN_MILLIS = 60 * 1000
 
-fun getTimeString(
+/**
+ * Creates a String containing the firing time of `this` Alarm.
+ *
+ * @param context to create the String
+ * @param showAmPm whether or not to include AM/PM in 12-hour format
+ * @param hairSpace whether or not to replace all regular spaces with hair spaces
+ * @return a String containing the firing time of `this` Alarm
+ */
+fun Alarm.createTimeString(
     context: Context,
-    alarm: Alarm,
     showAmPm: Boolean = true,
     hairSpace: Boolean = false
 ): String {
-    val cal = Calendar.getInstance().apply {
-        this[Calendar.HOUR_OF_DAY] = alarm.hour
-        this[Calendar.MINUTE] = alarm.minute
-        this[Calendar.SECOND] = 0
-        this[Calendar.MILLISECOND] = 0
-    }
-    return getTimeString(context, cal, showAmPm, hairSpace)
+    val calendar = Calendar.getInstance().setHms(hour, minute)
+    return calendar.createTimeString(context, showAmPm, hairSpace)
 }
 
-fun getTimeString(
+/**
+ * Creates a String containing the time of `this` Calendar.
+ *
+ * @param context to create the String
+ * @param showAmPm whether or not to include AM/PM in 12-hour format
+ * @param hairSpace whether or not to replace all regular spaces with hair spaces
+ * @return a String containing the time of `this` Calendar, or an empty String if `this` is `null`
+ */
+fun Calendar?.createTimeString(
     context: Context,
-    calendar: Calendar?,
     showAmPm: Boolean = true,
     hairSpace: Boolean = false
 ): String {
-    if (calendar == null) return ""
+    if (this == null) return ""
     val skeleton = if (DateFormat.is24HourFormat(context)) "Hm" else "hm"
     var pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
     if (!showAmPm) pattern = pattern.replace("a", "").trim()
-    val str = DateFormat.format(pattern, calendar).toString()
+    val str = DateFormat.format(pattern, this).toString()
     if (hairSpace) return str.replace(' ', '\u200A')
     return str
 }
 
-fun getDateString(cal: Calendar?, showWeek: Boolean = true, showYear: Boolean = true): String {
-    if (cal == null) return ""
+/**
+ * Creates a String containing the date of `this` Calendar.
+ *
+ * @param showWeek whether or not to include days of week; default value is `true`
+ * @param showYear whether or not to include year; default value is `true`
+ * @return a String containing the date of `this` Calendar, or an empty String if `this` is `null`
+ */
+fun Calendar?.createDateString(showWeek: Boolean = true, showYear: Boolean = true): String {
+    if (this == null) return ""
     val now = Calendar.getInstance()
-    var skeleton = if (cal[Calendar.YEAR] == now[Calendar.YEAR] || !showYear) {
+    var skeleton = if (this[Calendar.YEAR] == now[Calendar.YEAR] || !showYear) {
         "MMMd"
     } else {
         "yyyyMMMd"
     }
     if (showWeek) skeleton += "E"
     val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
-    return DateFormat.format(pattern, cal).toString()
+    return DateFormat.format(pattern, this).toString()
 }
 
-fun getDateTimeString(ctx: Context, c: Calendar?, showWeek: Boolean = true): String {
-    if (c == null) return ""
+/**
+ * Creates a String containing the date and the time of `this` Calendar.
+ *
+ * @param showWeek whether or not to include days of week; default value is `true`
+ * @return a String containing the date and the time of `this` Calendar, or an empty String if
+ * `this` is `null`
+ */
+fun Calendar?.createDateTimeString(context: Context, showWeek: Boolean = true): String {
+    if (this == null) return ""
     val now = Calendar.getInstance()
     val skeleton = StringBuilder().apply {
-        if (!c.sameYearAs(now)) append("yyyy")
+        if (!sameYearAs(now)) append("yyyy")
         append("MMMd")
         if (showWeek) append("E")
-        append(if (DateFormat.is24HourFormat(ctx)) "Hm" else "hma")
+        append(if (DateFormat.is24HourFormat(context)) "Hm" else "hma")
     }.toString()
     val inFormat = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)
-    return DateFormat.format(inFormat, c).toString()
+    return DateFormat.format(inFormat, this).toString()
 }
 
 fun getRelativeDateTimeString(ctx: Context, c: Calendar?): String {
@@ -98,9 +121,15 @@ fun getRelativeDateTimeString(ctx: Context, c: Calendar?): String {
     }
 }
 
-
-fun getTimeDistanceString(context: Context, alarmTime: Long): String {
-    var delta = alarmTime - Calendar.getInstance().timeInMillis
+/**
+ * Creates a String describing the difference between a specified time from now.
+ *
+ * @param context to create the String
+ * @param timeInMillis a time in the future, in milliseconds
+ * @return a String describing the difference between a specified time from now
+ */
+fun createTimeDifferenceString(context: Context, timeInMillis: Long): String {
+    var delta = timeInMillis - Calendar.getInstance().timeInMillis
 
     val formats = context.resources.getStringArray(R.array.time_distance)
     if (delta < MINUTE_IN_MILLIS) return formats[0]
@@ -124,6 +153,13 @@ fun getTimeDistanceString(context: Context, alarmTime: Long): String {
     return formats[index].format(dayStr, hourStr, minuteStr)
 }
 
+/**
+ * Gets the title of `this` alarm, or the default title ([R.string.msg_default_alarm_title]) if the
+ * title is blank.
+ *
+ * @param context to get the String
+ * @return the title of `this` alarm, or the default title if the title is blank
+ */
 fun Alarm.getTitleOrDefault(context: Context): String {
     return if (title.isNullOrBlank()) {
         context.getString(R.string.msg_default_alarm_title)
@@ -132,6 +168,12 @@ fun Alarm.getTitleOrDefault(context: Context): String {
     }
 }
 
+/**
+ * Gets a CharSequence containing the repeat type of `this` alarm.
+ *
+ * @param resources to get the text
+ * @return a CharSequence containing the repeat type of `this` alarm
+ */
 fun Alarm.getRepeatTypeText(resources: Resources): CharSequence {
     val index = when (repeatType) {
         Alarm.NON_REPEAT -> 0
@@ -144,75 +186,72 @@ fun Alarm.getRepeatTypeText(resources: Resources): CharSequence {
     return resources.getStringArray(R.array.repeat_types)[index]
 }
 
+/**
+ * Gets a CharSequence describing the repeat cycle of `this` alarm.
+ *
+ * @param resources to get the text
+ * @return a CharSequence describing the repeat cycle of `this` alarm
+ */
 fun Alarm.getRepeatCycleText(resources: Resources): CharSequence {
     val cycles = arrayOf(0, R.plurals.days, R.plurals.weeks, R.plurals.months, R.plurals.years)
     return resources.getQuantityText(cycles[repeatType and 0xF], repeatCycle)
 }
 
-fun getRepeatString(ctx: Context, alarm: Alarm): String {
-    when (alarm.repeatType) {
+/**
+ * Creates a String describing the repeat pattern of `this` alarm.
+ *
+ * @param context to create the String
+ * @return a String describing the repeat pattern of `this` alarm
+ */
+fun Alarm.getRepeatString(context: Context): String {
+    when (repeatType) {
         Alarm.NON_REPEAT -> return ""
         Alarm.REPEAT_DAILY -> {
-            val str = ctx.resources.getQuantityString(
-                    R.plurals.days_for_repeat,
-                    alarm.repeatCycle,
-                    alarm.repeatCycle
-            )
-            if (alarm.repeatCycle == 1) {
-                return ctx.getString(R.string.msg_days_for_repeat_single)
+            if (repeatCycle == 1) {
+                return context.getString(R.string.msg_days_for_repeat_single)
             }
-            return str
+            return context.resources.getQuantityString(R.plurals.days_for_repeat, repeatCycle,
+                    repeatCycle)
         }
         Alarm.REPEAT_WEEKLY -> {
-            val indexStr = run {
-                val daysOfWeek = when (Locale.getDefault().language) {
-                    Locale.CHINESE.language -> getShortWeekDays()
-                    else -> getShortWeekDays("E")
-                }
-                val repeatDays = daysOfWeek.filterKeys {
-                    alarm.repeatIndex.isWeekdaySet(it)
-                }.values
-                repeatDays.joinToString()
+            val daysOfWeek = when (Locale.getDefault()) {
+                Locale.CHINESE -> getShortWeekDays()
+                else -> getShortWeekDays("E")
             }
-            val str = ctx.resources.getQuantityString(R.plurals.weeks_for_repeat,
-                    alarm.repeatCycle, alarm.repeatCycle, indexStr)
-            if (alarm.repeatCycle == 1) {
-                return ctx.getString(R.string.msg_weeks_for_repeat_single, null, indexStr)
+            val indexStr = daysOfWeek.filterKeys {
+                repeatIndex.isWeekdaySet(it)
+            }.values.joinToString()
+
+            if (repeatCycle == 1) {
+                return context.getString(R.string.msg_weeks_for_repeat_single, null, indexStr)
             }
-            return str
+            return context.resources.getQuantityString(R.plurals.weeks_for_repeat, repeatCycle,
+                    repeatCycle, indexStr)
         }
         Alarm.REPEAT_MONTHLY_BY_DATE -> {
-            val indexStr = run {
-                val daysOfMonth = MutableList(31) { index -> index + 1 }
-                val repeatDays = daysOfMonth.filterIndexed { index, _ ->
-                    alarm.repeatIndex shr index and 1 == 1
-                }
-                repeatDays.joinToString()
+            val daysOfMonth = MutableList(31) { index -> index + 1 }
+            val indexStr = daysOfMonth.asSequence().filterIndexed { index, _ ->
+                repeatIndex shr index and 1 == 1
+            }.joinToString()
+            if (repeatCycle == 1) {
+                return context.getString(R.string.msg_months_for_repeat_single, null, indexStr)
             }
-            val str = ctx.resources.getQuantityString(R.plurals.months_for_repeat,
-                    alarm.repeatCycle, alarm.repeatCycle, indexStr)
-            if (alarm.repeatCycle == 1) {
-                return ctx.getString(R.string.msg_months_for_repeat_single, null, indexStr)
-            }
-            return str
+            return context.resources.getQuantityString(R.plurals.months_for_repeat, repeatCycle,
+                    repeatCycle, indexStr)
         }
         Alarm.REPEAT_YEARLY_BY_DATE -> {
-            val date = getDateString(alarm.activateDate, false, false)
-            val str = ctx.resources.getQuantityString(R.plurals.years_for_repeat,
-                    alarm.repeatCycle, alarm.repeatCycle, date)
-            if (alarm.repeatCycle == 1) {
-                return ctx.getString(R.string.msg_years_for_repeat_single, null, date)
+            val date = activateDate.createDateString(false, false)
+            if (repeatCycle == 1) {
+                return context.getString(R.string.msg_years_for_repeat_single, null, date)
             }
-            return str
+            return context.resources.getQuantityString(R.plurals.years_for_repeat, repeatCycle,
+                    repeatCycle, date)
         }
-        else -> {
-            return ""
-        }
-
+        else -> return ""
     }
-
 }
 
+// TODO: Documentation
 fun Calendar.setMidnight(year: Int, month: Int, date: Int) = apply {
     set(year, month, date, 0, 0, 0)
     set(Calendar.MILLISECOND, 0)

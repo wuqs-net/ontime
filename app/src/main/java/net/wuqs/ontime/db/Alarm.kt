@@ -33,12 +33,11 @@ class Alarm(
         @ColumnInfo(name = "notes") var notes: String = ""
 ) : Parcelable {
 
-    // TODO: new primary key using hashcode/md5
-
     init {
         activateDate?.setHms(0)
     }
 
+    // TODO: Move to AlarmUtil.kt
     /**
      * Determines the [Alarm]'s next occurrence.
      */
@@ -51,19 +50,13 @@ class Alarm(
         else -> null
     }
 
-    fun updateMissed() {
-        when (repeatType) {
-            NON_REPEAT -> isEnabled = false
-            REPEAT_DAILY -> nextTime = getNextOccurrence()
-        }
-    }
-
+    // TODO: Move to AlarmUtil.kt
     fun createAlarmStartIntent(context: Context): Intent {
-        val bundle = Bundle().apply { putParcelable(ALARM_INSTANCE, this@Alarm) }
+        val bundle = Bundle().apply { putParcelable(EXTRA_ALARM_INSTANCE, this@Alarm) }
         return Intent(context, AlarmService::class.java).apply {
             action = ACTION_ALARM_START
             addCategory("ALARM_MANAGER")
-            putExtra(ALARM_INSTANCE, bundle)
+            putExtra(EXTRA_ALARM_INSTANCE, bundle)
         }
     }
 
@@ -73,14 +66,14 @@ class Alarm(
             hour = source.readInt(),
             minute = source.readInt(),
             title = source.readString(),
-            ringtoneUri = DTC.toUri(source.readString()),
-            vibrate = DTC.toBoolean(source.readByte()),
-            isEnabled = DTC.toBoolean(source.readByte()),
+            ringtoneUri = source.readString().toUri(),
+            vibrate = source.readInt().toBoolean(),
+            isEnabled = source.readInt().toBoolean(),
             repeatType = source.readInt(),
             repeatCycle = source.readInt(),
             repeatIndex = source.readInt(),
-            activateDate = DTC.toCalendar(source.readLong()),
-            nextTime = DTC.toCalendar(source.readLong().takeIf { it != 0L }),
+            activateDate = source.readLong().toCalendar(),
+            nextTime = source.readLong().takeIf { it != -1L }.toCalendar(),
             snoozed = source.readInt(),
             notes = source.readString()
     )
@@ -91,7 +84,7 @@ class Alarm(
             hour = another.hour,
             minute = another.minute,
             title = another.title,
-            ringtoneUri = Uri.parse(another.ringtoneUri!!.toString()),
+            ringtoneUri = another.ringtoneUri,
             vibrate = another.vibrate,
             isEnabled = another.isEnabled,
             repeatType = another.repeatType,
@@ -110,14 +103,14 @@ class Alarm(
         writeInt(hour)
         writeInt(minute)
         writeString(title)
-        writeString(DTC.toString(ringtoneUri ?: Uri.EMPTY))
-        writeByte(DTC.toByte(vibrate))
-        writeByte(DTC.toByte(isEnabled))
+        writeString(ringtoneUri.toString())
+        writeInt(vibrate.toInt())
+        writeInt(isEnabled.toInt())
         writeInt(repeatType)
         writeInt(repeatCycle)
         writeInt(repeatIndex)
-        writeLong(DTC.toLong(activateDate)!!)
-        writeLong(DTC.toLong(nextTime) ?: 0L)
+        writeLong(activateDate.toLong()!!)
+        writeLong(nextTime.toLong() ?: -1L)
         writeInt(snoozed)
         writeString(notes)
     }
@@ -161,8 +154,6 @@ class Alarm(
     companion object {
 
         const val ALARM_ID = "net.wuqs.ontime.extra.ALARM_ID"
-        const val ALARM_INSTANCE = "net.wuqs.ontime.extra.ALARM_INSTANCE"
-        const val IS_NEW_ALARM = "net.wuqs.ontime.extra.IS_NEW_ALARM"
 
         /*
         Repeat types
@@ -186,6 +177,5 @@ class Alarm(
             override fun createFromParcel(source: Parcel): Alarm = Alarm(source)
             override fun newArray(size: Int): Array<Alarm?> = arrayOfNulls(size)
         }
-        val DTC = DataTypeConverter()
     }
 }

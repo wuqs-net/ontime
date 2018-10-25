@@ -83,14 +83,14 @@ class MainActivity : AppCompatActivity(),
         when (requestCode) {
             CREATE_ALARM_REQUEST, EDIT_ALARM_REQUEST -> {
                 if (resultCode == RESULT_SAVE_ALARM) {
-                    val alarm = data!!.getParcelableExtra<Alarm>(ALARM_INSTANCE)
+                    val alarm = data!!.getParcelableExtra<Alarm>(EXTRA_ALARM_INSTANCE)
                     if (alarm.id == Alarm.INVALID_ID) {
                         alarmUpdateHandler.asyncAddAlarm(alarm, true)
                     } else {
                         alarmUpdateHandler.asyncUpdateAlarm(alarm, true)
                     }
                 } else if (resultCode == RESULT_DELETE_ALARM) {
-                    val alarm = data!!.getParcelableExtra<Alarm>(ALARM_INSTANCE)
+                    val alarm = data!!.getParcelableExtra<Alarm>(EXTRA_ALARM_INSTANCE)
                     alarmUpdateHandler.asyncDeleteAlarm(alarm)
                 }
             }
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity(),
                 alarm.activateDate!!.add(Calendar.DAY_OF_MONTH, 1)
             }
             val editAlarmIntent = EditAlarmActivity.createIntent(this)
-                    .putExtra(ALARM_INSTANCE, alarm)
+                    .putExtra(EXTRA_ALARM_INSTANCE, alarm)
             startActivityForResult(editAlarmIntent, CREATE_ALARM_REQUEST)
         }
     }
@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity(),
         }
         logger.v("onListItemClick: $item")
         val editAlarmIntent = EditAlarmActivity.createIntent(this)
-                .putExtra(ALARM_INSTANCE, item)
+                .putExtra(EXTRA_ALARM_INSTANCE, item)
         startActivityForResult(editAlarmIntent, EDIT_ALARM_REQUEST)
     }
 

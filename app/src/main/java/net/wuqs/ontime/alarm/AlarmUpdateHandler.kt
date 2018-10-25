@@ -82,7 +82,7 @@ class AlarmUpdateHandler(context: Context,
         }
 
         val msg = anchor.context.getString(R.string.msg_alarm_will_go_off,
-                getTimeDistanceString(anchor.context, alarmTime))
+                createTimeDifferenceString(anchor.context, alarmTime))
         Snackbar.make(anchor, msg, Snackbar.LENGTH_SHORT).show()
     }
 

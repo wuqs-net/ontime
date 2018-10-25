@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.item_missed_alarm.view.*
 import net.wuqs.ontime.R
-import net.wuqs.ontime.alarm.getDateTimeString
+import net.wuqs.ontime.alarm.createDateTimeString
 import net.wuqs.ontime.db.Alarm
 
 class MissedAlarmsAdapter(private val mListener: OnListInteractListener, private val data: List<Alarm>)
@@ -33,11 +33,11 @@ class MissedAlarmsAdapter(private val mListener: OnListInteractListener, private
             tv_alarm_title.text = alarm.title
             tv_alarm_time.text = alarm.getNextOccurrence().let {
                 if (it == null) {
-                    getDateTimeString(context, alarm.nextTime)
+                    alarm.nextTime.createDateTimeString(context)
                 } else {
                     context.getString(R.string.msg_missed_alarm_next_time,
-                            getDateTimeString(context, alarm.nextTime),
-                            getDateTimeString(context, it))
+                            alarm.nextTime.createDateTimeString(context),
+                            it.createDateTimeString(context))
                 }
             }
         }

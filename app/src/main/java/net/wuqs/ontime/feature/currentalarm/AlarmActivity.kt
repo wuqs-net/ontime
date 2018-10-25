@@ -39,7 +39,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
                 or LayoutParams.FLAG_DISMISS_KEYGUARD
                 or LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
 
-        alarm = intent.getParcelableExtra(ALARM_INSTANCE)
+        alarm = intent.getParcelableExtra(EXTRA_ALARM_INSTANCE)
 
         btn_delay.setOnClickListener { delayAlarm() }
         btn_dismiss.setOnClickListener { dismissAlarm() }
@@ -51,7 +51,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
                 tv_next_date.visibility = View.GONE
             } else {
                 tv_next_date.visibility = View.VISIBLE
-                tv_next_date.text = getString(R.string.msg_next_date, getDateString(it, false))
+                tv_next_date.text = getString(R.string.msg_next_date, it.createDateString(false))
             }
         }
     }

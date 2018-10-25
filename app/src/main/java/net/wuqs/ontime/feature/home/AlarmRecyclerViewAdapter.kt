@@ -9,9 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.item_alarm.view.*
 import net.wuqs.ontime.R
-import net.wuqs.ontime.alarm.getDateString
+import net.wuqs.ontime.alarm.createDateString
+import net.wuqs.ontime.alarm.createTimeString
 import net.wuqs.ontime.alarm.getRepeatString
-import net.wuqs.ontime.alarm.getTimeString
 import net.wuqs.ontime.alarm.sameDayAs
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.feature.home.AlarmListFragment.OnListFragmentActionListener
@@ -62,7 +62,7 @@ class AlarmRecyclerViewAdapter
 
             updateEnabledDisplay(item.isEnabled)
 
-            tv_alarm_time.text = getTimeString(context, item, false, true)
+            tv_alarm_time.text = item.createTimeString(context, false, true)
             if (DateFormat.is24HourFormat(context)) {
                 iv_dot_am.visibility = View.INVISIBLE
                 iv_dot_pm.visibility = View.INVISIBLE
@@ -79,14 +79,14 @@ class AlarmRecyclerViewAdapter
             // Display information about snooze and next alarm
             item.nextTime.let {
                 tv_next_date.text = when {
-                    it == null -> getDateString(item.activateDate)
-                    item.snoozed <= 0 -> getDateString(it)
+                    it == null -> item.activateDate.createDateString()
+                    item.snoozed <= 0 -> it.createDateString()
                     else -> context.getString(
                             R.string.msg_snoozed_time,
                             if (it.sameDayAs(Calendar.getInstance())) {
-                                getTimeString(context, it)
+                                it.createTimeString(context)
                             } else {
-                                getDateString(it)
+                                it.createDateString()
                             },
                             context.resources.getQuantityString(R.plurals.msg_times,
                                     item.snoozed, item.snoozed)
@@ -100,7 +100,7 @@ class AlarmRecyclerViewAdapter
                 group_repeat.visibility = View.GONE
             } else {
                 group_repeat.visibility = View.VISIBLE
-                tv_repeat_pattern.text = getRepeatString(context, item)
+                tv_repeat_pattern.text = item.getRepeatString(context)
             }
 
 //            item.nextTime?.let {
