@@ -42,16 +42,14 @@ class AlarmService : Service() {
         if (!alarm.isEnabled) {
             logger.i("Disabled alarm triggered: $alarm")
             alarm.snoozed = 0
-            alarm.nextTime = alarm.getNextOccurrence().also {
-                if (it == null) alarm.isEnabled = false
-            }
+            alarm.nextTime = alarm.getNextOccurrence(alarm.nextTime!!)
             alarmUpdateHandler.asyncUpdateAlarm(alarm)
             return
         }
 
         AlarmWakeLock.acquireCpuWakeLock(this)
         if (currentAlarm == null) {
-            alarm.nextTime = alarm.getNextOccurrence().also {
+            alarm.nextTime = alarm.getNextOccurrence(alarm.nextTime!!).also {
                 if (it == null) alarm.isEnabled = false
             }
             currentAlarm = alarm

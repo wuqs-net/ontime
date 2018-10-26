@@ -23,7 +23,7 @@ fun Alarm.nextTimeDaily(now: Calendar = Calendar.getInstance()): Calendar? {
         GregorianCalendar(it[Calendar.YEAR], it[Calendar.MONTH], it[Calendar.DAY_OF_MONTH],
                 hour, minute)
     }
-    if (next.before(now)) {
+    if (!next.after(now)) {
         val c = (now dayDiff next) / repeatCycle + 1
         next.add(Calendar.DATE, c.toInt() * repeatCycle)
     }

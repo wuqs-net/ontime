@@ -10,7 +10,6 @@ import android.support.v4.content.LocalBroadcastManager
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AppDatabase
 import net.wuqs.ontime.db.updateAlarmToDb
-import net.wuqs.ontime.feature.currentalarm.AlarmActivity
 import net.wuqs.ontime.util.AlarmWakeLock
 import net.wuqs.ontime.util.AsyncHandler
 import net.wuqs.ontime.util.Logger
@@ -89,23 +88,6 @@ class AlarmStateManager : BroadcastReceiver() {
             when (intent.action) {
                 ACTION_BOOT_COMPLETED -> scheduleAllAlarms(context, true)
                 ACTION_SCHEDULE_ALL_ALARMS -> scheduleAllAlarms(context, false)
-                ACTION_ALARM_START -> {
-                    val alarm = intent.getBundleExtra(EXTRA_ALARM_INSTANCE).getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)
-                    if (alarm.isEnabled) {
-                        logger.i("Alarm started: $alarm")
-                        // TODO: Multiple alarms go off at the same time
-                        val myIntent = Intent(context, AlarmActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
-                            putExtra(EXTRA_ALARM_INSTANCE, alarm)
-                        }
-                        context.startActivity(myIntent)
-                    } else {
-                        logger.i("Disabled alarm triggered: $alarm")
-                        alarm.snoozed = 0
-                        alarm.nextTime = alarm.getNextOccurrence()
-                        AlarmUpdateHandler(context).asyncUpdateAlarm(alarm)
-                    }
-                }
     //            ACTION_SHOW_MISSED_ALARMS -> {
     //                logger.i("Show missed alarms")
     //                val mIntent = Intent(context, MissedAlarmsActivity::class.java).apply {
