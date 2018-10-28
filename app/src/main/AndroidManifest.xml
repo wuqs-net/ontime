@@ -24,6 +24,7 @@
         </activity>
         <activity
             android:name=".feature.currentalarm.AlarmActivity"
+            android:launchMode="singleTask"
             android:excludeFromRecents="true"
             android:taskAffinity="" />
         <activity

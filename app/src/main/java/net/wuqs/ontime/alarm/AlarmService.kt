@@ -9,6 +9,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
 import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.feature.currentalarm.AlarmActivity
 import net.wuqs.ontime.feature.currentalarm.AlarmRinger
 import net.wuqs.ontime.util.AlarmWakeLock
 import net.wuqs.ontime.util.Logger
@@ -16,6 +17,7 @@ import java.util.*
 
 const val ACTION_ALARM_START = "net.wuqs.ontime.action.ALARM_START"
 const val ACTION_ALARM_DISMISS = "net.wuqs.ontime.action.ALARM_DISMISS"
+const val ACTION_ALARM_SHOW_SNOOZE_OPTIONS = "net.wuqs.ontime.action.ALARM_SHOW_SNOOZE_OPTIONS"
 const val ACTION_ALARM_SNOOZE = "net.wuqs.ontime.action.ALARM_SNOOZE"
 const val ACTION_ALARM_DONE = "net.wuqs.ontime.action.ALARM_DONE"
 
@@ -55,7 +57,8 @@ class AlarmService : Service() {
             currentAlarm = alarm
 
             // Show notification.
-            showAlarmStartNotification(this, alarm)
+            val notification = buildAlarmNotification(this, CHANNEL_ALARM, alarm, true)
+            startForeground(NOTIFICATION_ID_ALARM, notification)
 
             AlarmRinger.start(this, alarm)
         } else {
@@ -69,6 +72,15 @@ class AlarmService : Service() {
     private fun dismissCurrentAlarm() {
         currentAlarm!!.snoozed = 0
         stopCurrentAlarm()
+    }
+
+    private fun showSnoozeOptions() {
+        sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+        val snoozeIntent = Intent(this, AlarmActivity::class.java).apply {
+            action = ACTION_ALARM_SHOW_SNOOZE_OPTIONS
+            putExtra(EXTRA_ALARM_INSTANCE, currentAlarm)
+        }
+        startActivity(snoozeIntent)
     }
 
     private fun snoozeCurrentAlarm(quantity: Int, unit: Int) {
@@ -134,6 +146,7 @@ class AlarmService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) return Service.START_NOT_STICKY
 
+        logger.v("onStartCommand(): action=${intent.action}")
         when (intent.action) {
             ACTION_ALARM_START -> {
                 val alarm = intent.getBundleExtra(EXTRA_ALARM_INSTANCE)
@@ -141,6 +154,7 @@ class AlarmService : Service() {
                 startAlarm(alarm)
             }
             ACTION_ALARM_DISMISS -> dismissCurrentAlarm()
+            ACTION_ALARM_SHOW_SNOOZE_OPTIONS -> showSnoozeOptions()
         }
 
         return Service.START_NOT_STICKY

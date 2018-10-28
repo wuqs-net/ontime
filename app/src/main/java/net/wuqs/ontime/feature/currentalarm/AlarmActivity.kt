@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -18,7 +19,6 @@ import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.util.Logger
-import net.wuqs.ontime.util.changeTaskDescription
 import java.util.*
 
 class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListener {
@@ -39,8 +39,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm)
-
-        changeTaskDescription()
+        logger.v("onCreate()")
 
         volumeControlStream = AudioManager.STREAM_ALARM
 
@@ -55,7 +54,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
 
         alarm = intent.getParcelableExtra(EXTRA_ALARM_INSTANCE)
 
-        btn_delay.setOnClickListener { delayAlarm() }
+        btn_delay.setOnClickListener { showSnoozeOptions() }
         btn_dismiss.setOnClickListener { dismissAlarm() }
         tv_alarm_title.text = alarm.title
         tv_alarm_notes.text = alarm.notes
@@ -73,6 +72,25 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        logger.v("onNewIntent(), action=${intent?.action}")
+        this.intent = intent
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val notification = buildAlarmNotification(this@AlarmActivity,
+                CHANNEL_CURRENT_ALARM, alarm)
+        with(NotificationManagerCompat.from(this)) {
+            notify(NOTIFICATION_ID_ALARM, notification)
+        }
+        if (intent.action == ACTION_ALARM_SHOW_SNOOZE_OPTIONS) {
+            showSnoozeOptions()
+        }
+    }
+
     override fun onDelayOptionClick(quantity: Int, unit: Int) {
         val interval = if (unit == Calendar.WEEK_OF_YEAR) {
             intArrayOf((7 * quantity), Calendar.DATE)
@@ -85,7 +103,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
-    private fun delayAlarm() {
+    private fun showSnoozeOptions() {
         DelayOptionFragment.newInstance(alarm.nextTime).show(supportFragmentManager, null)
     }
 

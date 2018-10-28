@@ -16,11 +16,21 @@ import net.wuqs.ontime.util.Logger
 import java.util.*
 import kotlin.collections.ArrayList
 
-private const val EXTRA_ON_BOOT = "net.wuqs.ontime.extra.ON_BOOT"
-const val EXTRA_MISSED_ALARMS = "net.wuqs.ontime.extra.MISSED_ALARMS"
 const val ACTION_DISMISS_ALL_MISSED_ALARMS = "net.wuqs.ontime.action.DISMISS_ALL_MISSED_ALARMS"
+
 const val ACTION_SCHEDULE_ALL_ALARMS = "net.wuqs.ontime.action.SCHEDULE_ALL_ALARMS"
+
 const val ACTION_SHOW_MISSED_ALARMS = "net.wuqs.ontime.action.SHOW_MISSED_ALARMS"
+
+const val EXTRA_MISSED_ALARMS = "net.wuqs.ontime.extra.MISSED_ALARMS"
+
+private const val EXTRA_ON_BOOT = "net.wuqs.ontime.extra.ON_BOOT"
+
+private val ACTION_BOOT_COMPLETED = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+    Intent.ACTION_LOCKED_BOOT_COMPLETED
+} else {
+    Intent.ACTION_BOOT_COMPLETED
+}
 
 class AlarmStateManager : BroadcastReceiver() {
 
@@ -102,12 +112,6 @@ class AlarmStateManager : BroadcastReceiver() {
             }
         }
 
-        private val ACTION_BOOT_COMPLETED = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Intent.ACTION_LOCKED_BOOT_COMPLETED
-        } else {
-            Intent.ACTION_BOOT_COMPLETED
-        }
-
         /**
          * Schedules all alarms in AlarmManager.
          */
@@ -137,8 +141,7 @@ class AlarmStateManager : BroadcastReceiver() {
                 putParcelableArrayListExtra(EXTRA_MISSED_ALARMS, ArrayList(enabled))
                 putExtra(EXTRA_ON_BOOT, onBoot)
             }
-            val lbm = LocalBroadcastManager.getInstance(context)
-            lbm.sendBroadcast(intent)
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
         }
 
         private fun dismissAllMissedAlarms(context: Context, alarms: List<Alarm>) {

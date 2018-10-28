@@ -1,9 +1,9 @@
 package net.wuqs.ontime.alarm
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -13,76 +13,98 @@ import net.wuqs.ontime.R
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.feature.currentalarm.AlarmActivity
 
-/** Channel ID for alarm notifications. */
+/** Notification channel ID for starting alarm. */
 const val CHANNEL_ALARM = "net.wuqs.ontime.channel.ALARM"
+
+/** Notification channel ID for current alarm. */
+const val CHANNEL_CURRENT_ALARM = "net.wuqs.ontime.channel.ONGOING_ALARM"
 
 const val NOTIFICATION_ID_ALARM = 1
 
-fun Context.createAlarmNotificationChannel() {
+fun Context.createAlarmNotificationChannels() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val name = getString(R.string.channel_name_alarm)
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(CHANNEL_ALARM, name, importance).apply {
+        val alarmChannel = NotificationChannel(
+                CHANNEL_ALARM,
+                getString(R.string.channel_name_alarm),
+                NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            setSound(null, null)
+            setShowBadge(false)
+        }
+        val currentAlarmChannel = NotificationChannel(
+                CHANNEL_CURRENT_ALARM,
+                getString(R.string.channel_name_current_alarm),
+                NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
             setSound(null, null)
             setShowBadge(false)
         }
         with(getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager) {
-            createNotificationChannel(channel)
+            createNotificationChannel(alarmChannel)
+            createNotificationChannel(currentAlarmChannel)
         }
     }
 }
 
 /**
- * Creates a notification for `this` firing alarm.
+ * Builds a notification for a current alarm.
  *
- * @param service to build the notification
- * @return a notification indicating `this` alarm.
+ * @param context the Context to build the notification
+ * @return a notification indicating the current alarm
  */
-fun showAlarmStartNotification(service: Service, alarm: Alarm) {
-    val notification = NotificationCompat.Builder(service, CHANNEL_ALARM).apply {
+fun buildAlarmNotification(
+    context: Context,
+    channelId: String,
+    alarm: Alarm,
+    fullScreen: Boolean = false
+): Notification {
+    return NotificationCompat.Builder(context, channelId).apply {
         setSmallIcon(R.drawable.ic_stat_alarm)
-        setContentTitle(alarm.getTitleOrDefault(service))
-        setContentText(service.getString(R.string.msg_click_for_more_options,
-                alarm.createTimeString(service)))
+        setContentTitle(alarm.getTitleOrDefault(context))
+        setContentText(context.getString(R.string.msg_click_for_more_options,
+                alarm.createTimeString(context)))
         setOngoing(true)
         setAutoCancel(false)
         setShowWhen(false)
         setCategory(NotificationCompat.CATEGORY_ALARM)
         setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         setLocalOnly(true)
-        color = ContextCompat.getColor(service, R.color.colorPrimary)
+        color = ContextCompat.getColor(context, R.color.colorPrimary)
         priority = NotificationCompat.PRIORITY_HIGH
 
-        val contentIntent = Intent(service, AlarmActivity::class.java).apply {
+        val contentIntent = Intent(context, AlarmActivity::class.java).apply {
             putExtra(EXTRA_ALARM_INSTANCE, alarm)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val contentPendingIntent = PendingIntent.getActivity(service, NOTIFICATION_ID_ALARM,
+        val contentPendingIntent = PendingIntent.getActivity(context, NOTIFICATION_ID_ALARM,
                 contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         setContentIntent(contentPendingIntent)
 
-        val dismissIntent = Intent(service, AlarmService::class.java).apply {
+        val dismissIntent = Intent(context, AlarmService::class.java).apply {
             action = ACTION_ALARM_DISMISS
         }
-        val dismissPendingIntent = PendingIntent.getService(service, NOTIFICATION_ID_ALARM,
+        val dismissPendingIntent = PendingIntent.getService(context, NOTIFICATION_ID_ALARM,
                 dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         addAction(R.drawable.ic_alarm_off_black_24dp,
-                service.getString(R.string.action_dismiss_alarm), dismissPendingIntent)
+                context.getString(R.string.action_dismiss_alarm), dismissPendingIntent)
 
-//        val snoozeIntent = Intent(service, AlarmService::class.java).apply {
-//            action = ACTION_ALARM_SNOOZE
-//        }
-//        val snoozePendingIntent = PendingIntent.getBroadcast(service, NOTIFICATION_ID_ALARM,
-//                snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-//        addAction(R.drawable.ic_arrow_right,
-//                service.getString(R.string.action_delay_alarm), snoozePendingIntent)
-
-        val fullScreenIntent = Intent(service, AlarmActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
-            putExtra(EXTRA_ALARM_INSTANCE, alarm)
+        val snoozeIntent = Intent(context, AlarmService::class.java).apply {
+            action = ACTION_ALARM_SHOW_SNOOZE_OPTIONS
+//            putExtra(EXTRA_ALARM_INSTANCE, alarm)
         }
-        setFullScreenIntent(PendingIntent.getActivity(service, NOTIFICATION_ID_ALARM,
-                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT), true)
-    }.build()
+        val snoozePendingIntent = PendingIntent.getService(context, NOTIFICATION_ID_ALARM,
+                snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        addAction(R.drawable.ic_arrow_right,
+                context.getString(R.string.action_delay_alarm), snoozePendingIntent)
 
-    service.startForeground(NOTIFICATION_ID_ALARM, notification)
+        if (fullScreen) {
+            val fullScreenIntent = Intent(context, AlarmActivity::class.java).apply {
+                flags = (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        or Intent.FLAG_ACTIVITY_NO_USER_ACTION)
+                putExtra(EXTRA_ALARM_INSTANCE, alarm)
+            }
+            setFullScreenIntent(PendingIntent.getActivity(context, NOTIFICATION_ID_ALARM,
+                    fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT), true)
+        }
+    }.build()
 }
