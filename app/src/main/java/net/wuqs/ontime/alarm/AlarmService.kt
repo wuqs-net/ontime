@@ -173,7 +173,6 @@ class AlarmService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         logger.v("onDestroy()")
-        AlarmRinger.release()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 }

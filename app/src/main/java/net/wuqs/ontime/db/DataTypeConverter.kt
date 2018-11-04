@@ -17,10 +17,10 @@ fun Long?.toCalendar() = this?.let { Calendar.getInstance().apply { timeInMillis
 class DataTypeConverter {
 
     @TypeConverter
-    fun toString(uri: Uri) = uri.toString()
+    fun toString(uri: Uri?) = uri?.toString()
 
     @TypeConverter
-    fun toUri(string: String): Uri? = string.toUri()
+    fun toUri(string: String?) = string?.toUri()
 
     @TypeConverter
     fun toInt(b: Boolean) = b.toInt()

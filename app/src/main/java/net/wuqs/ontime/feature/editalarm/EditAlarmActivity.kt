@@ -222,6 +222,7 @@ class EditAlarmActivity : AppCompatActivity(),
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             data?.let {
                 alarm.ringtoneUri = it.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                mLogger.v("Ringtone picked: ${alarm.ringtoneUri}")
                 val ringtone = RingtoneManager.getRingtone(this, alarm.ringtoneUri)
                 oiv_ringtone.valueText = ringtone.getTitle(this)
                 alarmEdited = true

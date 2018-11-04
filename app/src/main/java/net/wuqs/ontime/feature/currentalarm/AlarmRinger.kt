@@ -30,25 +30,29 @@ object AlarmRinger {
     @JvmStatic
     fun start(context: Context, alarm: Alarm) {
         if (isStarted) stop(context)
-        if (mediaPlayer == null) mediaPlayer = MediaPlayer()
 
         logger.v("start(), ringtone=${alarm.ringtoneUri}, vibrate=${alarm.vibrate}")
         isStarted = true
 
-        mediaPlayer!!.setDataSource(context, alarm.ringtoneUri)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val audioAttributes = AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .build()
-            mediaPlayer!!.setAudioAttributes(audioAttributes)
-        } else {
-            @Suppress("DEPRECATION")
-            mediaPlayer!!.setAudioStreamType(AudioManager.STREAM_ALARM)
+        alarm.ringtoneUri?.let {
+            if (mediaPlayer == null) mediaPlayer = MediaPlayer()
+            logger.v("MediaPlayer is created")
+            val mp = this.mediaPlayer!!
+            mp.setDataSource(context, it)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val audioAttributes = AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build()
+                mp.setAudioAttributes(audioAttributes)
+            } else {
+                @Suppress("DEPRECATION")
+                mp.setAudioStreamType(AudioManager.STREAM_ALARM)
+            }
+            mp.prepare()
+            mp.isLooping = true
+            mp.start()
         }
-        mediaPlayer!!.prepare()
-        mediaPlayer?.isLooping = true
-        mediaPlayer!!.start()
 
         if (alarm.vibrate) {
             val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -69,23 +73,17 @@ object AlarmRinger {
     fun stop(context: Context) {
         if (isStarted) {
             logger.v("stop()")
-            mediaPlayer!!.run {
+            mediaPlayer?.run {
                 stop()
                 reset()
+                release()
+                logger.v("MediaPlayer is released")
             }
+            mediaPlayer = null
             val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             vibrator.cancel()
             isStarted = false
         }
-    }
-
-    /**
-     * Releases the MediaPlayer. This is called when `AlarmService` is destroyed.
-     */
-    @JvmStatic
-    fun release() {
-        mediaPlayer!!.release()
-        mediaPlayer = null
     }
 
     @JvmStatic

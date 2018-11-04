@@ -66,7 +66,7 @@ class Alarm(
             hour = source.readInt(),
             minute = source.readInt(),
             title = source.readString(),
-            ringtoneUri = source.readString().toUri(),
+            ringtoneUri = source.readParcelable(Uri::class.java.classLoader),
             vibrate = source.readInt().toBoolean(),
             isEnabled = source.readInt().toBoolean(),
             repeatType = source.readInt(),
@@ -103,7 +103,7 @@ class Alarm(
         writeInt(hour)
         writeInt(minute)
         writeString(title)
-        writeString(ringtoneUri.toString())
+        writeParcelable(ringtoneUri, 0)
         writeInt(vibrate.toInt())
         writeInt(isEnabled.toInt())
         writeInt(repeatType)
