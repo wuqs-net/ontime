@@ -105,7 +105,6 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         fun destroyInstance() {
-            INSTANCE?.close()
             INSTANCE = null
         }
     }
