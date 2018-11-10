@@ -8,7 +8,7 @@ import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
-@Database(entities = [Alarm::class], version = 7)
+@Database(entities = [Alarm::class], version = 8)
 @TypeConverters(DataTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -85,6 +85,10 @@ abstract class AppDatabase : RoomDatabase() {
             execSQL("ALTER TABLE alarms_new RENAME TO alarms")
         }
 
+        val MIGRATION_7_8 = newMigration(7, 8) {
+            execSQL("UPDATE alarms SET ringtone_uri = NULL WHERE ringtone_uri = 'null'")
+        }
+
         fun getInstance(context: Context): AppDatabase? {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
@@ -96,7 +100,8 @@ abstract class AppDatabase : RoomDatabase() {
                                     MIGRATION_3_4,
                                     MIGRATION_4_5,
                                     MIGRATION_5_6,
-                                    MIGRATION_6_7
+                                    MIGRATION_6_7,
+                                    MIGRATION_7_8
                             )
                             .build()
                 }

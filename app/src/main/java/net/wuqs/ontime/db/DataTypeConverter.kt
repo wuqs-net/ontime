@@ -4,7 +4,9 @@ import android.arch.persistence.room.TypeConverter
 import android.net.Uri
 import java.util.*
 
-fun String.toUri(): Uri? = Uri.parse(this)
+fun Uri?.toStringOrNull() = this?.toString()
+
+fun String?.toUri() = this?.let { Uri.parse(this) }
 
 fun Boolean.toInt() = if (this) 1 else 0
 
@@ -17,7 +19,7 @@ fun Long?.toCalendar() = this?.let { Calendar.getInstance().apply { timeInMillis
 class DataTypeConverter {
 
     @TypeConverter
-    fun toString(uri: Uri?) = uri?.toString()
+    fun toStringOrNull(uri: Uri?) = uri?.toString()
 
     @TypeConverter
     fun toUri(string: String?) = string?.toUri()
