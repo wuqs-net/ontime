@@ -117,23 +117,26 @@
 
         <net.wuqs.ontime.feature.editalarm.OptionItemView
             android:id="@+id/oiv_ringtone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             app:captionText="@string/msg_ringtone"
             app:iconImage="@drawable/ic_ringtone"
+            app:layout_constraintEnd_toStartOf="@+id/cb_vibrate"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider_repeat" />
+            app:layout_constraintTop_toBottomOf="@+id/divider_repeat"
+            tools:valueText="Default Ringtone (Abdieruidndbx)" />
 
         <CheckBox
             android:id="@+id/cb_vibrate"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:paddingStart="0dp"
-            android:paddingEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/msg_vibrate"
             android:textAppearance="@style/TextAppearance.AppCompat.Menu"
             app:layout_constraintBottom_toBottomOf="@+id/oiv_ringtone"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/oiv_ringtone"
             app:layout_constraintTop_toTopOf="@+id/oiv_ringtone" />
 
         <View
