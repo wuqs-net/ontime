@@ -10,6 +10,12 @@ def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
+ext {
+    versionMajor = 0
+    versionMinor = 7
+    versionPatch = 1
+}
+
 android {
     signingConfigs {
         playConfig {
@@ -24,8 +30,8 @@ android {
         applicationId "net.wuqs.ontime"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 2411
-        versionName '0.7.1'
+        versionCode genVersionCode()
+        versionName genVersionName()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -55,6 +61,15 @@ android {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
     buildToolsVersion '28.0.3'
+}
+
+private Integer genVersionCode() {
+    return ext.versionMajor * 100000 + ext.versionMinor * 1000 + ext.versionPatch * 10
+}
+
+private String genVersionName() {
+    String name = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
+    return name
 }
 
 dependencies {
