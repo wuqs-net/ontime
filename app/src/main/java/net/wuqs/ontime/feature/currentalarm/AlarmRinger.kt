@@ -4,12 +4,14 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.support.annotation.RequiresApi
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.util.Logger
+import java.io.IOException
 
 object AlarmRinger {
 
@@ -34,11 +36,17 @@ object AlarmRinger {
         logger.v("start(), ringtone=${alarm.ringtoneUri}, vibrate=${alarm.vibrate}")
         isStarted = true
 
+        // Start MediaPlayer only if ringtone is not null.
         alarm.ringtoneUri?.let {
             if (mediaPlayer == null) mediaPlayer = MediaPlayer()
             logger.v("MediaPlayer is created")
             val mp = this.mediaPlayer!!
-            mp.setDataSource(context, it)
+            try {
+                mp.setDataSource(context, it)
+            } catch (e: IOException) {
+                mp.setDataSource(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+                logger.e("Fail to play ringtone: $it")
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val audioAttributes = AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)

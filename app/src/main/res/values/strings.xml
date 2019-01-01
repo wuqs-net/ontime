@@ -8,6 +8,7 @@
     <string name="action_keep_editing">Keep editing</string>
     <string name="action_delete">Delete</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_go_to_settings">Go to Settings</string>
     <string name="action_enable">Enable alarm</string>
     <string name="title_new_alarm">New alarm</string>
     <string name="title_edit_alarm">Edit alarm</string>
@@ -62,6 +63,8 @@
     <string name="msg_next_date">Alarm will go off on %1$s</string>
     <string name="msg_ringtone">Ringtone</string>
     <string name="msg_vibrate">Vibrate</string>
+    <string name="msg_ask_for_perm">Allow \"Storage\" in \"App permissions\" to use custom ringtone</string>
+    <string name="msg_allow_ringtone_access">Click to allow access to custom ringtone</string>
 
     <string name="msg_default_alarm_title">OnTime Alarm</string>
     <string name="channel_name_alarm">Alarms</string>

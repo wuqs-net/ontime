@@ -1,16 +1,22 @@
 package net.wuqs.ontime.feature.editalarm
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.activity_edit_alarm.*
 import net.wuqs.ontime.R
@@ -26,7 +32,11 @@ import net.wuqs.ontime.util.Logger
 import net.wuqs.ontime.util.changeTaskDescription
 import net.wuqs.ontime.util.hideSoftInput
 import net.wuqs.ontime.util.shortToast
+import java.io.File
+import java.io.IOException
 import java.util.*
+
+private const val PERMISSION_REQUEST_RINGTONE = 2
 
 class EditAlarmActivity : AppCompatActivity(),
         PromptDialogFragment.OnClickListener,
@@ -79,9 +89,8 @@ class EditAlarmActivity : AppCompatActivity(),
         tv_alarm_time.setOnClickListener { showTimePickerDialog() }
         oiv_repeat_type.setOnClickListener { showRepeatPickerDialog() }
 
-        val ringtone = RingtoneManager.getRingtone(this, alarm.ringtoneUri)
-        oiv_ringtone.valueText = ringtone.getTitle(this)
         oiv_ringtone.setOnClickListener { showRingtonePicker() }
+        cl_perm_warn.setOnClickListener { requestRingtonePerm() }
 
         cb_vibrate.isChecked = alarm.vibrate
 
@@ -91,6 +100,12 @@ class EditAlarmActivity : AppCompatActivity(),
         updateRepeatDisplay()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        updateRingtoneDisplay()
+    }
+
     override fun onDialogPositiveClick(dialogFragment: DialogFragment) {
         when (dialogFragment.tag) {
             TAG_DELETE_ALARM -> {
@@ -98,6 +113,13 @@ class EditAlarmActivity : AppCompatActivity(),
                         .putExtra(EXTRA_ALARM_INSTANCE, alarm)
                 setResult(RESULT_DELETE_ALARM, data)
                 finish()
+            }
+            TAG_ASK_FOR_PERM -> {
+                // Redirect user to app setting screen to allow permission
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", packageName, null)
+                }
+                startActivity(intent)
             }
         }
     }
@@ -219,19 +241,70 @@ class EditAlarmActivity : AppCompatActivity(),
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            data?.let {
-                alarm.ringtoneUri = it.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                mLogger.v("Ringtone picked: ${alarm.ringtoneUri}")
-                val ringtone = RingtoneManager.getRingtone(this, alarm.ringtoneUri)
-                oiv_ringtone.valueText = ringtone.getTitle(this)
-                alarmEdited = true
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
+            alarm.ringtoneUri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+            mLogger.v("Ringtone picked: ${alarm.ringtoneUri}")
+            updateRingtoneDisplay()
+            alarmEdited = true
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        permissions.forEachIndexed { index, perm ->
+            if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+                mLogger.i("$perm granted")
+            } else {
+                mLogger.i("$perm denied")
+            }
+        }
+        when (requestCode) {
+            PERMISSION_REQUEST_RINGTONE -> {
+                updateRingtoneDisplay()
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        PromptDialogFragment.show(
+                                this,
+                                R.string.msg_ask_for_perm,
+                                R.string.action_go_to_settings,
+                                android.R.string.cancel,
+                                TAG_ASK_FOR_PERM
+                        )
+                    }
+                }
             }
         }
     }
 
     override fun onBackPressed() {
         promptDiscard()
+    }
+
+    private fun hasRingtonePerm(): Boolean {
+        alarm.ringtoneUri?.let {
+            return when (it.scheme) {
+                "file" -> try {
+                    mLogger.v("Ringtone path: ${it.path}")
+                    File(it.path).canRead()
+                } catch (e: IOException) {
+                    false
+                }
+                "content" -> try {
+                    contentResolver.query(it, null, null, null, null).close()
+                    true
+                } catch (e: SecurityException) {
+                    false
+                }
+                else -> false
+            }
+        }
+        return true
+    }
+
+    private fun requestRingtonePerm() {
+        ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                PERMISSION_REQUEST_RINGTONE)
     }
 
     private fun promptDelete() {
@@ -275,12 +348,19 @@ class EditAlarmActivity : AppCompatActivity(),
 
     private fun showRingtonePicker() {
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
             putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
             putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarm.ringtoneUri)
         }
         startActivityForResult(intent, 1)
+//        Intent.ACTION_GET_CONTENT
+    }
+
+    private fun updateRingtoneDisplay() {
+        val ringtone = RingtoneManager.getRingtone(this, alarm.ringtoneUri)
+        oiv_ringtone.valueText = ringtone.getTitle(this)
+        cl_perm_warn.visibility = if (hasRingtonePerm()) View.GONE else View.VISIBLE
     }
 
     private fun updateRepeatDisplay() {
@@ -326,3 +406,4 @@ private const val TAG_EDIT_ALARM = "EDIT_ALARM"
 private const val TAG_DELETE_ALARM = "DELETE_ALARM"
 private const val TAG_DISCARD_CHANGES = "DISCARD_CHANGES"
 private const val TAG_REPEAT_TYPE = "REPEAT_TYPE"
+private const val TAG_ASK_FOR_PERM = "ASK_FOR_PERM"

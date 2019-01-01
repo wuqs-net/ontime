@@ -9,6 +9,7 @@
     <string name="action_keep_editing">继续修改</string>
     <string name="action_delete">删除</string>
     <string name="action_cancel">取消</string>
+    <string name="action_go_to_settings">去设置</string>
     <string name="action_enable">启用闹钟</string>
     <string name="title_new_alarm">新建闹钟</string>
     <string name="title_edit_alarm">修改闹钟</string>
@@ -63,6 +64,8 @@
     <string name="msg_next_date">下次响铃：%1$s</string>
     <string name="msg_ringtone">铃声</string>
     <string name="msg_vibrate">振动</string>
+    <string name="msg_ask_for_perm">在“应用权限”设置中开启“存储空间”权限，以使用自定义铃声</string>
+    <string name="msg_allow_ringtone_access">点击以允许使用自定义铃声</string>
 
     <string name="msg_default_alarm_title">OnTime 闹钟</string>
     <string name="channel_name_alarm">闹钟</string>

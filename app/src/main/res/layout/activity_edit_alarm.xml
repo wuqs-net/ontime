@@ -139,15 +139,50 @@
             app:layout_constraintStart_toEndOf="@+id/oiv_ringtone"
             app:layout_constraintTop_toTopOf="@+id/oiv_ringtone" />
 
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/cl_perm_warn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintTop_toBottomOf="@+id/oiv_ringtone">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/iv_perm_warn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/boundary_margin"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_perm_warn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_perm_warn"
+                app:srcCompat="@drawable/ic_warning_black_24dp"
+                app:tint="?attr/colorError"
+                app:tintMode="src_in" />
+
+            <TextView
+                android:id="@+id/tv_perm_warn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/content_start_padding"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="@dimen/boundary_margin"
+                android:layout_marginBottom="16dp"
+                android:text="@string/msg_allow_ringtone_access"
+                android:textColor="?attr/colorError"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
         <View
             android:id="@+id/divider_ringtone"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider"
-            app:layout_constraintTop_toBottomOf="@+id/oiv_ringtone" />
+            app:layout_constraintTop_toBottomOf="@+id/cl_perm_warn" />
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/imageView"
+            android:id="@+id/iv_notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/boundary_margin"
