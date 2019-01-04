@@ -4,9 +4,7 @@ package net.wuqs.ontime.feature.home
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateFormat
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import kotlinx.android.synthetic.main.item_alarm.view.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.createDateString
@@ -47,6 +45,7 @@ class AlarmRecyclerViewAdapter
     }
 
     inner class ViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
+
         fun bindData(item: Alarm) = with(mView) {
             setOnClickListener { mListener?.onListItemClick(data[adapterPosition]) }
 
@@ -103,6 +102,23 @@ class AlarmRecyclerViewAdapter
                 tv_repeat_pattern.text = item.getRepeatString(context)
             }
 
+            // Create context menu.
+            setOnCreateContextMenuListener { menu, v, menuInfo ->
+                MenuInflater(v.context).inflate(R.menu.menu_alarm_list_context, menu)
+                val menuItemListener = MenuItem.OnMenuItemClickListener {
+                    mListener?.onContextMenuItemSelected(data[adapterPosition], it)
+                    true
+                }
+                menu.findItem(R.id.item_skip_once).run {
+                    setOnMenuItemClickListener(menuItemListener)
+                    isVisible = item.nextTime?.let { item.getNextOccurrence(it) } != null
+                }
+                menu.findItem(R.id.item_delete).run {
+                    setOnMenuItemClickListener(menuItemListener)
+                }
+            }
+
+            // Countdown to next alarm
 //            item.nextTime?.let {
 //                val now = Calendar.getInstance()
 //                if (layoutPosition == 0 && now.sameDayAs(it)) {

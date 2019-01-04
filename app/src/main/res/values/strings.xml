@@ -23,6 +23,13 @@
     <string name="option_today_alarms">Today\'s alarms</string>
     <string name="option_history">History</string>
 
+    <!--Context menu in alarm list-->
+    <string name="action_skip_once">Skip once</string>
+    <string name="msg_alarm_skipped">Alarm is skipped to %1$s</string>
+    <string name="msg_titled_alarm_skipped">&lt;b>%2$s&lt;/b> is skipped to %1$s</string>
+    <string name="action_undo">Undo</string>
+
+    <!--Backup & restore-->
     <string name="action_backup">Backup</string>
     <string name="action_restore">Restore</string>
     <string name="msg_backup_successful">Backup successful</string>

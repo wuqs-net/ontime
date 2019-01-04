@@ -135,6 +135,14 @@ class AlarmListFragment : Fragment() {
          * @param isChecked whether the switch is checked.
          */
         fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean)
+
+        /**
+         * Called when an option in the context menu of an item in the [RecyclerView] is selected.
+         *
+         * @param item the [Alarm] attached to the [RecyclerView] item.
+         * @param menuItem the [MenuItem] selected.
+         */
+        fun onContextMenuItemSelected(item: Alarm, menuItem: MenuItem)
     }
 
     private val mLogger = Logger("AlarmListFragment")

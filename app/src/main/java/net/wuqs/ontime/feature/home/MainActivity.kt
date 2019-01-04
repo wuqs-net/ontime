@@ -1,17 +1,23 @@
 package net.wuqs.ontime.feature.home
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v4.text.TextUtilsCompat
 import android.support.v7.app.AppCompatActivity
+import android.text.Html
+import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -67,7 +73,7 @@ class MainActivity : AppCompatActivity(),
 
         changeTaskDescription()
 
-        alarmUpdateHandler = AlarmUpdateHandler(this, fabCreateAlarm)
+        alarmUpdateHandler = AlarmUpdateHandler(this)
 
         val filter = IntentFilter(ACTION_SHOW_MISSED_ALARMS)
         val lbm = LocalBroadcastManager.getInstance(this)
@@ -84,9 +90,11 @@ class MainActivity : AppCompatActivity(),
                 if (resultCode == RESULT_SAVE_ALARM) {
                     val alarm = data!!.getParcelableExtra<Alarm>(EXTRA_ALARM_INSTANCE)
                     if (alarm.id == Alarm.INVALID_ID) {
-                        alarmUpdateHandler.asyncAddAlarm(alarm, true)
+                        alarmUpdateHandler.asyncAddAlarm(alarm)
+                        showAlarmWillGoOffSnack(alarm)
                     } else {
-                        alarmUpdateHandler.asyncUpdateAlarm(alarm, true)
+                        alarmUpdateHandler.asyncUpdateAlarm(alarm)
+                        showAlarmWillGoOffSnack(alarm)
                     }
                 } else if (resultCode == RESULT_DELETE_ALARM) {
                     val alarm = data!!.getParcelableExtra<Alarm>(EXTRA_ALARM_INSTANCE)
@@ -162,8 +170,73 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onAlarmSwitchClick(item: Alarm, isChecked: Boolean) {
         item.isEnabled = isChecked
-        alarmUpdateHandler.asyncUpdateAlarm(item, true)
+        alarmUpdateHandler.asyncUpdateAlarm(item)
+        showAlarmWillGoOffSnack(item)
     }
+
+    /**
+     * Called when an alarm item in the list is long-pressed and an option is selected
+     */
+    override fun onContextMenuItemSelected(item: Alarm, menuItem: MenuItem) {
+        when (menuItem.itemId) {
+            R.id.item_skip_once -> {
+                val updated = Alarm(item).apply { nextTime = getNextOccurrence(nextTime!!) }
+                alarmUpdateHandler.asyncUpdateAlarm(updated)
+                showAlarmSkippedSnack(updated, item)
+            }
+            R.id.item_delete -> {
+                // Prompt before deleting.
+                AlertDialog.Builder(this).run {
+                    setMessage(R.string.prompt_delete_alarm)
+                    setPositiveButton(R.string.action_delete) { _, _ ->
+                        alarmUpdateHandler.asyncDeleteAlarm(item)
+                    }
+                    setNegativeButton(android.R.string.cancel, null)
+                    create()
+                }.show()
+            }
+        }
+    }
+
+    /**
+     * Shows a Snackbar that displays the time left until the alarm goes off.
+     */
+    private fun showAlarmWillGoOffSnack(alarm: Alarm) {
+        if (!alarm.isEnabled) return
+        alarm.nextTime?.let {
+            val msg = getString(
+                    R.string.msg_alarm_will_go_off,
+                    createTimeDifferenceString(this, it)
+            )
+            Snackbar.make(fabCreateAlarm, msg, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    /**
+     * Shows a Snackbar that tells user an alarm is skipped and allows them to undo.
+     */
+    private fun showAlarmSkippedSnack(updated: Alarm, old: Alarm) {
+        updated.nextTime?.let {
+            val msg = if (updated.title.isNullOrBlank()) {
+                getString(R.string.msg_alarm_skipped, it.createDateString())
+            } else {
+                // If the alarm has a title, bold it and show.
+                val title = Html.escapeHtml(updated.title!!)
+                val text = getString(R.string.msg_titled_alarm_skipped,
+                        it.createDateString(), title)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
+                } else {
+                    @Suppress("DEPRECATION")
+                    Html.fromHtml(text)
+                }
+            }
+            Snackbar.make(fabCreateAlarm, msg, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.action_undo) { alarmUpdateHandler.asyncUpdateAlarm(old) }
+                    .show()
+        }
+    }
+
 
     /**
      * Called when the create alarm button is clicked.

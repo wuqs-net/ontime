@@ -38,6 +38,8 @@ import java.util.*
 
 private const val PERMISSION_REQUEST_RINGTONE = 2
 
+const val TAG_DELETE_ALARM = "DELETE_ALARM"
+
 class EditAlarmActivity : AppCompatActivity(),
         PromptDialogFragment.OnClickListener,
         TimePickerDialogFragment.OnTimeSetListener,
@@ -403,7 +405,6 @@ class EditAlarmActivity : AppCompatActivity(),
 }
 
 private const val TAG_EDIT_ALARM = "EDIT_ALARM"
-private const val TAG_DELETE_ALARM = "DELETE_ALARM"
 private const val TAG_DISCARD_CHANGES = "DISCARD_CHANGES"
 private const val TAG_REPEAT_TYPE = "REPEAT_TYPE"
 private const val TAG_ASK_FOR_PERM = "ASK_FOR_PERM"

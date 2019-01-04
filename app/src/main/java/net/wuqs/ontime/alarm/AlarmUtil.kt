@@ -125,20 +125,20 @@ fun getRelativeDateTimeString(ctx: Context, c: Calendar?): String {
  * Creates a String describing the difference between a specified time from now.
  *
  * @param context to create the String
- * @param timeInMillis a time in the future, in milliseconds
- * @return a String describing the difference between a specified time from now
+ * @param timeInFuture a [Calendar] that represents a time in the future
+ * @return a String describing the difference between the specified time from now
  */
-fun createTimeDifferenceString(context: Context, timeInMillis: Long): String {
-    var delta = timeInMillis - Calendar.getInstance().timeInMillis
+fun createTimeDifferenceString(context: Context, timeInFuture: Calendar): String {
+    var diff = timeInFuture.timeInMillis - Calendar.getInstance().timeInMillis
 
     val formats = context.resources.getStringArray(R.array.time_distance)
-    if (delta < MINUTE_IN_MILLIS) return formats[0]
+    if (diff < MINUTE_IN_MILLIS) return formats[0]
 
-    delta /= MINUTE_IN_MILLIS
-    val minute = (delta % 60).toInt()
-    delta /= 60
-    val hour = (delta % 24).toInt()
-    val day = (delta / 24).toInt()
+    diff /= MINUTE_IN_MILLIS
+    val minute = (diff % 60).toInt()
+    diff /= 60
+    val hour = (diff % 24).toInt()
+    val day = (diff / 24).toInt()
 
     val minuteStr = context.resources.getQuantityString(R.plurals.minutes_with_quan, minute, minute)
     val hourStr = context.resources.getQuantityString(R.plurals.hours_with_quan, hour, hour)
