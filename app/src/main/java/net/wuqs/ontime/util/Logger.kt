@@ -13,3 +13,12 @@ class Logger(private val logTag: String) {
     fun wtf(message: String) = Log.wtf(logTag, message)
     fun wtf(message: String, tr: Throwable) = Log.wtf(logTag, message, tr)
 }
+
+fun Any.logV(message: String) = Log.v(javaClass.simpleName, message)
+fun Any.logD(message: String) = Log.d(javaClass.simpleName, message)
+fun Any.logI(message: String) = Log.i(javaClass.simpleName, message)
+fun Any.logW(message: String) = Log.w(javaClass.simpleName, message)
+fun Any.logE(message: String) = Log.e(javaClass.simpleName, message)
+fun Any.logE(message: String, tr: Throwable) = Log.e(javaClass.simpleName, message, tr)
+fun Any.logWtf(message: String) = Log.wtf(javaClass.simpleName, message)
+fun Any.logWtf(message: String, tr: Throwable) = Log.wtf(javaClass.simpleName, message, tr)
