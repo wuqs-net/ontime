@@ -33,85 +33,80 @@
         android:id="@+id/tv_app_version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_app_name"
-        tools:text="0.7-beta" />
+        tools:text="0.7.3" />
 
-    <android.support.v7.widget.CardView
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_app_version">
 
-        <android.support.constraint.ConstraintLayout
+        <TextView
+            android:id="@+id/tv_review"
+            style="@style/AppTheme.AboutAction"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:text="@string/action_rate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/action_rate"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_review"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_review"
+            app:srcCompat="@drawable/ic_favorite_black_24dp" />
+
+        <View
+            android:id="@+id/divider2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/content_start_padding"
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/listDivider"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_review" />
 
-            <TextView
-                android:id="@+id/tv_review"
-                style="@style/AppTheme.AboutAction"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:text="@string/action_rate"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tv_feedback"
+            style="@style/AppTheme.AboutAction"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:paddingStart="@dimen/content_start_padding"
+            android:paddingEnd="@dimen/text_margin"
+            android:text="@string/action_feedback"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
-            <ImageView
-                android:id="@+id/iv_review"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:contentDescription="@string/action_rate"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_review"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_review"
-                app:srcCompat="@drawable/ic_favorite_black_24dp" />
+        <ImageView
+            android:id="@+id/iv_feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/action_feedback"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_feedback"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_feedback"
+            app:srcCompat="@drawable/ic_feedback_black_24dp" />
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="@dimen/content_start_padding"
-                android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_review" />
-
-            <TextView
-                android:id="@+id/tv_feedback"
-                style="@style/AppTheme.AboutAction"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:paddingEnd="@dimen/text_margin"
-                android:paddingStart="@dimen/content_start_padding"
-                android:text="@string/action_feedback"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/divider2" />
-
-            <ImageView
-                android:id="@+id/iv_feedback"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:contentDescription="@string/action_feedback"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_feedback"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_feedback"
-                app:srcCompat="@drawable/ic_feedback_black_24dp" />
-
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v7.widget.CardView>
+    </android.support.constraint.ConstraintLayout>
 
     <TextView
         android:id="@+id/tv_app_author"

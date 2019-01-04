@@ -87,7 +87,7 @@
 
     <!--About-->
     <string name="title_about">关于</string>
-    <string name="action_rate">去应用商店评分</string>
+    <string name="action_rate">去评价</string>
     <string name="action_feedback">建议与反馈</string>
 
     <string-array name="time_distance">
