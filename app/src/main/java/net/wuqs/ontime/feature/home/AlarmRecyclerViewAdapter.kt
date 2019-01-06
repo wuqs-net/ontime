@@ -7,10 +7,7 @@ import android.text.format.DateFormat
 import android.view.*
 import kotlinx.android.synthetic.main.item_alarm.view.*
 import net.wuqs.ontime.R
-import net.wuqs.ontime.alarm.createDateString
-import net.wuqs.ontime.alarm.createTimeString
-import net.wuqs.ontime.alarm.getRepeatString
-import net.wuqs.ontime.alarm.sameDayAs
+import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.feature.home.AlarmListFragment.OnListFragmentActionListener
 import net.wuqs.ontime.util.Logger
@@ -93,6 +90,7 @@ class AlarmRecyclerViewAdapter
                 }
             }
             iv_snoozed.visibility = if (item.snoozed <= 0) View.GONE else View.VISIBLE
+            // TODOk: Show skipped status
 
             // Display information about repeat
             if (item.repeatType == Alarm.NON_REPEAT) {
@@ -105,6 +103,17 @@ class AlarmRecyclerViewAdapter
             // Create context menu.
             setOnCreateContextMenuListener { menu, v, menuInfo ->
                 MenuInflater(v.context).inflate(R.menu.menu_alarm_list_context, menu)
+
+                // Set title for the menu.
+                // If the alarm title is empty, use its next time or activate time.
+                val title = item.title.takeUnless { it.isNullOrBlank() }
+                        ?: item.nextTime.createDateTimeString(context).ifBlank {
+                            val activateTime = item.activateDate!!.clone() as Calendar
+                            activateTime.setHms(item.hour, item.minute)
+                            activateTime.createDateTimeString(context)
+                        }
+                menu.setHeaderTitle(title)
+
                 val menuItemListener = MenuItem.OnMenuItemClickListener {
                     mListener?.onContextMenuItemSelected(data[adapterPosition], it)
                     true

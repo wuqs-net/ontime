@@ -6,5 +6,5 @@
         android:title="@string/action_skip_once" />
     <item
         android:id="@+id/item_delete"
-        android:title="@string/action_delete" />
+        android:title="@string/action_delete_this_alarm" />
 </menu>

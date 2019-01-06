@@ -25,7 +25,8 @@
     <string name="option_history">历史记录</string>
 
     <!--Context menu in alarm list-->
-    <string name="action_skip_once">跳过一次</string>
+    <string name="action_skip_once">跳过下次闹钟</string>
+    <string name="action_delete_this_alarm">删除此闹钟</string>
     <string name="msg_alarm_skipped">已将闹钟的下次响铃移至%1$s</string>
     <string name="msg_titled_alarm_skipped">已将&lt;b>%2$s&lt;/b>的下次响铃移至%1$s</string>
     <string name="action_undo">撤销</string>

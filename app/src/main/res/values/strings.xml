@@ -24,7 +24,8 @@
     <string name="option_history">History</string>
 
     <!--Context menu in alarm list-->
-    <string name="action_skip_once">Skip once</string>
+    <string name="action_skip_once">Skip next alarm</string>
+    <string name="action_delete_this_alarm">Delete this alarm</string>
     <string name="msg_alarm_skipped">Alarm is skipped to %1$s</string>
     <string name="msg_titled_alarm_skipped">&lt;b>%2$s&lt;/b> is skipped to %1$s</string>
     <string name="action_undo">Undo</string>
