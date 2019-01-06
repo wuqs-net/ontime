@@ -55,20 +55,41 @@ class AlarmStateManager : BroadcastReceiver() {
         fun createScheduleAllAlarmsIntent(context: Context) =
                 createIntent(ACTION_SCHEDULE_ALL_ALARMS, context)
 
-        fun scheduleAlarm(context: Context, alarm: Alarm) {
-            val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
+        /**
+         * Creates a [PendingIntent] for an [Alarm].
+         *
+         * @param context to create the [PendingIntent].
+         * @param alarm which the [PendingIntent] is to be created for.
+         * @param flags for the [PendingIntent].
+         * @return a [PendingIntent] for the specified [Alarm].
+         */
+        private fun createPendingIntent(
+            context: Context,
+            alarm: Alarm,
+            flags: Int = PendingIntent.FLAG_UPDATE_CURRENT
+        ): PendingIntent? {
             val startAlarmIntent = alarm.createAlarmStartIntent(context).apply {
                 addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
             }
-            val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // getForeground
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 PendingIntent.getForegroundService(context, alarm.hashCode(), startAlarmIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT)
+                        flags)
             } else {
                 PendingIntent.getService(context, alarm.hashCode(), startAlarmIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT)
+                        flags)
             }
+        }
+
+        /**
+         * Schedules an [Alarm] to so it will go off.
+         *
+         * @param context to schedule the [Alarm].
+         * @param alarm to be scheduled.
+         */
+        fun scheduleAlarm(context: Context, alarm: Alarm) {
+            val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            val pendingIntent = createPendingIntent(context, alarm)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Make sure the alarm fires even if the device is dozing.
@@ -83,28 +104,36 @@ class AlarmStateManager : BroadcastReceiver() {
             logger.d("Alarm registered: $alarm")
         }
 
+        /**
+         * Cancels an [Alarm] so it will not go off.
+         *
+         * @param context to cancel the [Alarm].
+         * @param alarm to be cancelled.
+         */
         fun cancelAlarm(context: Context, alarm: Alarm) {
-            val operation = PendingIntent.getService(context, alarm.hashCode(),
-                    alarm.createAlarmStartIntent(context), PendingIntent.FLAG_NO_CREATE)
-            operation?.let {
-                val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                am.cancel(it)
-                it.cancel()
-                logger.d("Alarm cancelled: $alarm")
+            val pendingIntent = createPendingIntent(context, alarm,
+                    PendingIntent.FLAG_NO_CREATE)
+            if (pendingIntent == null) {
+                logger.e("PendingIntent is null, alarm cannot be cancelled: $alarm")
+                return
             }
+
+            val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            am.cancel(pendingIntent)
+            logger.d("Alarm cancelled: $alarm")
         }
 
         fun handleIntent(context: Context, intent: Intent) {
             when (intent.action) {
                 ACTION_BOOT_COMPLETED -> scheduleAllAlarms(context, true)
                 ACTION_SCHEDULE_ALL_ALARMS -> scheduleAllAlarms(context, false)
-    //            ACTION_SHOW_MISSED_ALARMS -> {
-    //                logger.i("Show missed alarms")
-    //                val mIntent = Intent(context, MissedAlarmsActivity::class.java).apply {
-    //                    putExtras(intent)
-    //                }
-    //                context.startActivity(mIntent)
-    //            }
+                // ACTION_SHOW_MISSED_ALARMS -> {
+                //     logger.i("Show missed alarms")
+                //     val mIntent = Intent(context, MissedAlarmsActivity::class.java).apply {
+                //         putExtras(intent)
+                //     }
+                //     context.startActivity(mIntent)
+                // }
                 ACTION_DISMISS_ALL_MISSED_ALARMS -> {
                     dismissAllMissedAlarms(context,
                             intent.getParcelableArrayListExtra(EXTRA_MISSED_ALARMS))
