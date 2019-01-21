@@ -27,8 +27,8 @@
     <!--Context menu in alarm list-->
     <string name="action_skip_once">跳过下次闹钟</string>
     <string name="action_delete_this_alarm">删除此闹钟</string>
-    <string name="msg_alarm_skipped">已将闹钟的下次响铃移至%1$s</string>
-    <string name="msg_titled_alarm_skipped">已将&lt;b>%2$s&lt;/b>的下次响铃移至%1$s</string>
+    <string name="msg_alarm_skipped">已将闹钟移至%1$s</string>
+    <string name="msg_titled_alarm_skipped">已将&lt;b>%2$s&lt;/b>移至%1$s</string>
     <string name="action_undo">撤销</string>
 
     <!--Backup & restore-->
@@ -79,7 +79,8 @@
     <string name="channel_name_alarm">闹钟</string>
     <string name="channel_name_current_alarm">当前响铃的闹钟</string>
     <string name="msg_click_for_more_options">%1$s &#8226; 点击以查看详情</string>
-    <string name="msg_snoozed_until">推迟至%1$s</string>
+    <string name="msg_snoozed_until">已推迟至%1$s</string>
+    <string name="msg_skipped_to">已移至%1$s</string>
     <string name="msg_snoozed_time">%1$s（%2$s）</string>
     <string name="action_dismiss_alarm">关闭</string>
     <string name="action_delay_alarm">推迟…</string>

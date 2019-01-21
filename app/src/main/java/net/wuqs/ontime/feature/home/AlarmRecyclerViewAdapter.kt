@@ -89,8 +89,19 @@ class AlarmRecyclerViewAdapter
                     )
                 }
             }
-            iv_snoozed.visibility = if (item.snoozed <= 0) View.GONE else View.VISIBLE
-            // TODOk: Show skipped status
+            iv_snoozed.run {
+                if (item.snoozed > 0) {
+                    visibility = View.VISIBLE
+                    setImageResource(R.drawable.ic_postpone_black)
+                    // Change back to right arrow if not preferred, or
+                    // TODO: also change alarm screen
+                } else if (item.nextTime?.after(item.getNextOccurrence()) == true) {
+                    visibility = View.VISIBLE
+                    setImageResource(R.drawable.ic_skip_next_black)
+                } else {
+                    visibility = View.GONE
+                }
+            }
 
             // Display information about repeat
             if (item.repeatType == Alarm.NON_REPEAT) {

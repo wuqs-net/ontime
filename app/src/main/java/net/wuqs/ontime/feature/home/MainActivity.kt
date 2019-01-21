@@ -141,9 +141,9 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onTimeSet(fragment: TimePickerDialogFragment, hourOfDay: Int, minute: Int) {
         if (fragment.tag == TAG_NEW_ALARM) {
-            val alarm = Alarm(hour = hourOfDay, minute = minute)
-            if (alarm.isSetTimeEarlierThanNow()) {
-                alarm.activateDate!!.add(Calendar.DAY_OF_MONTH, 1)
+            val alarm = Alarm(hour = hourOfDay, minute = minute).apply {
+                if (isSetTimeEarlierThanNow()) activateDate!!.add(Calendar.DAY_OF_MONTH, 1)
+                nextTime = getNextOccurrence()
             }
             val editAlarmIntent = EditAlarmActivity.createIntent(this)
                     .putExtra(EXTRA_ALARM_INSTANCE, alarm)
@@ -175,12 +175,16 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Called when an alarm item in the list is long-pressed and an option is selected
+     * Called when an alarm item in the list is long-pressed and an option is selected.
      */
     override fun onContextMenuItemSelected(item: Alarm, menuItem: MenuItem) {
         when (menuItem.itemId) {
             R.id.item_skip_once -> {
-                val updated = Alarm(item).apply { nextTime = getNextOccurrence(nextTime!!) }
+                val updated = Alarm(item).apply {
+                    nextTime = getNextOccurrence(nextTime!!)
+                    // Make sure previous snooze status is cleared.
+                    snoozed = 0
+                }
                 alarmUpdateHandler.asyncUpdateAlarm(updated)
                 showAlarmSkippedSnack(updated, item)
             }

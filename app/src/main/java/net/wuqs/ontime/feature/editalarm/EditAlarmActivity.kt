@@ -98,7 +98,7 @@ class EditAlarmActivity : AppCompatActivity(),
 
         et_notes.setText(alarm.notes)
 
-        updateNextAlarmDate(alarm.snoozed != 0)
+        updateNextAlarmDate(displayOnly = true)
         updateRepeatDisplay()
     }
 
@@ -373,25 +373,39 @@ class EditAlarmActivity : AppCompatActivity(),
         }
     }
 
-    private fun updateNextAlarmDate(snoozed: Boolean = false) {
-        if (snoozed) {
-            val dateTime = alarm.nextTime.createDateTimeString(this)
-            tv_next_date.text = getString(R.string.msg_snoozed_until, dateTime)
+    /**
+     * Updates the next occurrence of the [Alarm] and its display.
+     *
+     * @param displayOnly if `true`, updates the display without changing any data. This parameter
+     * is `false` by default.
+     */
+    private fun updateNextAlarmDate(displayOnly: Boolean = false) {
+        if (!displayOnly) {
+            alarm.nextTime = alarm.getNextOccurrence()
+            alarm.snoozed = 0
+            mLogger.i("nextTime changed to ${alarm.nextTime?.time}")
+        }
+
+        if (alarm.nextTime == null) {
+            tv_next_date.text = if (alarm.repeatType == Alarm.NON_REPEAT) {
+                getString(R.string.msg_cannot_set_past_time)
+            } else {
+                getString(R.string.msg_select_at_least_one_day)
+            }
             return
         }
-        alarm.getNextOccurrence().let {
-            tv_next_date.text = if (it != null) {
-                getString(R.string.msg_next_date, it.createDateString())
-            } else {
-                if (alarm.repeatType == Alarm.NON_REPEAT) {
-                    getString(R.string.msg_cannot_set_past_time)
-                } else {
-                    getString(R.string.msg_select_at_least_one_day)
-                }
+
+        alarm.nextTime?.let {
+            if (alarm.snoozed > 0) {
+                val time = it.createDateTimeString(this)
+                tv_next_date.text = getString(R.string.msg_snoozed_until, time)
+                return
             }
-            mLogger.i(it?.time.toString())
-            alarm.nextTime = it
-            alarm.snoozed = 0
+            val date = it.createDateString()
+            tv_next_date.text = when {
+                it.after(alarm.getNextOccurrence()) -> getString(R.string.msg_skipped_to, date)
+                else -> getString(R.string.msg_next_date, date)
+            }
         }
 
     }

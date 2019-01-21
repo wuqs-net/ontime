@@ -79,6 +79,7 @@
     <string name="channel_name_current_alarm">Current alarms</string>
     <string name="msg_click_for_more_options">%1$s &#8226; Click for details</string>
     <string name="msg_snoozed_until">Snoozed until %1$s</string>
+    <string name="msg_skipped_to">Skipped to %1$s</string>
     <string name="msg_snoozed_time">%1$s (%2$s)</string>
     <string name="action_dismiss_alarm">Dismiss</string>
     <string name="action_delay_alarm">Snooze…</string>
