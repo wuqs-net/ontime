@@ -74,7 +74,7 @@
         android:id="@+id/btn_delay"
         android:layout_width="0dp"
         android:layout_height="64dp"
-        android:drawableStart="@drawable/ic_arrow_right"
+        android:drawableStart="@drawable/ic_postpone_black"
         android:paddingStart="32dp"
         android:paddingEnd="0dp"
         android:text="@string/action_delay_alarm"
