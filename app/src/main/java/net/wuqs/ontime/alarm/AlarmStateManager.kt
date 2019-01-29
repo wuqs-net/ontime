@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.ACTION_BOOT_COMPLETED
 import android.os.Build
 import android.support.v4.content.LocalBroadcastManager
 import net.wuqs.ontime.db.Alarm
@@ -26,12 +27,6 @@ const val EXTRA_MISSED_ALARMS = "net.wuqs.ontime.extra.MISSED_ALARMS"
 
 private const val EXTRA_ON_BOOT = "net.wuqs.ontime.extra.ON_BOOT"
 
-private val ACTION_BOOT_COMPLETED = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-    Intent.ACTION_LOCKED_BOOT_COMPLETED
-} else {
-    Intent.ACTION_BOOT_COMPLETED
-}
-
 class AlarmStateManager : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -49,11 +44,13 @@ class AlarmStateManager : BroadcastReceiver() {
 
     companion object {
 
-        fun createIntent(action: String, context: Context) =
-                Intent(action, null, context, AlarmStateManager::class.java)
+        fun createIntent(action: String, context: Context): Intent {
+            return Intent(action, null, context, AlarmStateManager::class.java)
+        }
 
-        fun createScheduleAllAlarmsIntent(context: Context) =
-                createIntent(ACTION_SCHEDULE_ALL_ALARMS, context)
+        fun createScheduleAllAlarmsIntent(context: Context): Intent {
+            return createIntent(ACTION_SCHEDULE_ALL_ALARMS, context)
+        }
 
         /**
          * Creates a [PendingIntent] for an [Alarm].
@@ -123,9 +120,17 @@ class AlarmStateManager : BroadcastReceiver() {
             logger.d("Alarm cancelled: $alarm")
         }
 
+        /**
+         * Handles various [Intent] received.
+         *
+         * @param context to handle the [Intent].
+         * @param intent the [Intent] to be handled.
+         */
         fun handleIntent(context: Context, intent: Intent) {
             when (intent.action) {
                 ACTION_BOOT_COMPLETED -> scheduleAllAlarms(context, true)
+                // TODO: Direct boot aware (long-term plan)
+//                ACTION_LOCKED_BOOT_COMPLETED -> scheduleAllAlarms(context, true)
                 ACTION_SCHEDULE_ALL_ALARMS -> scheduleAllAlarms(context, false)
                 // ACTION_SHOW_MISSED_ALARMS -> {
                 //     logger.i("Show missed alarms")
