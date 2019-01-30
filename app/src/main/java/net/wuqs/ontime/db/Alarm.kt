@@ -17,20 +17,20 @@ import java.util.*
 
 @Entity(tableName = "alarms")
 class Alarm(
-        @PrimaryKey var id: Long = INVALID_ID,
-        @ColumnInfo(name = "hour") var hour: Int = 0,
-        @ColumnInfo(name = "minute") var minute: Int = 0,
-        @ColumnInfo(name = "title") var title: String? = "",
-        @ColumnInfo(name = "ringtone_uri") var ringtoneUri: Uri? = null,
-        @ColumnInfo(name = "vibrate") var vibrate: Boolean = false,
-        @ColumnInfo(name = "enabled") var isEnabled: Boolean = true,
-        @ColumnInfo(name = "repeat_type") var repeatType: Int = 0,
-        @ColumnInfo(name = "repeat_cycle") var repeatCycle: Int = 0,
-        @ColumnInfo(name = "repeat_index") var repeatIndex: Int = 0,
-        @ColumnInfo(name = "activate_date") var activateDate: Calendar? = Calendar.getInstance(),
-        @ColumnInfo(name = "next_occurrence") var nextTime: Calendar? = null,
-        @ColumnInfo(name = "snoozed") var snoozed: Int = 0,
-        @ColumnInfo(name = "notes") var notes: String = ""
+    @PrimaryKey var id: Long = INVALID_ID,
+    @ColumnInfo(name = "hour") var hour: Int = 0,
+    @ColumnInfo(name = "minute") var minute: Int = 0,
+    @ColumnInfo(name = "title") var title: String? = "",
+    @ColumnInfo(name = "ringtone_uri") var ringtoneUri: Uri? = null,
+    @ColumnInfo(name = "vibrate") var vibrate: Boolean = false,
+    @ColumnInfo(name = "enabled") var isEnabled: Boolean = true,
+    @ColumnInfo(name = "repeat_type") var repeatType: Int = 0,
+    @ColumnInfo(name = "repeat_cycle") var repeatCycle: Int = 0,
+    @ColumnInfo(name = "repeat_index") var repeatIndex: Int = 0,
+    @ColumnInfo(name = "activate_date") var activateDate: Calendar? = Calendar.getInstance(),
+    @ColumnInfo(name = "next_occurrence") var nextTime: Calendar? = null,
+    @ColumnInfo(name = "snoozed") var snoozed: Int = 0,
+    @ColumnInfo(name = "notes") var notes: String = ""
 ) : Parcelable {
 
     init {

@@ -93,7 +93,7 @@ class AlarmRecyclerViewAdapter
                 if (item.snoozed > 0) {
                     visibility = View.VISIBLE
                     setImageResource(R.drawable.ic_postpone_black)
-                    // Change back to right arrow if not preferred, or
+                    // Change back to right arrow if not preferred
                 } else if (item.nextTime?.after(item.getNextOccurrence()) == true) {
                     visibility = View.VISIBLE
                     setImageResource(R.drawable.ic_skip_next_black)
