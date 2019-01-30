@@ -18,20 +18,89 @@ import java.util.*
 @Entity(tableName = "alarms")
 class Alarm(
     @PrimaryKey var id: Long = INVALID_ID,
-    @ColumnInfo(name = "hour") var hour: Int = 0,
-    @ColumnInfo(name = "minute") var minute: Int = 0,
-    @ColumnInfo(name = "title") var title: String? = "",
-    @ColumnInfo(name = "ringtone_uri") var ringtoneUri: Uri? = null,
-    @ColumnInfo(name = "vibrate") var vibrate: Boolean = false,
-    @ColumnInfo(name = "enabled") var isEnabled: Boolean = true,
-    @ColumnInfo(name = "repeat_type") var repeatType: Int = 0,
-    @ColumnInfo(name = "repeat_cycle") var repeatCycle: Int = 0,
-    @ColumnInfo(name = "repeat_index") var repeatIndex: Int = 0,
-    @ColumnInfo(name = "activate_date") var activateDate: Calendar? = Calendar.getInstance(),
-    @ColumnInfo(name = "next_occurrence") var nextTime: Calendar? = null,
-    @ColumnInfo(name = "snoozed") var snoozed: Int = 0,
-    @ColumnInfo(name = "notes") var notes: String = ""
+    @ColumnInfo(name = Columns.HOUR) var hour: Int = 0,
+    @ColumnInfo(name = Columns.MINUTE) var minute: Int = 0,
+    @ColumnInfo(name = Columns.TITLE) var title: String? = "",
+    @ColumnInfo(name = Columns.RINGTONE_URI) var ringtoneUri: Uri? = null,
+    @ColumnInfo(name = Columns.VIBRATE) var vibrate: Boolean = false,
+    @ColumnInfo(name = Columns.ENABLED) var isEnabled: Boolean = true,
+    @ColumnInfo(name = Columns.REPEAT_TYPE) var repeatType: Int = 0,
+    @ColumnInfo(name = Columns.REPEAT_CYCLE) var repeatCycle: Int = 0,
+    @ColumnInfo(name = Columns.REPEAT_INDEX) var repeatIndex: Int = 0,
+    @ColumnInfo(name = Columns.ACTIVATE_DATE) var activateDate: Calendar? = Calendar.getInstance(),
+    @ColumnInfo(name = Columns.NEXT_OCCURRENCE) var nextTime: Calendar? = null,
+    @ColumnInfo(name = Columns.SNOOZED) var snoozed: Int = 0,
+    @ColumnInfo(name = Columns.NOTES) var notes: String = ""
 ) : Parcelable {
+
+    object Columns {
+        const val ID = "id"
+        const val HOUR = "hour"
+        const val MINUTE = "minute"
+        const val TITLE = "title"
+        const val RINGTONE_URI = "ringtone_uri"
+        const val VIBRATE = "vibrate"
+        const val ENABLED = "enabled"
+        const val REPEAT_TYPE = "repeat_type"
+        const val REPEAT_CYCLE = "repeat_cycle"
+        const val REPEAT_INDEX = "repeat_index"
+        const val ACTIVATE_DATE = "activate_date"
+        const val NEXT_OCCURRENCE = "next_occurrence"
+        const val SNOOZED = "snoozed"
+        const val NOTES = "notes"
+    }
+
+    companion object {
+
+        const val ALARM_ID = "net.wuqs.ontime.extra.ALARM_ID"
+
+        /*
+        Repeat types
+        1st digit: display type
+        2nd digit: calculate type
+        3rd digit: flag for repeat yearly
+         */
+        const val NON_REPEAT = 0x0
+        const val REPEAT_DAILY = 0x11
+        const val REPEAT_WEEKLY = 0x22
+        const val REPEAT_MONTHLY_BY_DATE = 0x43
+        const val REPEAT_MONTHLY_BY_WEEK = 0x83
+        const val REPEAT_YEARLY_BY_DATE = 0x144
+        const val REPEAT_YEARLY_BY_WEEK = 0x184
+
+        const val INVALID_ID = 0L
+
+        /**
+         * Creates an [Alarm] with arguments from a [Bundle].
+         */
+        fun fromBundle(bundle: Bundle): Alarm {
+            return Alarm(
+                    id = bundle.getLong(Columns.ID),
+                    hour = bundle.getInt(Columns.HOUR),
+                    minute = bundle.getInt(Columns.MINUTE),
+                    title = bundle.getString(Columns.TITLE),
+                    ringtoneUri = bundle.getParcelable(Columns.RINGTONE_URI),
+                    vibrate = bundle.getBoolean(Columns.VIBRATE),
+                    isEnabled = bundle.getBoolean(Columns.ENABLED),
+                    repeatType = bundle.getInt(Columns.REPEAT_TYPE),
+                    repeatCycle = bundle.getInt(Columns.REPEAT_CYCLE),
+                    repeatIndex = bundle.getInt(Columns.REPEAT_INDEX),
+                    activateDate = bundle.getLong(Columns.ACTIVATE_DATE).toCalendar(),
+                    nextTime = bundle.getLong(Columns.NEXT_OCCURRENCE)
+                            .takeIf { it != -1L }
+                            .toCalendar(),
+                    snoozed = bundle.getInt(Columns.SNOOZED),
+                    notes = bundle.getString(Columns.NOTES)
+            )
+        }
+
+        @Suppress("unused")
+        @JvmField
+        val CREATOR: Parcelable.Creator<Alarm> = object : Parcelable.Creator<Alarm> {
+            override fun createFromParcel(source: Parcel): Alarm = Alarm(source)
+            override fun newArray(size: Int): Array<Alarm?> = arrayOfNulls(size)
+        }
+    }
 
     init {
         activateDate?.setHms(0)
@@ -115,6 +184,28 @@ class Alarm(
         writeString(notes)
     }
 
+    /**
+     * Creates a [Bundle] containing information about this [Alarm].
+     */
+    fun toBundle(): Bundle {
+        return Bundle().apply {
+            putLong(Columns.ID, id)
+            putInt(Columns.HOUR, hour)
+            putInt(Columns.MINUTE, minute)
+            putString(Columns.TITLE, title)
+            putParcelable(Columns.RINGTONE_URI, ringtoneUri)
+            putBoolean(Columns.VIBRATE, vibrate)
+            putBoolean(Columns.ENABLED, isEnabled)
+            putInt(Columns.REPEAT_TYPE, repeatType)
+            putInt(Columns.REPEAT_CYCLE, repeatCycle)
+            putInt(Columns.REPEAT_INDEX, repeatIndex)
+            putLong(Columns.ACTIVATE_DATE, activateDate.toLong()!!)
+            putLong(Columns.NEXT_OCCURRENCE, nextTime.toLong() ?: -1L)
+            putInt(Columns.SNOOZED, snoozed)
+            putString(Columns.NOTES, notes)
+        }
+    }
+
     override fun toString(): String {
         return "{id=$id, $hour:$minute, " +
                 "title=$title, isEnabled=$isEnabled, " +
@@ -150,32 +241,4 @@ class Alarm(
     }
 
     override fun hashCode() = id.hashCode()
-
-    companion object {
-
-        const val ALARM_ID = "net.wuqs.ontime.extra.ALARM_ID"
-
-        /*
-        Repeat types
-        1st digit: display type
-        2nd digit: calculate type
-        3rd digit: flag for repeat yearly
-         */
-        const val NON_REPEAT = 0x0
-        const val REPEAT_DAILY = 0x11
-        const val REPEAT_WEEKLY = 0x22
-        const val REPEAT_MONTHLY_BY_DATE = 0x43
-        const val REPEAT_MONTHLY_BY_WEEK = 0x83
-        const val REPEAT_YEARLY_BY_DATE = 0x144
-        const val REPEAT_YEARLY_BY_WEEK = 0x184
-
-        const val INVALID_ID = 0L
-
-        @Suppress("unused")
-        @JvmField
-        val CREATOR: Parcelable.Creator<Alarm> = object : Parcelable.Creator<Alarm> {
-            override fun createFromParcel(source: Parcel): Alarm = Alarm(source)
-            override fun newArray(size: Int): Array<Alarm?> = arrayOfNulls(size)
-        }
-    }
 }
