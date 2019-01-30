@@ -14,10 +14,8 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.text.TextUtilsCompat
 import android.support.v7.app.AppCompatActivity
 import android.text.Html
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -32,9 +30,25 @@ import net.wuqs.ontime.feature.about.AboutActivity
 import net.wuqs.ontime.feature.editalarm.EditAlarmActivity
 import net.wuqs.ontime.feature.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.feature.shared.dialog.TimePickerDialogFragment
-import net.wuqs.ontime.util.Logger
 import net.wuqs.ontime.util.changeTaskDescription
+import net.wuqs.ontime.util.logD
+import net.wuqs.ontime.util.logV
 import java.util.*
+
+/** Activity result code for saving an alarm. */
+const val RESULT_SAVE_ALARM = 1
+
+/** Activity result code for deleting an alarm. */
+const val RESULT_DELETE_ALARM = 2
+
+/** [TimePickerDialogFragment] tag for creating a new alarm. */
+private const val TAG_NEW_ALARM = "NEW_ALARM"
+
+/** Permission request code for database backup. */
+private const val PERMISSION_REQUEST_BACKUP_DB = 1
+
+/** Permission request code for database restore. */
+private const val PERMISSION_REQUEST_RESTORE_DB = 2
 
 
 class MainActivity : AppCompatActivity(),
@@ -43,14 +57,17 @@ class MainActivity : AppCompatActivity(),
 
     private lateinit var alarmUpdateHandler: AlarmUpdateHandler
 
+    /**
+     * Local [BroadcastReceiver] to interact with other components of the app.
+     */
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            logger.d("onReceive(): ${intent?.action}")
+            logD("onReceive(): ${intent?.action}")
             when (intent!!.action) {
                 ACTION_SHOW_MISSED_ALARMS -> {
                     // Start the activity to show missed alarms.
                     if (!intent.hasExtra(EXTRA_MISSED_ALARMS)) return
-                    logger.i("Show missed alarms")
+                    logD("Show missed alarms")
                     val missedAlarmsIntent = Intent(
                             this@MainActivity,
                             MissedAlarmsActivity::class.java
@@ -70,7 +87,6 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        logger.v("onCreate")
 
         createAlarmNotificationChannels()
 
@@ -165,7 +181,7 @@ class MainActivity : AppCompatActivity(),
             // Show alarm info in debug builds.
             Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show()
         }
-        logger.v("onListItemClick: $item")
+        logV("onListItemClick(): $item")
         val editAlarmIntent = EditAlarmActivity.createIntent(this)
                 .putExtra(EXTRA_ALARM_INSTANCE, item)
         startActivityForResult(editAlarmIntent, EDIT_ALARM_REQUEST)
@@ -209,7 +225,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onListUpdate() {
-        logger.v("onListUpdate()")
+        logV("onListUpdate()")
         // Close any context menu when the list is updated.
         closeContextMenu()
     }
@@ -238,8 +254,11 @@ class MainActivity : AppCompatActivity(),
             } else {
                 // If the alarm has a title, bold it and show.
                 val title = Html.escapeHtml(updated.title!!)
-                val text = getString(R.string.msg_titled_alarm_skipped,
-                        it.createDateString(), title)
+                val text = getString(
+                        R.string.msg_titled_alarm_skipped,
+                        it.createDateString(),
+                        title
+                )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
                 } else {
@@ -304,14 +323,4 @@ class MainActivity : AppCompatActivity(),
         lbm.unregisterReceiver(receiver)
         super.onDestroy()
     }
-
-    private val logger = Logger("MainActivity")
 }
-
-private const val TAG_NEW_ALARM = "NEW_ALARM"
-
-const val RESULT_SAVE_ALARM = 1
-const val RESULT_DELETE_ALARM = 2
-
-private const val PERMISSION_REQUEST_BACKUP_DB = 1
-private const val PERMISSION_REQUEST_RESTORE_DB = 2
