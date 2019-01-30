@@ -213,7 +213,21 @@ class MainActivity : AppCompatActivity(),
             R.id.item_delete -> {
                 // Prompt before deleting.
                 AlertDialog.Builder(this).run {
-                    setMessage(R.string.prompt_delete_alarm)
+                    val text = getString(
+                            if (item.title.isNullOrBlank()) {
+                                R.string.prompt_delete_untitled_alarm
+                            } else {
+                                R.string.prompt_delete_titled_alarm
+                            },
+                            Html.escapeHtml(item.getTitleOrTime(this@MainActivity))
+                    )
+                    val styled = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        Html.fromHtml(text)
+                    }
+                    setMessage(styled)
                     setPositiveButton(R.string.action_delete) { _, _ ->
                         alarmUpdateHandler.asyncDeleteAlarm(item)
                     }

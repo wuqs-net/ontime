@@ -35,6 +35,21 @@ fun Alarm.createTimeString(
 }
 
 /**
+ * Gets the title of this [Alarm]. If there is no title, return the next occurrence instead.
+ * If there is no next occurrence, return the first occurrence instead.
+ *
+ * @param context the [Context] used to get the String.
+ */
+fun Alarm.getTitleOrTime(context: Context): String {
+    return title.takeUnless { it.isNullOrBlank() }
+            ?: nextTime.createDateTimeString(context).ifBlank {
+                val time = activateDate!!.clone() as Calendar
+                time.setHms(hour, minute)
+                time.createDateTimeString(context)
+            }
+}
+
+/**
  * Creates a String containing the time of `this` Calendar.
  *
  * @param context to create the String

@@ -30,6 +30,8 @@
     <string name="msg_alarm_skipped">已将闹钟移至%1$s</string>
     <string name="msg_titled_alarm_skipped">已将&lt;b>%2$s&lt;/b>移至%1$s</string>
     <string name="action_undo">撤销</string>
+    <string name="prompt_delete_untitled_alarm">删除&lt;b>%1$s&lt;/b>的闹钟？</string>
+    <string name="prompt_delete_titled_alarm">删除&lt;b>%1$s&lt;/b>？</string>
 
     <!--Backup & restore-->
     <string name="action_backup">备份</string>

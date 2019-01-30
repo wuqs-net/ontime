@@ -116,13 +116,7 @@ class AlarmRecyclerViewAdapter
 
                 // Set title for the menu.
                 // If the alarm title is empty, use its next time or activate time.
-                val title = item.title.takeUnless { it.isNullOrBlank() }
-                        ?: item.nextTime.createDateTimeString(context).ifBlank {
-                            val activateTime = item.activateDate!!.clone() as Calendar
-                            activateTime.setHms(item.hour, item.minute)
-                            activateTime.createDateTimeString(context)
-                        }
-                menu.setHeaderTitle(title)
+                menu.setHeaderTitle(item.getTitleOrTime(context))
 
                 val menuItemListener = MenuItem.OnMenuItemClickListener {
                     mListener?.onContextMenuItemSelected(data[layoutPosition], it)

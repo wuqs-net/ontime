@@ -29,6 +29,8 @@
     <string name="msg_alarm_skipped">Alarm is skipped to %1$s</string>
     <string name="msg_titled_alarm_skipped">&lt;b>%2$s&lt;/b> is skipped to %1$s</string>
     <string name="action_undo">Undo</string>
+    <string name="prompt_delete_untitled_alarm">Delete alarm at &lt;b>%1$s&lt;/b>?</string>
+    <string name="prompt_delete_titled_alarm">Delete &lt;b>%1$s&lt;/b>?</string>
 
     <!--Backup & restore-->
     <string name="action_backup">Backup</string>
