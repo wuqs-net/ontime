@@ -44,14 +44,14 @@ class AlarmRecyclerViewAdapter
     inner class ViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
 
         fun bindData(item: Alarm) = with(mView) {
-            setOnClickListener { mListener?.onListItemClick(data[adapterPosition]) }
+            setOnClickListener { mListener?.onListItemClick(item) }
 
             swc_enable_alarm.let {
                 it.setOnCheckedChangeListener(null)
                 it.isEnabled = item.nextTime != null
                 it.isChecked = item.isEnabled
                 it.setOnCheckedChangeListener { _, isChecked ->
-                    mListener?.onAlarmSwitchClick(data[adapterPosition], isChecked)
+                    mListener?.onAlarmSwitchClick(item, isChecked)
                     updateEnabledDisplay(isChecked)
                 }
             }
@@ -125,7 +125,7 @@ class AlarmRecyclerViewAdapter
                 menu.setHeaderTitle(title)
 
                 val menuItemListener = MenuItem.OnMenuItemClickListener {
-                    mListener?.onContextMenuItemSelected(data[adapterPosition], it)
+                    mListener?.onContextMenuItemSelected(item, it)
                     true
                 }
                 menu.findItem(R.id.item_skip_once).run {

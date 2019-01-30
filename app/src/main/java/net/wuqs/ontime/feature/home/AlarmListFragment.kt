@@ -93,6 +93,7 @@ class AlarmListFragment : Fragment() {
 
     private fun onDataChange(data: List<Alarm>) {
         mAdapter?.setAlarms(data)
+        mListener?.onListUpdate()
         if (data.isEmpty()) {
             rv_alarm_list.visibility = View.INVISIBLE
             tv_hint_add_alarm.visibility = View.VISIBLE
@@ -143,6 +144,11 @@ class AlarmListFragment : Fragment() {
          * @param menuItem the [MenuItem] selected.
          */
         fun onContextMenuItemSelected(item: Alarm, menuItem: MenuItem)
+
+        /**
+         * Called when the contents of the [RecyclerView] is updated.
+         */
+        fun onListUpdate()
     }
 
     private val mLogger = Logger("AlarmListFragment")

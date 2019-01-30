@@ -40,6 +40,9 @@ class AlarmService : Service() {
     private fun startAlarm(alarm: Alarm) {
         logger.i("Alarm started: $alarm")
 
+        val lbm = LocalBroadcastManager.getInstance(this)
+        lbm.sendBroadcast(Intent(ACTION_ALARM_START))
+
         // Update disabled alarm
         if (!alarm.isEnabled) {
             logger.i("Disabled alarm triggered: $alarm")

@@ -59,6 +59,10 @@ class MainActivity : AppCompatActivity(),
                     }
                     startActivity(missedAlarmsIntent)
                 }
+                ACTION_ALARM_START -> {
+                    // Close any context menu when an alarm starts.
+                    closeContextMenu()
+                }
             }
         }
     }
@@ -74,7 +78,10 @@ class MainActivity : AppCompatActivity(),
 
         alarmUpdateHandler = AlarmUpdateHandler(this)
 
-        val filter = IntentFilter(ACTION_SHOW_MISSED_ALARMS)
+        val filter = IntentFilter().apply {
+            addAction(ACTION_SHOW_MISSED_ALARMS)
+            addAction(ACTION_ALARM_START)
+        }
         val lbm = LocalBroadcastManager.getInstance(this)
         lbm.registerReceiver(receiver, filter)
 
@@ -199,6 +206,12 @@ class MainActivity : AppCompatActivity(),
                 }.show()
             }
         }
+    }
+
+    override fun onListUpdate() {
+        logger.v("onListUpdate()")
+        // Close any context menu when the list is updated.
+        closeContextMenu()
     }
 
     /**
