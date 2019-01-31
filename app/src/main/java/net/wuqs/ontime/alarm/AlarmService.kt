@@ -7,7 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Binder
 import android.os.IBinder
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.feature.currentalarm.AlarmActivity
 import net.wuqs.ontime.feature.currentalarm.AlarmRinger
@@ -119,7 +119,7 @@ class AlarmService : Service() {
             when (intent.action) {
                 ACTION_ALARM_START -> {
                     val alarm = intent.getBundleExtra(EXTRA_ALARM_INSTANCE)
-                            .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)
+                            .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)!!
                     startAlarm(alarm)
                 }
                 ACTION_ALARM_DISMISS -> {
@@ -153,7 +153,7 @@ class AlarmService : Service() {
         when (intent.action) {
             ACTION_ALARM_START -> {
                 val alarm = intent.getBundleExtra(EXTRA_ALARM_INSTANCE)
-                        .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)
+                        .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)!!
                 startAlarm(alarm)
             }
             ACTION_ALARM_DISMISS -> dismissCurrentAlarm()
