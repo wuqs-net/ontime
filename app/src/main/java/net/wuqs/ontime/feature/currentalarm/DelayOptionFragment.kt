@@ -3,10 +3,10 @@ package net.wuqs.ontime.feature.currentalarm
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialog
-import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +26,7 @@ class DelayOptionFragment
         return object : BottomSheetDialog(context!!, theme) {
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                         or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                         or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                         or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
@@ -63,7 +63,7 @@ class DelayOptionFragment
         }
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is DelayOptionListener) {
             listener = context

@@ -1,7 +1,7 @@
 package net.wuqs.ontime.feature.editalarm
 
 import android.content.Context
-import android.support.constraint.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import kotlinx.android.synthetic.main.view_option_item.view.*

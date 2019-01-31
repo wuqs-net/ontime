@@ -8,7 +8,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.util.Logger
 import java.io.IOException

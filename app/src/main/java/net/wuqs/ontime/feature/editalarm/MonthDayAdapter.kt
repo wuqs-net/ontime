@@ -1,6 +1,6 @@
 package net.wuqs.ontime.feature.editalarm
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import net.wuqs.ontime.R

@@ -3,9 +3,9 @@ package net.wuqs.ontime.feature.shared.dialog
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentActivity
+import androidx.annotation.StringRes
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
 
 /**
  * DialogFragment used to show a prompt.

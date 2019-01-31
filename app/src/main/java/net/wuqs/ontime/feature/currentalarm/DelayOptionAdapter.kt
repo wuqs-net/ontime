@@ -1,6 +1,6 @@
 package net.wuqs.ontime.feature.currentalarm
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,8 +39,6 @@ class DelayOptionAdapter(
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
-
-
 
     companion object {
         val ALL_INTERVALS = listOf(

@@ -1,8 +1,8 @@
 package net.wuqs.ontime.feature.missedalarms
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_missed_alarms.*
 import net.wuqs.ontime.R
 import net.wuqs.ontime.alarm.ACTION_DISMISS_ALL_MISSED_ALARMS

@@ -10,10 +10,10 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.NavUtils
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.DialogFragment
+import androidx.core.app.NavUtils
+import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -292,7 +292,7 @@ class EditAlarmActivity : AppCompatActivity(),
                     false
                 }
                 "content" -> try {
-                    contentResolver.query(it, null, null, null, null).close()
+                    contentResolver.query(it, null, null, null, null)?.close()
                     true
                 } catch (e: SecurityException) {
                     false

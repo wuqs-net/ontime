@@ -4,10 +4,10 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AlertDialog
 import android.widget.DatePicker
 import java.util.*
 
@@ -37,6 +37,7 @@ class DatePickerDialogFragment : DialogFragment() {
                 minDate?.let { datePicker.minDate = it }
             }
         } else {
+            @Suppress("DEPRECATION")
             AlertDialog.Builder(context).run {
                 val datePicker = DatePicker(context).apply {
                     init(y, m, d, null)
