@@ -1,8 +1,8 @@
 package net.wuqs.ontime.db
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.MediatorLiveData
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MediatorLiveData
 import net.wuqs.ontime.alarm.isDaily
 import net.wuqs.ontime.alarm.isMonthly
 import net.wuqs.ontime.alarm.isWeekly
