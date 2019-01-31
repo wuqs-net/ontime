@@ -1,6 +1,6 @@
 package net.wuqs.ontime.feature.home
 
-import android.support.v7.util.DiffUtil
+import androidx.recyclerview.widget.DiffUtil
 import net.wuqs.ontime.db.Alarm
 
 class AlarmDiffCallback(

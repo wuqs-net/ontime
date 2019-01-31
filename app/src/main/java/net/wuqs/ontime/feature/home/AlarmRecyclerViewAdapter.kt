@@ -1,8 +1,8 @@
 package net.wuqs.ontime.feature.home
 
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.text.format.DateFormat
 import android.view.*
 import kotlinx.android.synthetic.main.item_alarm.view.*

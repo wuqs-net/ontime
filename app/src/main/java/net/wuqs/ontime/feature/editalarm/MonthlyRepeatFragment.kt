@@ -1,8 +1,8 @@
 package net.wuqs.ontime.feature.editalarm
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_repeat_monthly.*
 import net.wuqs.ontime.R
@@ -53,8 +53,8 @@ class MonthlyRepeatFragment : RepeatOptionFragment(),
     }
 }
 
-val Int.binString get() = Integer.toBinaryString(this)!!
-val Int.hexString get() = Integer.toHexString(this)!!
+val Int.binString: String get() = Integer.toBinaryString(this)
+val Int.hexString: String get() = Integer.toHexString(this)
 fun Int.setBit(bitIndex: Int, on: Boolean) = if (on) {
     this or (1 shl bitIndex)
 } else {
