@@ -33,6 +33,10 @@ class OptionItemView(context: Context, attrs: AttributeSet) : ConstraintLayout(c
         iconResId = a.getResourceId(R.styleable.OptionItemView_iconImage, 0)
         captionText = a.getText(R.styleable.OptionItemView_captionText)
         valueText = a.getText(R.styleable.OptionItemView_valueText)
+    }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        // TODO: Change measure implementation.
     }
 }
