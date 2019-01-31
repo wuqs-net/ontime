@@ -2,7 +2,7 @@ package net.wuqs.ontime.alarm
 
 import android.content.Context
 import android.content.res.Resources
-import android.support.v4.util.ArrayMap
+import androidx.collection.ArrayMap
 import android.text.format.DateFormat
 import android.text.format.DateUtils
 import net.wuqs.ontime.R
