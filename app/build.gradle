@@ -92,6 +92,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     // Test helpers for Room
     androidTestImplementation "androidx.room:room-testing:$room_version"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test:runner:1.1.2-alpha01'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.2-alpha01'
     androidTestImplementation 'androidx.test:rules:1.1.2-alpha01'

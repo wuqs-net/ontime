@@ -1,8 +1,8 @@
 package net.wuqs.ontime.db
 
-import android.arch.persistence.room.Room
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
+import androidx.room.Room
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -14,7 +14,7 @@ class DbReadWriteTest {
 
     @Before
     fun createDb() {
-        val context = InstrumentationRegistry.getTargetContext()
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
         mDb = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
         mAlarmDao = mDb.alarmDao
     }
