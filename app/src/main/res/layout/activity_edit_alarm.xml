@@ -8,13 +8,13 @@
     android:layout_height="match_parent"
     tools:context=".feature.editalarm.EditAlarmActivity">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusable="true"
         android:focusableInTouchMode="true">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_alarm_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,16 +41,18 @@
 
         <TextView
             android:id="@+id/tv_next_date"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/content_start_padding"
             android:layout_marginTop="8dp"
-            android:textAlignment="center"
+            android:layout_marginEnd="16dp"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_alarm_title"
             tools:text="下次响铃日期：2018年12月10日" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_alarm_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,7 +71,6 @@
             android:layout_marginStart="@dimen/content_start_padding"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/boundary_margin"
-            android:ems="10"
             android:hint="@string/hint_alarm_title"
             android:imeOptions="actionDone"
             android:inputType="textCapSentences"
@@ -119,34 +120,33 @@
             android:id="@+id/oiv_ringtone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             app:captionText="@string/msg_ringtone"
             app:iconImage="@drawable/ic_ringtone"
             app:layout_constraintEnd_toStartOf="@+id/cb_vibrate"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider_repeat"
-            tools:valueText="Default Ringtone (Abdieruidndbx)" />
+            tools:valueText="Default Ringtone (A)" />
 
         <CheckBox
             android:id="@+id/cb_vibrate"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text="@string/msg_vibrate"
             android:textAppearance="@style/TextAppearance.AppCompat.Menu"
             app:layout_constraintBottom_toBottomOf="@+id/oiv_ringtone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/oiv_ringtone"
             app:layout_constraintTop_toTopOf="@+id/oiv_ringtone" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_perm_warn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="?android:attr/selectableItemBackground"
             app:layout_constraintTop_toBottomOf="@+id/oiv_ringtone">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_perm_warn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -172,7 +172,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:id="@+id/divider_ringtone"
@@ -181,7 +181,7 @@
             android:background="?android:attr/listDivider"
             app:layout_constraintTop_toBottomOf="@+id/cl_perm_warn" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -218,5 +218,5 @@
             android:background="?android:attr/listDivider"
             app:layout_constraintTop_toBottomOf="@+id/et_notes" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
