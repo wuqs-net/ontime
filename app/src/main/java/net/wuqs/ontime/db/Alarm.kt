@@ -1,9 +1,9 @@
 package net.wuqs.ontime.db
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -90,7 +90,7 @@ class Alarm(
                             .takeIf { it != -1L }
                             .toCalendar(),
                     snoozed = bundle.getInt(Columns.SNOOZED),
-                    notes = bundle.getString(Columns.NOTES)
+                    notes = bundle.getString(Columns.NOTES)!!
             )
         }
 
@@ -144,7 +144,7 @@ class Alarm(
             activateDate = source.readLong().toCalendar(),
             nextTime = source.readLong().takeIf { it != -1L }.toCalendar(),
             snoozed = source.readInt(),
-            notes = source.readString()
+            notes = source.readString()!!
     )
 
     @Ignore
