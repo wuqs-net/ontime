@@ -2,9 +2,11 @@ package net.wuqs.ontime.db
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
 import net.wuqs.ontime.R
+import net.wuqs.ontime.feature.home.MainActivity
 import net.wuqs.ontime.util.Logger
 import net.wuqs.ontime.util.shortToast
 import java.io.File
@@ -99,6 +101,7 @@ class RestoreDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
         if (result) {
             context.shortToast(R.string.msg_restore_successful)
             (context as? Activity)?.finishAffinity()
+            context.startActivity(Intent(context, MainActivity::class.java))
         } else {
             context.shortToast(R.string.msg_restore_failed)
         }
