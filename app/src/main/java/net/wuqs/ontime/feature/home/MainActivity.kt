@@ -95,16 +95,20 @@ class MainActivity : AppCompatActivity(),
 
         alarmUpdateHandler = AlarmUpdateHandler(this)
 
+        volumeControlStream = AudioManager.STREAM_ALARM
+        fabCreateAlarm.setOnClickListener { onFabCreateAlarmClick() }
+        sendBroadcast(AlarmStateManager.createScheduleAllAlarmsIntent(this))
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         val filter = IntentFilter().apply {
             addAction(ACTION_SHOW_MISSED_ALARMS)
             addAction(ACTION_ALARM_START)
         }
         val lbm = LocalBroadcastManager.getInstance(this)
         lbm.registerReceiver(receiver, filter)
-
-        volumeControlStream = AudioManager.STREAM_ALARM
-        fabCreateAlarm.setOnClickListener { onFabCreateAlarmClick() }
-        sendBroadcast(AlarmStateManager.createScheduleAllAlarmsIntent(this))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -351,9 +355,9 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun onDestroy() {
+    override fun onPause() {
         val lbm = LocalBroadcastManager.getInstance(this)
         lbm.unregisterReceiver(receiver)
-        super.onDestroy()
+        super.onPause()
     }
 }
