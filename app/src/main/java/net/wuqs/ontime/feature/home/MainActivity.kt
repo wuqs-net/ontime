@@ -151,13 +151,13 @@ class MainActivity : AppCompatActivity(),
             PERMISSION_REQUEST_BACKUP_DB -> {
                 if (grantResults.isNotEmpty() && grantResults[0]
                         == PackageManager.PERMISSION_GRANTED) {
-                    backupDb()
+                    backupDb(true)
                 }
             }
             PERMISSION_REQUEST_RESTORE_DB -> {
                 if (grantResults.isNotEmpty() && grantResults[0]
                         == PackageManager.PERMISSION_GRANTED) {
-                    restoreDb()
+                    restoreDb(true)
                 }
             }
         }
@@ -297,14 +297,23 @@ class MainActivity : AppCompatActivity(),
      *
      * This function is NOT for production use.
      */
-    private fun backupDb() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    PERMISSION_REQUEST_BACKUP_DB)
-        } else {
-            BackupDbTask(this).execute()
+    private fun backupDb(permissionGranted: Boolean = false) {
+        fun backup() {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        PERMISSION_REQUEST_BACKUP_DB)
+            } else {
+                BackupDbTask(this).execute()
+            }
+        }
+        if (permissionGranted) {
+            backup()
+            return
+        }
+        prompt(R.string.action_backup, R.string.action_backup, android.R.string.cancel) { which ->
+            if (which == AlertDialog.BUTTON_POSITIVE) backup()
         }
     }
 
@@ -313,14 +322,23 @@ class MainActivity : AppCompatActivity(),
      *
      * This function is NOT for production use.
      */
-    private fun restoreDb() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    PERMISSION_REQUEST_RESTORE_DB)
-        } else {
-            RestoreDbTask(this).execute()
+    private fun restoreDb(permissionGranted: Boolean = false) {
+        fun restore() {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        PERMISSION_REQUEST_RESTORE_DB)
+            } else {
+                RestoreDbTask(this).execute()
+            }
+        }
+        if (permissionGranted) {
+            restore()
+            return
+        }
+        prompt(R.string.action_restore, R.string.action_restore, android.R.string.cancel) { which ->
+            if (which == AlertDialog.BUTTON_POSITIVE) restore()
         }
     }
 
