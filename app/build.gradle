@@ -13,7 +13,8 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 ext {
     versionMajor = 0
     versionMinor = 7
-    versionPatch = 8
+    versionPatch = 10
+    versionSuffix = '-internal'
 }
 
 android {
@@ -68,7 +69,7 @@ private Integer genVersionCode() {
 }
 
 private String genVersionName() {
-    String name = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
+    String name = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}${ext.versionSuffix}"
     return name
 }
 
