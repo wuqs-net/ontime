@@ -35,9 +35,9 @@
     <!--Backup & restore-->
     <string name="action_backup">Backup</string>
     <string name="action_restore">Restore</string>
-    <string name="msg_backup_successful">Backup successful</string>
+    <string name="msg_backup_successful">Backup completed</string>
     <string name="msg_backup_failed">Backup failed</string>
-    <string name="msg_restore_successful">Restore successful. Please restart the application</string>
+    <string name="msg_restore_successful">Restore completed</string>
     <string name="msg_restore_failed">Restore failed</string>
 
     <string name="option_non_repeat">Does not repeat</string>
