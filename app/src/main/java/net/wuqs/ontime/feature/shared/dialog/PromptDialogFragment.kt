@@ -1,9 +1,9 @@
 package net.wuqs.ontime.feature.shared.dialog
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 
@@ -15,7 +15,7 @@ class PromptDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val listener = activity as OnClickListener
         val args = arguments!!
-        return AlertDialog.Builder(activity).run {
+        return AlertDialog.Builder(activity!!).run {
             setMessage(args.getInt(ARG_MESSAGE))
             setPositiveButton(args.getInt(ARG_POSITIVE)) { _, _ ->
                 listener.onDialogPositiveClick(this@PromptDialogFragment)

@@ -1,7 +1,6 @@
 package net.wuqs.ontime.feature.home
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -19,6 +18,7 @@ import android.text.Html
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import net.wuqs.ontime.BuildConfig
 import net.wuqs.ontime.R

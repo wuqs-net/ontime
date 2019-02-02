@@ -1,9 +1,9 @@
 package net.wuqs.ontime.feature.shared.dialog
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.annotation.ArrayRes
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 
@@ -12,7 +12,7 @@ class SpinnerDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val listener = activity as OptionListener
         val itemsId = arguments?.getInt(ARG_ITEMS_ID)!!
-        return AlertDialog.Builder(activity).run {
+        return AlertDialog.Builder(activity!!).run {
             setItems(itemsId) { _, which ->
                 listener.onOptionClick(this@SpinnerDialogFragment, which)
             }
