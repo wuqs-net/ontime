@@ -8,13 +8,15 @@ import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
-@Database(entities = [Alarm::class], version = 8)
+@Database(entities = [Alarm::class], version = AppDatabase.DB_VERSION)
 @TypeConverters(DataTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val alarmDao: AlarmDao
 
     companion object {
+
+        const val DB_VERSION = 8
 
         private var INSTANCE: AppDatabase? = null
 
