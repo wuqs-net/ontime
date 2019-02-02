@@ -9,16 +9,16 @@ import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Html
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import net.wuqs.ontime.BuildConfig
 import net.wuqs.ontime.R
@@ -30,6 +30,7 @@ import net.wuqs.ontime.feature.about.AboutActivity
 import net.wuqs.ontime.feature.editalarm.EditAlarmActivity
 import net.wuqs.ontime.feature.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.feature.shared.dialog.TimePickerDialogFragment
+import net.wuqs.ontime.feature.shared.dialog.prompt
 import net.wuqs.ontime.util.changeTaskDescription
 import net.wuqs.ontime.util.logD
 import net.wuqs.ontime.util.logV
@@ -216,28 +217,25 @@ class MainActivity : AppCompatActivity(),
             }
             R.id.item_delete -> {
                 // Prompt before deleting.
-                AlertDialog.Builder(this).run {
-                    val text = getString(
-                            if (item.title.isNullOrBlank()) {
-                                R.string.prompt_delete_untitled_alarm
-                            } else {
-                                R.string.prompt_delete_titled_alarm
-                            },
-                            Html.escapeHtml(item.getTitleOrTime(this@MainActivity))
-                    )
-                    val styled = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
-                    } else {
-                        @Suppress("DEPRECATION")
-                        Html.fromHtml(text)
-                    }
-                    setMessage(styled)
-                    setPositiveButton(R.string.action_delete) { _, _ ->
+                val text = getString(
+                        if (item.title.isNullOrBlank()) {
+                            R.string.prompt_delete_untitled_alarm
+                        } else {
+                            R.string.prompt_delete_titled_alarm
+                        },
+                        Html.escapeHtml(item.getTitleOrTime(this@MainActivity))
+                )
+                val message = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
+                } else {
+                    @Suppress("DEPRECATION")
+                    Html.fromHtml(text)
+                }
+                prompt(message, R.string.action_delete, android.R.string.cancel) { which ->
+                    if (which == AlertDialog.BUTTON_POSITIVE) {
                         alarmUpdateHandler.asyncDeleteAlarm(item)
                     }
-                    setNegativeButton(android.R.string.cancel, null)
-                    create()
-                }.show()
+                }
             }
         }
     }
