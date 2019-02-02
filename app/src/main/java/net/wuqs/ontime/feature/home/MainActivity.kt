@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.AudioManager
-import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.Menu
@@ -17,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -225,12 +225,7 @@ class MainActivity : AppCompatActivity(),
                         },
                         Html.escapeHtml(item.getTitleOrTime(this@MainActivity))
                 )
-                val message = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
-                } else {
-                    @Suppress("DEPRECATION")
-                    Html.fromHtml(text)
-                }
+                val message = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
                 prompt(message, R.string.action_delete, android.R.string.cancel) { which ->
                     if (which == AlertDialog.BUTTON_POSITIVE) {
                         alarmUpdateHandler.asyncDeleteAlarm(item)
@@ -275,12 +270,7 @@ class MainActivity : AppCompatActivity(),
                         it.createDateString(),
                         title
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
-                } else {
-                    @Suppress("DEPRECATION")
-                    Html.fromHtml(text)
-                }
+                HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
             }
             Snackbar.make(fabCreateAlarm, msg, Snackbar.LENGTH_LONG)
                     .setAction(R.string.action_undo) { alarmUpdateHandler.asyncUpdateAlarm(old) }
