@@ -106,6 +106,9 @@ dependencies {
     implementation "androidx.vectordrawable:vectordrawable:$vectordrawable_version"
     implementation "com.google.android.material:material:$material_version"
 
+    // Android KTX
+    implementation "androidx.core:core-ktx:1.0.1"
+
     // Architecture components
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"

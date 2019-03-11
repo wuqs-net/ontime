@@ -31,7 +31,7 @@ import net.wuqs.ontime.feature.shared.dialog.TimePickerDialogFragment
 import net.wuqs.ontime.util.Logger
 import net.wuqs.ontime.util.changeTaskDescription
 import net.wuqs.ontime.util.hideSoftInput
-import net.wuqs.ontime.util.shortToast
+import net.wuqs.ontime.util.toast
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -213,9 +213,10 @@ class EditAlarmActivity : AppCompatActivity(),
                 if (alarm.nextTime == null) {
                     if (alarm.repeatType == Alarm.NON_REPEAT) {
                         // Prevent the user from setting a non-repeat alarm in the past
-                        shortToast(R.string.msg_cannot_set_past_time)
+                        toast(R.string.msg_cannot_set_past_time)
+
                     } else {
-                        shortToast(R.string.msg_select_at_least_one_day)
+                        toast(R.string.msg_select_at_least_one_day)
                     }
                     return true
                 }

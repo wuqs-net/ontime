@@ -6,7 +6,7 @@ import android.os.AsyncTask
 import android.os.Environment
 import net.wuqs.ontime.R
 import net.wuqs.ontime.util.Logger
-import net.wuqs.ontime.util.shortToast
+import net.wuqs.ontime.util.toast
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -59,9 +59,9 @@ class BackupDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
         val context = contextRef.get() ?: return
 
         if (result) {
-            context.shortToast(R.string.msg_backup_successful)
+            context.toast(R.string.msg_backup_successful)
         } else {
-            context.shortToast(R.string.msg_backup_failed)
+            context.toast(R.string.msg_backup_failed)
         }
     }
 }
@@ -97,10 +97,10 @@ class RestoreDbTask(context: Context) : AsyncTask<Unit, Int, Boolean>() {
         val context = contextRef.get() ?: return
 
         if (result) {
-            context.shortToast(R.string.msg_restore_successful)
+            context.toast(R.string.msg_restore_successful)
             (context as? Activity)?.finishAffinity()
         } else {
-            context.shortToast(R.string.msg_restore_failed)
+            context.toast(R.string.msg_restore_failed)
         }
     }
 }
