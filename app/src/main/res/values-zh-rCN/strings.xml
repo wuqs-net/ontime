@@ -76,6 +76,15 @@
     <string name="msg_vibrate">振动</string>
     <string name="msg_ask_for_perm">在“应用权限”设置中开启“存储空间”权限，以使用自定义铃声</string>
     <string name="msg_allow_ringtone_access">点击以允许使用自定义铃声</string>
+    <string name="msg_silence_after">响铃时长</string>
+    <string name="msg_silence_after_never">持续响铃</string>
+    <string-array name="msg_ringtone_durations">
+        <item>1分钟</item>
+        <item>5分钟</item>
+        <item>15分钟</item>
+        <item>响一声</item>
+        <item>持续响铃</item>
+    </string-array>
 
     <string name="msg_default_alarm_title">OnTime 闹钟</string>
     <string name="channel_name_alarm">闹钟</string>

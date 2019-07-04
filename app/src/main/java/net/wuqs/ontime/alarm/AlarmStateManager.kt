@@ -86,17 +86,17 @@ class AlarmStateManager : BroadcastReceiver() {
         fun scheduleAlarm(context: Context, alarm: Alarm) {
             val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-            val pendingIntent = createPendingIntent(context, alarm)
+            val startAlarm = createPendingIntent(context, alarm)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Make sure the alarm fires even if the device is dozing.
                 am.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         alarm.nextTime!!.timeInMillis,
-                        pendingIntent
+                        startAlarm
                 )
             } else {
-                am.setExact(AlarmManager.RTC_WAKEUP, alarm.nextTime!!.timeInMillis, pendingIntent)
+                am.setExact(AlarmManager.RTC_WAKEUP, alarm.nextTime!!.timeInMillis, startAlarm)
             }
             logger.d("Alarm registered: $alarm")
         }

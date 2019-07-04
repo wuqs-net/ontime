@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="ringtone_durations">
+        <item>60000</item>
+        <item>300000</item>
+        <item>900000</item>
+        <item>-2</item> <!--Ringtone played once-->
+        <item>-1</item> <!--Never-->
+    </integer-array>
+</resources>

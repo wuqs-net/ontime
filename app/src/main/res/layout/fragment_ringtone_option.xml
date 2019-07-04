@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <net.wuqs.ontime.feature.editalarm.OptionItemView
+        android:id="@+id/oiv_ringtone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:captionText="@string/msg_ringtone"
+        app:iconImage="@drawable/ic_ringtone"
+        app:layout_constraintEnd_toStartOf="@+id/cb_vibrate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:valueText="Default Ringtone (A)" />
+
+    <CheckBox
+        android:id="@+id/cb_vibrate"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/msg_vibrate"
+        android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+        app:layout_constraintBottom_toBottomOf="@+id/oiv_ringtone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/oiv_ringtone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_perm_warn"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="?android:attr/selectableItemBackground"
+        app:layout_constraintTop_toBottomOf="@+id/oiv_ringtone">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_perm_warn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/boundary_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_perm_warn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_perm_warn"
+            app:srcCompat="@drawable/ic_warning_black_24dp"
+            app:tint="?attr/colorError"
+            app:tintMode="src_in" />
+
+        <TextView
+            android:id="@+id/tv_perm_warn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/content_start_padding"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="@dimen/boundary_margin"
+            android:layout_marginBottom="16dp"
+            android:text="@string/msg_allow_ringtone_access"
+            android:textColor="?attr/colorError"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <net.wuqs.ontime.feature.editalarm.OptionItemView
+        android:id="@+id/oiv_silence_after"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:captionText="@string/msg_silence_after"
+        app:layout_constraintTop_toBottomOf="@+id/cl_perm_warn"
+        tools:valueText="Default (10 minutes)" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

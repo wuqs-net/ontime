@@ -81,6 +81,7 @@ class AlarmService : Service() {
         sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
         val snoozeIntent = Intent(this, AlarmActivity::class.java).apply {
             action = ACTION_ALARM_SHOW_SNOOZE_OPTIONS
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra(EXTRA_ALARM_INSTANCE, currentAlarm)
         }
         startActivity(snoozeIntent)
@@ -147,7 +148,7 @@ class AlarmService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent == null) return Service.START_NOT_STICKY
+        if (intent == null) return START_NOT_STICKY
 
         logger.v("onStartCommand(): action=${intent.action}")
         when (intent.action) {
@@ -160,7 +161,7 @@ class AlarmService : Service() {
             ACTION_ALARM_SHOW_SNOOZE_OPTIONS -> showSnoozeOptions()
         }
 
-        return Service.START_NOT_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder {

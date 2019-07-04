@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.core.os.bundleOf
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.feature.editalarm.binString
 import net.wuqs.ontime.feature.editalarm.hexString
@@ -23,6 +24,7 @@ class Alarm(
     @ColumnInfo(name = Columns.TITLE) var title: String? = "",
     @ColumnInfo(name = Columns.RINGTONE_URI) var ringtoneUri: Uri? = null,
     @ColumnInfo(name = Columns.VIBRATE) var vibrate: Boolean = false,
+    @ColumnInfo(name = Columns.SILENCE_AFTER) var silenceAfter: Int = -1,
     @ColumnInfo(name = Columns.ENABLED) var isEnabled: Boolean = true,
     @ColumnInfo(name = Columns.REPEAT_TYPE) var repeatType: Int = 0,
     @ColumnInfo(name = Columns.REPEAT_CYCLE) var repeatCycle: Int = 0,
@@ -40,6 +42,7 @@ class Alarm(
         const val TITLE = "title"
         const val RINGTONE_URI = "ringtone_uri"
         const val VIBRATE = "vibrate"
+        const val SILENCE_AFTER = "silence_after"
         const val ENABLED = "enabled"
         const val REPEAT_TYPE = "repeat_type"
         const val REPEAT_CYCLE = "repeat_cycle"
@@ -81,6 +84,7 @@ class Alarm(
                     title = bundle.getString(Columns.TITLE),
                     ringtoneUri = bundle.getParcelable(Columns.RINGTONE_URI),
                     vibrate = bundle.getBoolean(Columns.VIBRATE),
+                    silenceAfter = bundle.getInt(Columns.SILENCE_AFTER),
                     isEnabled = bundle.getBoolean(Columns.ENABLED),
                     repeatType = bundle.getInt(Columns.REPEAT_TYPE),
                     repeatCycle = bundle.getInt(Columns.REPEAT_CYCLE),
@@ -137,6 +141,7 @@ class Alarm(
             title = source.readString(),
             ringtoneUri = source.readParcelable(Uri::class.java.classLoader),
             vibrate = source.readInt().toBoolean(),
+            silenceAfter = source.readInt(),
             isEnabled = source.readInt().toBoolean(),
             repeatType = source.readInt(),
             repeatCycle = source.readInt(),
@@ -155,6 +160,7 @@ class Alarm(
             title = another.title,
             ringtoneUri = another.ringtoneUri,
             vibrate = another.vibrate,
+            silenceAfter = another.silenceAfter,
             isEnabled = another.isEnabled,
             repeatType = another.repeatType,
             repeatCycle = another.repeatCycle,
@@ -174,6 +180,7 @@ class Alarm(
         writeString(title)
         writeParcelable(ringtoneUri, 0)
         writeInt(vibrate.toInt())
+        writeInt(silenceAfter)
         writeInt(isEnabled.toInt())
         writeInt(repeatType)
         writeInt(repeatCycle)
@@ -188,28 +195,29 @@ class Alarm(
      * Creates a [Bundle] containing information about this [Alarm].
      */
     fun toBundle(): Bundle {
-        return Bundle().apply {
-            putLong(Columns.ID, id)
-            putInt(Columns.HOUR, hour)
-            putInt(Columns.MINUTE, minute)
-            putString(Columns.TITLE, title)
-            putParcelable(Columns.RINGTONE_URI, ringtoneUri)
-            putBoolean(Columns.VIBRATE, vibrate)
-            putBoolean(Columns.ENABLED, isEnabled)
-            putInt(Columns.REPEAT_TYPE, repeatType)
-            putInt(Columns.REPEAT_CYCLE, repeatCycle)
-            putInt(Columns.REPEAT_INDEX, repeatIndex)
-            putLong(Columns.ACTIVATE_DATE, activateDate.toLong()!!)
-            putLong(Columns.NEXT_OCCURRENCE, nextTime.toLong() ?: -1L)
-            putInt(Columns.SNOOZED, snoozed)
-            putString(Columns.NOTES, notes)
-        }
+        return bundleOf(
+                Columns.ID to id,
+                Columns.HOUR to hour,
+                Columns.MINUTE to minute,
+                Columns.TITLE to title,
+                Columns.RINGTONE_URI to ringtoneUri,
+                Columns.VIBRATE to vibrate,
+                Columns.SILENCE_AFTER to silenceAfter,
+                Columns.ENABLED to isEnabled,
+                Columns.REPEAT_TYPE to repeatType,
+                Columns.REPEAT_CYCLE to repeatCycle,
+                Columns.REPEAT_INDEX to repeatIndex,
+                Columns.ACTIVATE_DATE to activateDate.toLong()!!,
+                Columns.NEXT_OCCURRENCE to (nextTime.toLong() ?: -1L),
+                Columns.SNOOZED to snoozed,
+                Columns.NOTES to notes
+        )
     }
 
     override fun toString(): String {
         return "{id=$id, $hour:$minute, " +
                 "title=$title, isEnabled=$isEnabled, " +
-                "ringtone=$ringtoneUri, vibrate=$vibrate, " +
+                "ringtone=$ringtoneUri, vibrate=$vibrate, silenceAfter=$silenceAfter, " +
                 "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
                 "repeatIndex=${repeatIndex.binString}, " +
                 "activate=${activateDate?.time}, next=${nextTime?.time}, " +
@@ -228,6 +236,7 @@ class Alarm(
         if (title != other.title) return false
         if (ringtoneUri != other.ringtoneUri) return false
         if (vibrate != other.vibrate) return false
+        if (silenceAfter != other.silenceAfter) return false
         if (isEnabled != other.isEnabled) return false
         if (repeatType != other.repeatType) return false
         if (repeatCycle != other.repeatCycle) return false
