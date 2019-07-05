@@ -61,7 +61,7 @@ class MonthDayAdapter(private val mListener: OnDayClickListener, private val ala
     }
 
     fun initList() {
-        calendar = alarm.activateDate!!.clone() as Calendar
+        calendar = Calendar.getInstance()
         calendar.isLenient = false
         val list = ArrayList<Int>(42)
         calendar[Calendar.DAY_OF_MONTH] = 1
