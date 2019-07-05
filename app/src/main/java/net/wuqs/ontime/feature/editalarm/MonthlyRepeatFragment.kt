@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_repeat_monthly.*
 import net.wuqs.ontime.R
+import net.wuqs.ontime.feature.shared.dialog.DatePickerDialogFragment
 import java.util.*
 
 /**
@@ -25,13 +26,21 @@ class MonthlyRepeatFragment : RepeatOptionFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_day_picker.layoutManager = GridLayoutManager(context, 7)
-        rv_day_picker.adapter = MonthDayAdapter(this, alarm.repeatIndex)
+        rv_day_picker.adapter = MonthDayAdapter(this, alarm)
         if (alarm.repeatIndex == 0) checkDefaultDate()
         mLogger.v("onViewCreated")
     }
 
-    override fun onDayClick(which: Int, isChecked: Boolean) {
-        val setBit = 1 shl which
+    override fun onDateSet(fragment: DatePickerDialogFragment, year: Int, month: Int, dayOfMonth: Int) {
+        super.onDateSet(fragment, year, month, dayOfMonth)
+        (rv_day_picker.adapter as MonthDayAdapter).run {
+            initList()
+            notifyDataSetChanged()
+        }
+    }
+
+    override fun onDayClick(dayIndex: Int, isChecked: Boolean) {
+        val setBit = 1 shl dayIndex
         alarm.repeatIndex = if (isChecked) {
             alarm.repeatIndex or setBit
         } else {
@@ -47,7 +56,6 @@ class MonthlyRepeatFragment : RepeatOptionFragment(),
         val defaultDate = alarm.activateDate!![Calendar.DATE] - 1
         onDayClick(defaultDate, true)
         (rv_day_picker.adapter as MonthDayAdapter).run {
-            dates = alarm.repeatIndex
             notifyItemChanged(defaultDate)
         }
     }
