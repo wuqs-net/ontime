@@ -13,7 +13,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 ext {
     versionMajor = 0
     versionMinor = 7
-    versionPatch = 15
+    versionPatch = 16
 }
 
 android {
@@ -115,6 +115,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     // Room
     implementation "androidx.room:room-runtime:$room_version"
+    implementation 'androidx.preference:preference:1.1.0-rc01'
     kapt "androidx.room:room-compiler:$room_version"
 
     // Test
