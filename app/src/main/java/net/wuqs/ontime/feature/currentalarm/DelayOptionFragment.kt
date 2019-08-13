@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.fragment_delay_option.view.*
 import net.wuqs.ontime.R
@@ -79,7 +80,11 @@ class DelayOptionFragment
 
     private fun getSnoozeOptions(): List<SnoozeLength> {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        var str = sharedPreferences.getString("snooze_lengths", "")!!
+        var str = sharedPreferences.getString("snooze_lengths", "").ifBlank {
+            getString(R.string.default_snooze_lengths).also {
+                sharedPreferences.edit { putString("snooze_lengths", it) }
+            }
+        }
         str = str.toLowerCase().replace(';', ',')
         val list = str.split(',')
         return list.mapNotNull {
