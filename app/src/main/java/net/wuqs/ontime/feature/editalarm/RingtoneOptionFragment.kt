@@ -40,7 +40,7 @@ class RingtoneOptionFragment : Fragment(),
     private var vibrate: Boolean = false
     private var silenceAfter: Int = -1
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = context as? OnOptionChangeListener
         if (listener == null) {

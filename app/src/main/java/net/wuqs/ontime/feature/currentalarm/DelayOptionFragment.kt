@@ -11,8 +11,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.fragment_delay_option.view.*
 import net.wuqs.ontime.R
+import net.wuqs.ontime.data.SnoozeLength
+import net.wuqs.ontime.data.add
 import java.util.*
 
 class DelayOptionFragment
@@ -51,14 +54,16 @@ class DelayOptionFragment
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        var options = DelayOptionAdapter.ALL_INTERVALS
+        var options = getSnoozeOptions()
         if (mNextTime != null) {
             options = options.filter {
-                Calendar.getInstance().apply { add(it.second, it.first) }.before(mNextTime)
+                Calendar.getInstance().apply { add(it) }.before(mNextTime)
             }
         }
         (view.rv_delay_options as RecyclerView).apply {
-            layoutManager = GridLayoutManager(context, 3)
+            layoutManager = GridLayoutManager(context, 3).apply {
+                reverseLayout = true
+            }
             adapter = DelayOptionAdapter(listener, options)
         }
     }
@@ -69,6 +74,20 @@ class DelayOptionFragment
             listener = context
         } else {
             throw RuntimeException("$context must implement DelayOptionListener")
+        }
+    }
+
+    private fun getSnoozeOptions(): List<SnoozeLength> {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        var str = sharedPreferences.getString("snooze_lengths", "")!!
+        str = str.toLowerCase().replace(';', ',')
+        val list = str.split(',')
+        return list.mapNotNull {
+            try {
+                SnoozeLength(it)
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 

@@ -6,7 +6,9 @@
     <item
         android:id="@+id/mi_restore"
         android:title="@string/action_restore" />
-
+    <item
+        android:id="@+id/mi_settings"
+        android:title="@string/title_activity_settings" />
     <item
         android:id="@+id/mi_about"
         android:title="@string/title_about" />

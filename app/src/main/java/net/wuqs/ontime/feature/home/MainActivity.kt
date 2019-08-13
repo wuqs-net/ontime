@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import net.wuqs.ontime.BuildConfig
 import net.wuqs.ontime.R
+import net.wuqs.ontime.feature.settings.SettingsActivity
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.BackupDbTask
@@ -112,6 +113,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             CREATE_ALARM_REQUEST, EDIT_ALARM_REQUEST -> {
                 if (resultCode == RESULT_SAVE_ALARM) {
@@ -141,6 +143,7 @@ class MainActivity : AppCompatActivity(),
             R.id.mi_backup -> backupDb()
             R.id.mi_restore -> restoreDb()
             R.id.mi_about -> startActivity(Intent(this, AboutActivity::class.java))
+            R.id.mi_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             else -> return super.onOptionsItemSelected(item)
         }
         return true

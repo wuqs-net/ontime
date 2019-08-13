@@ -170,6 +170,9 @@
     <string name="msg_months_for_repeat_single">每月的%2$s日</string>
     <string name="msg_years_for_repeat_single">每年%2$s</string>
 
+    <plurals name="seconds_with_quan">
+        <item quantity="other">%d秒</item>
+    </plurals>
     <plurals name="minutes_with_quan">
         <item quantity="other">%d分钟</item>
     </plurals>
@@ -182,5 +185,9 @@
     <plurals name="weeks_with_quan">
         <item quantity="other">%d周</item>
     </plurals>
+
+    <string name="title_activity_settings">设置</string>
+    <string name="pref_header_alarms">闹钟</string>
+    <string name="pref_title_snooze_lengths">推迟时长</string>
 
 </resources>
