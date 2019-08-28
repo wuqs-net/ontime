@@ -16,7 +16,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
 
-        const val DB_VERSION = 9
+        const val DB_VERSION = 10
 
         private var INSTANCE: AppDatabase? = null
 
@@ -95,6 +95,11 @@ abstract class AppDatabase : RoomDatabase() {
             execSQL("ALTER TABLE alarms ADD COLUMN ${Alarm.Columns.SILENCE_AFTER} INTEGER NOT NULL DEFAULT -1")
         }
 
+        val MIGRATION_9_10 = newMigration(9, 10) {
+            execSQL("ALTER TABLE alarms ADD COLUMN ${Alarm.Columns.HISTORICAL} INTEGER NOT NULL DEFAULT 0")
+            execSQL("ALTER TABLE alarms ADD COLUMN ${Alarm.Columns.PARENT_ALARM_ID} INTEGER")
+        }
+
         fun getInstance(context: Context): AppDatabase? {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
@@ -108,7 +113,8 @@ abstract class AppDatabase : RoomDatabase() {
                                     MIGRATION_5_6,
                                     MIGRATION_6_7,
                                     MIGRATION_7_8,
-                                    MIGRATION_8_9
+                                    MIGRATION_8_9,
+                                    MIGRATION_9_10
                             )
                             .build()
                 }

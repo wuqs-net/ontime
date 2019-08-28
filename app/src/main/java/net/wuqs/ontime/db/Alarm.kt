@@ -1,19 +1,20 @@
 package net.wuqs.ontime.db
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.core.os.bundleOf
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.feature.editalarm.binString
 import net.wuqs.ontime.feature.editalarm.hexString
+import net.wuqs.ontime.util.readBoolean
+import net.wuqs.ontime.util.writeBoolean
 import java.util.*
 
 @Entity(tableName = "alarms")
@@ -32,7 +33,9 @@ class Alarm(
     @ColumnInfo(name = Columns.ACTIVATE_DATE) var activateDate: Calendar? = Calendar.getInstance(),
     @ColumnInfo(name = Columns.NEXT_OCCURRENCE) var nextTime: Calendar? = null,
     @ColumnInfo(name = Columns.SNOOZED) var snoozed: Int = 0,
-    @ColumnInfo(name = Columns.NOTES) var notes: String = ""
+    @ColumnInfo(name = Columns.NOTES) var notes: String = "",
+    @ColumnInfo(name = Columns.HISTORICAL) var isHistorical: Boolean = false,
+    @ColumnInfo(name = Columns.PARENT_ALARM_ID) var parentAlarmId: Long? = null
 ) : Parcelable {
 
     object Columns {
@@ -51,6 +54,8 @@ class Alarm(
         const val NEXT_OCCURRENCE = "next_occurrence"
         const val SNOOZED = "snoozed"
         const val NOTES = "notes"
+        const val HISTORICAL = "historical"
+        const val PARENT_ALARM_ID = "parent_alarm_id"
     }
 
     companion object {
@@ -72,31 +77,6 @@ class Alarm(
         const val REPEAT_YEARLY_BY_WEEK = 0x184
 
         const val INVALID_ID = 0L
-
-        /**
-         * Creates an [Alarm] with arguments from a [Bundle].
-         */
-        fun fromBundle(bundle: Bundle): Alarm {
-            return Alarm(
-                    id = bundle.getLong(Columns.ID),
-                    hour = bundle.getInt(Columns.HOUR),
-                    minute = bundle.getInt(Columns.MINUTE),
-                    title = bundle.getString(Columns.TITLE),
-                    ringtoneUri = bundle.getParcelable(Columns.RINGTONE_URI),
-                    vibrate = bundle.getBoolean(Columns.VIBRATE),
-                    silenceAfter = bundle.getInt(Columns.SILENCE_AFTER),
-                    isEnabled = bundle.getBoolean(Columns.ENABLED),
-                    repeatType = bundle.getInt(Columns.REPEAT_TYPE),
-                    repeatCycle = bundle.getInt(Columns.REPEAT_CYCLE),
-                    repeatIndex = bundle.getInt(Columns.REPEAT_INDEX),
-                    activateDate = bundle.getLong(Columns.ACTIVATE_DATE).toCalendar(),
-                    nextTime = bundle.getLong(Columns.NEXT_OCCURRENCE)
-                            .takeIf { it != -1L }
-                            .toCalendar(),
-                    snoozed = bundle.getInt(Columns.SNOOZED),
-                    notes = bundle.getString(Columns.NOTES)!!
-            )
-        }
 
         @Suppress("unused")
         @JvmField
@@ -149,7 +129,9 @@ class Alarm(
             activateDate = source.readLong().toCalendar(),
             nextTime = source.readLong().takeIf { it != -1L }.toCalendar(),
             snoozed = source.readInt(),
-            notes = source.readString()!!
+            notes = source.readString()!!,
+            isHistorical = source.readBoolean(),
+            parentAlarmId = source.readLong().takeIf { it != INVALID_ID }
     )
 
     @Ignore
@@ -168,7 +150,9 @@ class Alarm(
             activateDate = another.activateDate!!.clone() as Calendar,
             nextTime = another.nextTime?.clone() as Calendar?,
             snoozed = another.snoozed,
-            notes = another.notes
+            notes = another.notes,
+            isHistorical = another.isHistorical,
+            parentAlarmId = another.parentAlarmId
     )
 
     override fun describeContents() = 0
@@ -189,29 +173,8 @@ class Alarm(
         writeLong(nextTime.toLong() ?: -1L)
         writeInt(snoozed)
         writeString(notes)
-    }
-
-    /**
-     * Creates a [Bundle] containing information about this [Alarm].
-     */
-    fun toBundle(): Bundle {
-        return bundleOf(
-                Columns.ID to id,
-                Columns.HOUR to hour,
-                Columns.MINUTE to minute,
-                Columns.TITLE to title,
-                Columns.RINGTONE_URI to ringtoneUri,
-                Columns.VIBRATE to vibrate,
-                Columns.SILENCE_AFTER to silenceAfter,
-                Columns.ENABLED to isEnabled,
-                Columns.REPEAT_TYPE to repeatType,
-                Columns.REPEAT_CYCLE to repeatCycle,
-                Columns.REPEAT_INDEX to repeatIndex,
-                Columns.ACTIVATE_DATE to activateDate.toLong()!!,
-                Columns.NEXT_OCCURRENCE to (nextTime.toLong() ?: -1L),
-                Columns.SNOOZED to snoozed,
-                Columns.NOTES to notes
-        )
+        writeBoolean(isHistorical)
+        writeLong(parentAlarmId ?: INVALID_ID)
     }
 
     override fun toString(): String {
@@ -245,6 +208,8 @@ class Alarm(
         if (nextTime != other.nextTime) return false
         if (snoozed != other.snoozed) return false
         if (notes != other.notes) return false
+        if (isHistorical != other.isHistorical) return false
+        if (parentAlarmId != other.parentAlarmId) return false
 
         return true
     }
