@@ -121,44 +121,44 @@ class Alarm(
 
     @Ignore
     private constructor(source: Parcel) : this(
-        id = source.readLong(),
-        hour = source.readInt(),
-        minute = source.readInt(),
-        title = source.readString(),
-        ringtoneUri = source.readParcelable(Uri::class.java.classLoader),
-        vibrate = source.readInt().toBoolean(),
-        silenceAfter = source.readInt(),
-        isEnabled = source.readInt().toBoolean(),
-        repeatType = source.readInt(),
-        repeatCycle = source.readInt(),
-        repeatIndex = source.readInt(),
-        activateDate = source.readLong().toCalendar(),
-        nextTime = source.readLong().takeIf { it != -1L }.toCalendar(),
-        snoozed = source.readInt(),
-        notes = source.readString()!!,
-        isHistorical = source.readBoolean(),
-        parentAlarmId = source.readLong().takeIf { it != INVALID_ID }
+            id = source.readLong(),
+            hour = source.readInt(),
+            minute = source.readInt(),
+            title = source.readString(),
+            ringtoneUri = source.readParcelable(Uri::class.java.classLoader),
+            vibrate = source.readInt().toBoolean(),
+            silenceAfter = source.readInt(),
+            isEnabled = source.readInt().toBoolean(),
+            repeatType = source.readInt(),
+            repeatCycle = source.readInt(),
+            repeatIndex = source.readInt(),
+            activateDate = source.readLong().toCalendar(),
+            nextTime = source.readLong().takeIf { it != -1L }.toCalendar(),
+            snoozed = source.readInt(),
+            notes = source.readString()!!,
+            isHistorical = source.readBoolean(),
+            parentAlarmId = source.readLong().takeIf { it != INVALID_ID }
     )
 
     @Ignore
     constructor(another: Alarm) : this(
-        id = another.id,
-        hour = another.hour,
-        minute = another.minute,
-        title = another.title,
-        ringtoneUri = another.ringtoneUri,
-        vibrate = another.vibrate,
-        silenceAfter = another.silenceAfter,
-        isEnabled = another.isEnabled,
-        repeatType = another.repeatType,
-        repeatCycle = another.repeatCycle,
-        repeatIndex = another.repeatIndex,
-        activateDate = another.activateDate!!.clone() as Calendar,
-        nextTime = another.nextTime?.clone() as Calendar?,
-        snoozed = another.snoozed,
-        notes = another.notes,
-        isHistorical = another.isHistorical,
-        parentAlarmId = another.parentAlarmId
+            id = another.id,
+            hour = another.hour,
+            minute = another.minute,
+            title = another.title,
+            ringtoneUri = another.ringtoneUri,
+            vibrate = another.vibrate,
+            silenceAfter = another.silenceAfter,
+            isEnabled = another.isEnabled,
+            repeatType = another.repeatType,
+            repeatCycle = another.repeatCycle,
+            repeatIndex = another.repeatIndex,
+            activateDate = another.activateDate!!.clone() as Calendar,
+            nextTime = another.nextTime?.clone() as Calendar?,
+            snoozed = another.snoozed,
+            notes = another.notes,
+            isHistorical = another.isHistorical,
+            parentAlarmId = another.parentAlarmId
     )
 
     override fun describeContents() = 0
@@ -185,15 +185,15 @@ class Alarm(
 
     override fun toString(): String = if (!isHistorical) {
         "{id=$id, $hour:$minute, " +
-            "title=$title, isEnabled=$isEnabled, " +
-            "ringtone=$ringtoneUri, vibrate=$vibrate, silenceAfter=$silenceAfter, " +
-            "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
-            "repeatIndex=${repeatIndex.binString}, " +
-            "activate=${activateDate?.time}, next=${nextTime?.time}, " +
-            "snoozed=$snoozed, notes=$notes}"
+                "title=$title, isEnabled=$isEnabled, " +
+                "ringtone=$ringtoneUri, vibrate=$vibrate, silenceAfter=$silenceAfter, " +
+                "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
+                "repeatIndex=${repeatIndex.binString}, " +
+                "activate=${activateDate?.time}, next=${nextTime?.time}, " +
+                "snoozed=$snoozed, notes=$notes}"
     } else {
         "{historical, id=$id, parent=$parentAlarmId, $hour:$minute, title=$title, " +
-            "activate=${activateDate?.time}, next=${nextTime?.time}, notes=$notes}"
+                "activate=${activateDate?.time}, next=${nextTime?.time}, notes=$notes}"
     }
 
     override fun equals(other: Any?): Boolean {
