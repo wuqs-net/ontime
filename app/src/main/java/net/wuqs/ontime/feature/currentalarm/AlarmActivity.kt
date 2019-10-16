@@ -58,6 +58,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
         btn_dismiss.setOnClickListener { dismissAlarm() }
         tv_alarm_title.text = alarm.title
         tv_alarm_notes.text = alarm.notes
+        if (alarm.isNonRepeat()) et_records.setText(alarm.notes)
 
         alarm.nextTime.let {
             if (it == null) {
@@ -108,7 +109,9 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
     }
 
     private fun dismissAlarm() {
-        val intent = Intent(ACTION_ALARM_DISMISS)
+        val intent = Intent(ACTION_ALARM_DISMISS).apply {
+            putExtra("records", et_records.text.toString())
+        }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 

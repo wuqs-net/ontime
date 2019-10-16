@@ -96,6 +96,7 @@
     <string name="action_dismiss_alarm">关闭</string>
     <string name="action_delay_alarm">推迟…</string>
     <string name="title_delay_alarm">推迟闹钟</string>
+    <string name="hint_records">记录</string>
 
     <string name="msg_missed_alarm_next_time">%1$s &#8226; 下次：%2$s</string>
     <string name="action_dismiss_all">全部关闭</string>
