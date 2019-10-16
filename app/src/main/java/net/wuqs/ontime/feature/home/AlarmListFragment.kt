@@ -85,6 +85,10 @@ class AlarmListFragment : Fragment() {
                 R.id.item_history -> AlarmDataModel.ALARMS_HISTORY
                 else -> throw IllegalArgumentException("Illegal filter type")
             }
+            activity?.title = getString(when (item.itemId) {
+                R.id.item_history -> R.string.option_history
+                else -> R.string.app_name
+            })
         }
         return super.onOptionsItemSelected(item)
     }

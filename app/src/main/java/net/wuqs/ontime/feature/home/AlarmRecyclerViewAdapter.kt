@@ -50,6 +50,7 @@ class AlarmRecyclerViewAdapter
                 it.setOnCheckedChangeListener(null)
                 it.isEnabled = item.nextTime != null
                 it.isChecked = item.isEnabled
+                it.visibility = if (item.isHistorical) View.INVISIBLE else View.VISIBLE
                 it.setOnCheckedChangeListener { _, isChecked ->
                     mListener?.onAlarmSwitchClick(data[layoutPosition], isChecked)
                     updateEnabledDisplay(isChecked)
