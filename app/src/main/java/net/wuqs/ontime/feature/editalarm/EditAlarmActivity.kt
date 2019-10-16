@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
@@ -67,6 +68,19 @@ class EditAlarmActivity : AppCompatActivity(),
         } else {
             title = getString(R.string.title_edit_alarm)
             et_alarm_title.setText(alarm.title)
+        }
+
+        // Temporary display settings for historical alarms
+        if (alarm.isHistorical) {
+            et_alarm_title.isEnabled = false
+            tv_alarm_time.isEnabled = false
+            tv_next_date.visibility = View.GONE
+            oiv_repeat_type.visibility = View.GONE
+            fragment_repeat.visibility = View.GONE
+            divider_repeat.visibility = View.GONE
+            fragment_ringtone.visibility = View.GONE
+            divider_ringtone.visibility = View.GONE
+            et_notes.isEnabled = false
         }
 
         et_alarm_title.setOnEditorActionListener { v, actionId, _ ->
@@ -178,6 +192,7 @@ class EditAlarmActivity : AppCompatActivity(),
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (alarm.isHistorical) return true // Temporary hide menu for history
         menuInflater.inflate(R.menu.menu_set_alarm, menu)
         menu?.run {
             setGroupVisible(R.id.menuGroupEdit, alarm.id != Alarm.INVALID_ID)
