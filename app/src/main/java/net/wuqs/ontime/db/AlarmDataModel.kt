@@ -21,7 +21,7 @@ class AlarmDataModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-    private val all = dao.alarmsHasNextTimeLive
+    private val all = dao.futureAlarmsLive
     private val history = dao.historicalAlarmsLive
 
     init {

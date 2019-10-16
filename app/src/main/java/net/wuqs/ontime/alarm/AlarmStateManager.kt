@@ -84,6 +84,11 @@ class AlarmStateManager : BroadcastReceiver() {
          * @param alarm to be scheduled.
          */
         fun scheduleAlarm(context: Context, alarm: Alarm) {
+            if (alarm.isHistorical) {
+                logger.d("Historical alarm does not need to be registered: $alarm")
+                return
+            }
+
             val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             val startAlarm = createPendingIntent(context, alarm)
@@ -151,9 +156,28 @@ class AlarmStateManager : BroadcastReceiver() {
          */
         private fun scheduleAllAlarms(context: Context, onBoot: Boolean) {
             val db = AppDatabase.getInstance(context)!!
-            val alarms = db.alarmDao.alarmsHasNextTime
+
+            val alarms = db.alarmDao.allSync
+            val (futureAlarms, historicalAlarms) = alarms.partition {
+                it.nextTime != null && !it.isHistorical
+            }
+
+            // Update old historical alarms
+            historicalAlarms.forEach { alarm ->
+                var changed = false
+                if (!alarm.isHistorical) {
+                    alarm.isHistorical = true
+                    changed = true
+                }
+                if (alarm.nextTime == null) {
+                    alarm.nextTime = alarm.activateDate?.apply { setHms(alarm.hour, alarm.minute) }
+                    changed = true
+                }
+                if (changed) updateAlarmToDb(db, alarm)
+            }
+
             val now = Calendar.getInstance()
-            val (notMissed, missed) = alarms.partition { it.nextTime!!.after(now) }
+            val (notMissed, missed) = futureAlarms.partition { it.nextTime!!.after(now) }
             logger.d("Not missed: ${notMissed.joinToString()}")
             logger.d("Missed: ${missed.joinToString()}")
             notMissed.forEach { alarm ->
@@ -186,8 +210,6 @@ class AlarmStateManager : BroadcastReceiver() {
                 it.nextTime = it.getNextOccurrence(now)
                 if (it.nextTime != null) {
                     scheduleAlarm(context, it)
-                } else {
-                    it.isEnabled = false
                 }
                 updateAlarmToDb(db, it)
             }

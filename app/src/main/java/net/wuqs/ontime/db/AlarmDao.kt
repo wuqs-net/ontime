@@ -21,7 +21,10 @@ interface AlarmDao {
     @get:Query("SELECT * FROM alarms WHERE next_occurrence IS NOT NULL ORDER BY next_occurrence")
     val alarmsHasNextTimeLive: LiveData<List<Alarm>>
 
-    @get:Query("SELECT * FROM alarms WHERE next_occurrence IS NULL ORDER BY activate_date DESC")
+    @get:Query("SELECT * FROM alarms WHERE historical = 0 ORDER BY next_occurrence")
+    val futureAlarmsLive: LiveData<List<Alarm>>
+
+    @get:Query("SELECT * FROM alarms WHERE historical = 1 ORDER BY next_occurrence DESC")
     val historicalAlarmsLive: LiveData<List<Alarm>>
 
     /** The number of alarms stored in database. */
