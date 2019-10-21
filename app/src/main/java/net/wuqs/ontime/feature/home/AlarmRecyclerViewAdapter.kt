@@ -20,15 +20,15 @@ import java.util.*
 class AlarmRecyclerViewAdapter
 (private val data: MutableList<Alarm>,
  private val mListener: OnListFragmentActionListener?)
-    : RecyclerView.Adapter<AlarmRecyclerViewAdapter.ViewHolder>() {
+    : RecyclerView.Adapter<AlarmRecyclerViewAdapter.ViewHolderAlarm>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderAlarm {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_alarm, parent, false)
-        return ViewHolder(view)
+        return ViewHolderAlarm(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolderAlarm, position: Int) {
         holder.bindData(data[position])
     }
 
@@ -41,7 +41,7 @@ class AlarmRecyclerViewAdapter
         diff.dispatchUpdatesTo(this)
     }
 
-    inner class ViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
+    inner class ViewHolderAlarm(private val mView: View) : RecyclerView.ViewHolder(mView) {
 
         fun bindData(item: Alarm) = with(mView) {
             setOnClickListener { mListener?.onListItemClick(data[layoutPosition]) }
