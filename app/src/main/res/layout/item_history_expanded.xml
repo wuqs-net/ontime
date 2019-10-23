@@ -55,17 +55,17 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:tint="@android:color/secondary_text_light"
-                android:tintMode="src_in"
+                app:tintMode="src_in"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_notes_black_24dp" />
+                app:srcCompat="@drawable/ic_notes_black_24dp"
+                android:contentDescription="@string/hint_records" />
 
             <TextView
                 android:id="@+id/tv_records"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="TextView"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_records"
