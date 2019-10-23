@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
@@ -49,7 +51,7 @@ android {
             signingConfig signingConfigs.playConfig
         }
         debug {
-            versionNameSuffix "-debug"
+            versionNameSuffix genDebugSuffix()
             debuggable true
             ext.alwaysUpdateBuildId = false
             applicationIdSuffix '.debug'
@@ -70,6 +72,13 @@ private Integer genVersionCode() {
 private String genVersionName() {
     String name = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
     return name
+}
+
+private String genDebugSuffix() {
+    Date date = new Date(System.currentTimeMillis());
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ssXXX");
+    String text = sdf.format(date);
+    return "-debug (${text})"
 }
 
 dependencies {
