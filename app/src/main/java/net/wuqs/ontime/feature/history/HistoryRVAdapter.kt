@@ -42,7 +42,7 @@ class HistoryRVAdapter(
     override fun onBindViewHolder(holder: HistoryEntryVH, position: Int) {
         val alarm = data[position]
         holder.view.run {
-            tv_alarm_time.text = alarm.createTimeString(context, hairSpace = true)
+            tv_alarm_time.text = alarm.activateDate.createTimeString(context, hairSpace = true)
             tv_alarm_title.run {
                 if (alarm.title.isNullOrEmpty()) {
                     visibility = View.GONE

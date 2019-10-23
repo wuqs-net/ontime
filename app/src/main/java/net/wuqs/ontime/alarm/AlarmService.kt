@@ -85,13 +85,7 @@ class AlarmService : Service() {
     private fun dismissCurrentAlarm(intent: Intent?) {
         currentAlarm!!.snoozed = 0
 
-        val updateAlarmTime = { alarm: Alarm ->
-            Calendar.getInstance().let {
-                alarm.hour = it[Calendar.HOUR_OF_DAY]
-                alarm.minute = it[Calendar.MINUTE]
-                alarm.nextTime = it
-            }
-        }
+        val updateAlarmTime = { alarm: Alarm -> alarm.nextTime = Calendar.getInstance() }
 
         if (currentAlarm!!.isNonRepeat()) {
             currentAlarm!!.apply {
