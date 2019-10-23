@@ -11,13 +11,13 @@ import net.wuqs.ontime.alarm.createDateString
 import net.wuqs.ontime.alarm.createTimeString
 import net.wuqs.ontime.db.Alarm
 
+private const val VIEW_TYPE_NORMAL = 1
+private const val VIEW_TYPE_EXPANDED = 2
+
 class HistoryRVAdapter(
     private var data: List<Alarm>,
     private val listener: OnListItemActionListener
 ) : RecyclerView.Adapter<HistoryEntryVH>() {
-
-    val VIEW_TYPE_NORMAL = 1
-    val VIEW_TYPE_EXPANDED = 2
 
     private var expandedPos = -1
 
