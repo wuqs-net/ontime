@@ -1,5 +1,8 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">OnTime</string>
+
+    <string name="ok">OK</string>
+
     <string name="new_alarm">Create new alarm</string>
     <string name="msg_no_history">No history</string>
     <string name="msg_click_add">Click the \"Add\" button below to create new alarm</string>
@@ -104,6 +107,12 @@
     <string name="msg_tomorrow">Tomorrow</string>
     <string name="msg_am">AM</string>
     <string name="msg_pm">PM</string>
+
+    <!--History list-->
+    <string name="msg_show_more">Show more</string>
+    <string name="msg_show_less">Show less</string>
+<!--    <string name="msg_done_on_time">Done on time</string>-->
+    <string name="msg_done_time">Done at %1$s, %2$s</string>
 
     <!--About-->
     <string name="title_about">About</string>

@@ -29,6 +29,7 @@ import net.wuqs.ontime.db.BackupDbTask
 import net.wuqs.ontime.db.RestoreDbTask
 import net.wuqs.ontime.feature.about.AboutActivity
 import net.wuqs.ontime.feature.editalarm.EditAlarmActivity
+import net.wuqs.ontime.feature.history.HistoryListActivity
 import net.wuqs.ontime.feature.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.feature.shared.dialog.TimePickerDialogFragment
 import net.wuqs.ontime.feature.shared.dialog.prompt
@@ -144,6 +145,7 @@ class MainActivity : AppCompatActivity(),
             R.id.mi_restore -> restoreDb()
             R.id.mi_about -> startActivity(Intent(this, AboutActivity::class.java))
             R.id.mi_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+            R.id.mi_history -> startActivity(Intent(this, HistoryListActivity::class.java))
             else -> return super.onOptionsItemSelected(item)
         }
         return true

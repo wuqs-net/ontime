@@ -22,7 +22,7 @@ class AlarmDataModel(application: Application) : AndroidViewModel(application) {
         }
 
     private val all = dao.futureAlarmsLive
-    private val history = dao.historicalAlarmsLive
+    val history = dao.historicalAlarmsLive
 
     init {
         alarms.addSource(all) { updateData() }

@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".feature.history.HistoryListActivity"
+            android:parentActivityName=".feature.home.MainActivity"></activity>
+        <activity
             android:name=".feature.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".feature.home.MainActivity">

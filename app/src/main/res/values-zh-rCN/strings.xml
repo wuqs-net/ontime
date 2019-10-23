@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">OnTime</string>
+
+    <string name="ok">确定</string>
+
     <string name="new_alarm">新建闹钟</string>
     <string name="msg_click_add">要新建闹钟，请点击下方的“添加”按钮</string>
     <string name="msg_no_history">没有历史记录</string>
@@ -105,6 +108,12 @@
     <string name="msg_tomorrow">明天</string>
     <string name="msg_am">上午</string>
     <string name="msg_pm">下午</string>
+
+    <!--History-->
+    <string name="msg_show_more">展开</string>
+    <string name="msg_show_less">收起</string>
+<!--    <string name="msg_done_on_time">准时完成</string>-->
+    <string name="msg_done_time">完成于%1$s (%2$s)</string>
 
     <!--About-->
     <string name="title_about">关于</string>
