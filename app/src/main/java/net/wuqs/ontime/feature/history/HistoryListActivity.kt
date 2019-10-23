@@ -1,19 +1,21 @@
 package net.wuqs.ontime.feature.history
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_history_list.*
 import net.wuqs.ontime.R
+import net.wuqs.ontime.alarm.AlarmUpdateHandler
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.AlarmDataModel
 import net.wuqs.ontime.feature.shared.dialog.TextInputDialogFragment
 import net.wuqs.ontime.util.logD
-import net.wuqs.ontime.util.logV
+
+private const val TAG_EDIT_NOTES = "EDIT_NOTES"
 
 class HistoryListActivity : AppCompatActivity(), HistoryRVAdapter.OnListItemActionListener,
         TextInputDialogFragment.TextInputDialogListener {
@@ -25,10 +27,18 @@ class HistoryListActivity : AppCompatActivity(), HistoryRVAdapter.OnListItemActi
 
     private lateinit var adapter: HistoryRVAdapter
 
+    private lateinit var alarmUpdateHandler: AlarmUpdateHandler
+
+    private var editingPosition: Int? = null
+
+    private var editingAlarm: Alarm? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history_list)
         title = getString(R.string.option_history)
+
+        alarmUpdateHandler = AlarmUpdateHandler(this)
 
         alarmDataModel = ViewModelProviders.of(this)[AlarmDataModel::class.java]
         historyEntries = alarmDataModel.history
@@ -41,15 +51,29 @@ class HistoryListActivity : AppCompatActivity(), HistoryRVAdapter.OnListItemActi
     }
 
     override fun onItemNotesClick(position: Int, alarm: Alarm) {
-        val dialog = TextInputDialogFragment.newInstance(getString(R.string.hint_alarm_notes),
+        val dialog = TextInputDialogFragment.newInstance(getString(R.string.hint_records),
             alarm.notes)
-        dialog.show(supportFragmentManager, "editNotes")
+        dialog.show(supportFragmentManager, TAG_EDIT_NOTES)
+        editingPosition = position
+        editingAlarm = alarm
     }
 
     override fun onTextOK(tag: String?, text: String) {
-        if (tag == "editNotes") {
-            logV("New notes: $text")
-            TODO("Change notes in alarm")
+        if (tag == TAG_EDIT_NOTES) {
+            editingAlarm?.let {
+                it.notes = text
+                alarmUpdateHandler.asyncUpdateAlarm(it)
+            }
+            editingAlarm = null
+            editingPosition?.let { adapter.notifyItemChanged(it) }
+            editingPosition = null
+        }
+    }
+
+    override fun onCancel(tag: String?) {
+        if (tag == TAG_EDIT_NOTES) {
+            editingAlarm = null
+            editingPosition = null
         }
     }
 

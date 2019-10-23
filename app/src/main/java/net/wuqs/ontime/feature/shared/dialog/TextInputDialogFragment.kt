@@ -28,7 +28,9 @@ class TextInputDialogFragment : DialogFragment() {
                 setPositiveButton(R.string.ok) { _, _ ->
                     listener.onTextOK(tag, view.et.text.toString())
                 }
-                setNegativeButton(android.R.string.cancel, null)
+                setNegativeButton(android.R.string.cancel) { _, _ ->
+                    listener.onCancel(tag)
+                }
             }
             builder.create().apply {
                 window?.setSoftInputMode(SOFT_INPUT_STATE_VISIBLE)
@@ -38,6 +40,7 @@ class TextInputDialogFragment : DialogFragment() {
 
     interface TextInputDialogListener {
         fun onTextOK(tag: String?, text: String)
+        fun onCancel(tag: String?)
     }
 
     companion object {
