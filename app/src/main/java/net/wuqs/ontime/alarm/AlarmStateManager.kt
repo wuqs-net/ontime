@@ -68,13 +68,7 @@ class AlarmStateManager : BroadcastReceiver() {
             val startAlarmIntent = alarm.createAlarmStartIntent(context).apply {
                 addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
             }
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                PendingIntent.getForegroundService(context, alarm.hashCode(), startAlarmIntent,
-                        flags)
-            } else {
-                PendingIntent.getService(context, alarm.hashCode(), startAlarmIntent,
-                        flags)
-            }
+            return PendingIntent.getService(context, alarm.hashCode(), startAlarmIntent, flags)
         }
 
         /**
@@ -96,9 +90,9 @@ class AlarmStateManager : BroadcastReceiver() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Make sure the alarm fires even if the device is dozing.
                 am.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        alarm.nextTime!!.timeInMillis,
-                        startAlarm
+                    AlarmManager.RTC_WAKEUP,
+                    alarm.nextTime!!.timeInMillis,
+                    startAlarm
                 )
             } else {
                 am.setExact(AlarmManager.RTC_WAKEUP, alarm.nextTime!!.timeInMillis, startAlarm)
@@ -114,7 +108,7 @@ class AlarmStateManager : BroadcastReceiver() {
          */
         fun cancelAlarm(context: Context, alarm: Alarm) {
             val pendingIntent = createPendingIntent(context, alarm,
-                    PendingIntent.FLAG_NO_CREATE)
+                PendingIntent.FLAG_NO_CREATE)
             if (pendingIntent == null) {
                 logger.e("PendingIntent is null, alarm cannot be cancelled: $alarm")
                 return
@@ -146,7 +140,7 @@ class AlarmStateManager : BroadcastReceiver() {
                 // }
                 ACTION_DISMISS_ALL_MISSED_ALARMS -> {
                     dismissAllMissedAlarms(context,
-                            intent.getParcelableArrayListExtra(EXTRA_MISSED_ALARMS))
+                        intent.getParcelableArrayListExtra(EXTRA_MISSED_ALARMS))
                 }
             }
         }
