@@ -33,7 +33,7 @@ interface AlarmDao {
 
     /** Returns the [Alarm] of the given id. */
     @Query("SELECT * FROM alarms WHERE id = :id LIMIT 1")
-    operator fun get(id: Int): Alarm
+    fun getAlarmSync(id: Int): Alarm
 
     @Query("SELECT * FROM alarms WHERE id = :id LIMIT 1")
     fun getAlarm(id: Int): LiveData<Alarm>
