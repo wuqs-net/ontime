@@ -58,6 +58,10 @@ class HistoryListActivity : AppCompatActivity(), HistoryRVAdapter.OnListItemActi
         editingAlarm = alarm
     }
 
+    override fun onItemEditClick(alarm: Alarm) {
+        // TODO: Actually edit parent
+    }
+
     override fun onTextOK(tag: String?, text: String) {
         if (tag == TAG_EDIT_NOTES) {
             editingAlarm?.let {

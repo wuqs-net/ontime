@@ -72,6 +72,13 @@ class HistoryRVAdapter(
                 tv_records.text = alarm.notes
                 tv_records.visibility = View.VISIBLE
                 cl_records.setOnClickListener { listener.onItemNotesClick(position, alarm) }
+                if (alarm.parentAlarmId != null) {
+                    // TODO: Check if parent actually exists
+                    btn_edit_alarm.visibility = View.VISIBLE
+                    btn_edit_alarm.setOnClickListener { listener.onItemEditClick(alarm) }
+                } else {
+                    btn_edit_alarm.visibility = View.GONE
+                }
             } else {
                 cl_expanded.visibility = View.GONE
             }
@@ -85,6 +92,7 @@ class HistoryRVAdapter(
 
     interface OnListItemActionListener {
         fun onItemNotesClick(position: Int, alarm: Alarm)
+        fun onItemEditClick(alarm: Alarm)
     }
 
 }
