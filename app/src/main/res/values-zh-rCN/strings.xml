@@ -191,4 +191,5 @@
     <string name="pref_header_alarms">闹钟</string>
     <string name="pref_title_snooze_lengths">推迟时长</string>
 
+    <string name="countdown">倒计时</string>
 </resources>

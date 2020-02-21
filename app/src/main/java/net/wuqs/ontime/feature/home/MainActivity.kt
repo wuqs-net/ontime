@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.media.RingtoneManager
 import android.os.Bundle
 import android.text.Html
 import android.view.Menu
@@ -28,6 +29,7 @@ import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.db.BackupDbTask
 import net.wuqs.ontime.db.RestoreDbTask
 import net.wuqs.ontime.feature.about.AboutActivity
+import net.wuqs.ontime.feature.currentalarm.DelayOptionFragment
 import net.wuqs.ontime.feature.editalarm.EditAlarmActivity
 import net.wuqs.ontime.feature.missedalarms.MissedAlarmsActivity
 import net.wuqs.ontime.feature.shared.dialog.TimePickerDialogFragment
@@ -55,7 +57,8 @@ private const val PERMISSION_REQUEST_RESTORE_DB = 2
 
 class MainActivity : AppCompatActivity(),
         AlarmListFragment.OnListFragmentActionListener,
-        TimePickerDialogFragment.OnTimeSetListener {
+        TimePickerDialogFragment.OnTimeSetListener,
+        DelayOptionFragment.DelayOptionListener {
 
     private lateinit var alarmUpdateHandler: AlarmUpdateHandler
 
@@ -71,8 +74,8 @@ class MainActivity : AppCompatActivity(),
                     if (!intent.hasExtra(EXTRA_MISSED_ALARMS)) return
                     logD("Show missed alarms")
                     val missedAlarmsIntent = Intent(
-                            this@MainActivity,
-                            MissedAlarmsActivity::class.java
+                        this@MainActivity,
+                        MissedAlarmsActivity::class.java
                     ).apply {
                         putExtras(intent)
                     }
@@ -98,6 +101,7 @@ class MainActivity : AppCompatActivity(),
 
         volumeControlStream = AudioManager.STREAM_ALARM
         fabCreateAlarm.setOnClickListener { onFabCreateAlarmClick() }
+        fabCreateAlarm.setOnLongClickListener { onFabCreateAlarmLongClick() }
         sendBroadcast(AlarmStateManager.createScheduleAllAlarmsIntent(this))
     }
 
@@ -221,12 +225,12 @@ class MainActivity : AppCompatActivity(),
             R.id.item_delete -> {
                 // Prompt before deleting.
                 val text = getString(
-                        if (item.title.isNullOrBlank()) {
-                            R.string.prompt_delete_untitled_alarm
-                        } else {
-                            R.string.prompt_delete_titled_alarm
-                        },
-                        Html.escapeHtml(item.getTitleOrTime(this@MainActivity))
+                    if (item.title.isNullOrBlank()) {
+                        R.string.prompt_delete_untitled_alarm
+                    } else {
+                        R.string.prompt_delete_titled_alarm
+                    },
+                    Html.escapeHtml(item.getTitleOrTime(this@MainActivity))
                 )
                 val message = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
                 prompt(message, R.string.action_delete, android.R.string.cancel) { which ->
@@ -251,8 +255,8 @@ class MainActivity : AppCompatActivity(),
         if (!alarm.isEnabled) return
         alarm.nextTime?.let {
             val msg = getString(
-                    R.string.msg_alarm_will_go_off,
-                    createTimeDifferenceString(this, it)
+                R.string.msg_alarm_will_go_off,
+                createTimeDifferenceString(this, it)
             )
             Snackbar.make(fabCreateAlarm, msg, Snackbar.LENGTH_SHORT).show()
         }
@@ -269,9 +273,9 @@ class MainActivity : AppCompatActivity(),
                 // If the alarm has a title, bold it and show.
                 val title = Html.escapeHtml(updated.title!!)
                 val text = getString(
-                        R.string.msg_titled_alarm_skipped,
-                        it.createDateString(),
-                        title
+                    R.string.msg_titled_alarm_skipped,
+                    it.createDateString(),
+                    title
                 )
                 HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
             }
@@ -295,6 +299,37 @@ class MainActivity : AppCompatActivity(),
         TimePickerDialogFragment.show(this, hour, minute, TAG_NEW_ALARM)
     }
 
+    private fun onFabCreateAlarmLongClick(): Boolean {
+        DelayOptionFragment.newInstance(null).show(supportFragmentManager, null)
+        return true
+    }
+
+    override fun onDelayOptionClick(quantity: Int, unit: Int) {
+        val calendar = Calendar.getInstance().apply {
+            add(unit, quantity)
+        }
+        val intervalStr = when (unit) {
+            Calendar.SECOND -> R.plurals.seconds_with_quan
+            Calendar.MINUTE -> R.plurals.minutes_with_quan
+            Calendar.HOUR_OF_DAY -> R.plurals.hours_with_quan
+            Calendar.DATE -> R.plurals.days_with_quan
+            Calendar.WEEK_OF_YEAR -> R.plurals.weeks_with_quan
+            else -> 0
+        }
+        val title = resources.getQuantityString(intervalStr, quantity, quantity)
+        logD(calendar.time.toString())
+        val alarm = Alarm(
+            hour = calendar[Calendar.HOUR_OF_DAY],
+            minute = calendar[Calendar.MINUTE],
+            title = "${getString(R.string.countdown)}${title}",
+            nextTime = calendar,
+            activateDate = calendar.clone() as Calendar,
+            ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        )
+        alarmUpdateHandler.asyncAddAlarm(alarm)
+        showAlarmWillGoOffSnack(alarm)
+    }
+
     /**
      * Backup database.
      *
@@ -305,8 +340,8 @@ class MainActivity : AppCompatActivity(),
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        PERMISSION_REQUEST_BACKUP_DB)
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_BACKUP_DB)
             } else {
                 BackupDbTask(this).execute()
             }
@@ -330,8 +365,8 @@ class MainActivity : AppCompatActivity(),
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        PERMISSION_REQUEST_RESTORE_DB)
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_RESTORE_DB)
             } else {
                 RestoreDbTask(this).execute()
             }
