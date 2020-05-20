@@ -13,4 +13,6 @@ object AsyncHandler {
     }
 
     fun post(r: () -> Unit) = mHandler.post(r)
+
+    fun postDelayed(delayMillis: Long, r: () -> Unit) = mHandler.postDelayed(r, delayMillis)
 }

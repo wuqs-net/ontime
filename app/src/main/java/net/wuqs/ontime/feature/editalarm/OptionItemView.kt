@@ -1,9 +1,9 @@
 package net.wuqs.ontime.feature.editalarm
 
 import android.content.Context
-import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.view_option_item.view.*
 import net.wuqs.ontime.R
 
@@ -33,6 +33,15 @@ class OptionItemView(context: Context, attrs: AttributeSet) : ConstraintLayout(c
         iconResId = a.getResourceId(R.styleable.OptionItemView_iconImage, 0)
         captionText = a.getText(R.styleable.OptionItemView_captionText)
         valueText = a.getText(R.styleable.OptionItemView_valueText)
+    }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            return
+        }
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val newWidthMeasureSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY)
+        super.onMeasure(newWidthMeasureSpec, heightMeasureSpec)
     }
 }

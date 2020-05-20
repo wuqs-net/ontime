@@ -1,6 +1,6 @@
 package net.wuqs.ontime.db
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import android.net.Uri
 import java.util.*
 

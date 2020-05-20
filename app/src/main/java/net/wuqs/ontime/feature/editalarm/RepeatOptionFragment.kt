@@ -2,7 +2,7 @@ package net.wuqs.ontime.feature.editalarm
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -29,7 +29,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerDialogF
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            alarm = it.getParcelable(ARG_ALARM)
+            alarm = it.getParcelable(ARG_ALARM)!!
         }
         mLogger.v("onCreate")
     }
@@ -51,7 +51,7 @@ abstract class RepeatOptionFragment : Fragment(), TextWatcher, DatePickerDialogF
         showRepeatCycle()
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         mListener = if (context is OnRepeatIndexPickListener) {
             context

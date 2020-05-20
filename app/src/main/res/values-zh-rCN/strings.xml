@@ -38,7 +38,7 @@
     <string name="action_restore">还原</string>
     <string name="msg_backup_successful">备份成功</string>
     <string name="msg_backup_failed">备份失败</string>
-    <string name="msg_restore_successful">还原成功，请重新启动应用</string>
+    <string name="msg_restore_successful">还原成功</string>
     <string name="msg_restore_failed">还原失败</string>
 
     <string name="option_non_repeat">单次</string>
@@ -76,6 +76,15 @@
     <string name="msg_vibrate">振动</string>
     <string name="msg_ask_for_perm">在“应用权限”设置中开启“存储空间”权限，以使用自定义铃声</string>
     <string name="msg_allow_ringtone_access">点击以允许使用自定义铃声</string>
+    <string name="msg_silence_after">响铃时长</string>
+    <string name="msg_silence_after_never">持续响铃</string>
+    <string-array name="msg_ringtone_durations">
+        <item>1分钟</item>
+        <item>5分钟</item>
+        <item>15分钟</item>
+        <item>播放一次</item>
+        <item>持续响铃</item>
+    </string-array>
 
     <string name="msg_default_alarm_title">OnTime 闹钟</string>
     <string name="channel_name_alarm">闹钟</string>
@@ -87,6 +96,7 @@
     <string name="action_dismiss_alarm">关闭</string>
     <string name="action_delay_alarm">推迟…</string>
     <string name="title_delay_alarm">推迟闹钟</string>
+    <string name="hint_records">记录</string>
 
     <string name="msg_missed_alarm_next_time">%1$s &#8226; 下次：%2$s</string>
     <string name="action_dismiss_all">全部关闭</string>
@@ -161,6 +171,9 @@
     <string name="msg_months_for_repeat_single">每月的%2$s日</string>
     <string name="msg_years_for_repeat_single">每年%2$s</string>
 
+    <plurals name="seconds_with_quan">
+        <item quantity="other">%d秒</item>
+    </plurals>
     <plurals name="minutes_with_quan">
         <item quantity="other">%d分钟</item>
     </plurals>
@@ -174,4 +187,9 @@
         <item quantity="other">%d周</item>
     </plurals>
 
+    <string name="title_activity_settings">设置</string>
+    <string name="pref_header_alarms">闹钟</string>
+    <string name="pref_title_snooze_lengths">推迟时长</string>
+
+    <string name="countdown">倒计时</string>
 </resources>

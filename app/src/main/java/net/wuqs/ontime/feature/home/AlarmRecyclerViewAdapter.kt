@@ -1,8 +1,8 @@
 package net.wuqs.ontime.feature.home
 
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.text.format.DateFormat
 import android.view.*
 import kotlinx.android.synthetic.main.item_alarm.view.*
@@ -50,6 +50,7 @@ class AlarmRecyclerViewAdapter
                 it.setOnCheckedChangeListener(null)
                 it.isEnabled = item.nextTime != null
                 it.isChecked = item.isEnabled
+                it.visibility = if (item.isHistorical) View.INVISIBLE else View.VISIBLE
                 it.setOnCheckedChangeListener { _, isChecked ->
                     mListener?.onAlarmSwitchClick(data[layoutPosition], isChecked)
                     updateEnabledDisplay(isChecked)

@@ -1,11 +1,11 @@
 package net.wuqs.ontime.feature.shared.dialog
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentActivity
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
 
 /**
  * DialogFragment used to show a prompt.
@@ -15,7 +15,7 @@ class PromptDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val listener = activity as OnClickListener
         val args = arguments!!
-        return AlertDialog.Builder(activity).run {
+        return AlertDialog.Builder(activity!!).run {
             setMessage(args.getInt(ARG_MESSAGE))
             setPositiveButton(args.getInt(ARG_POSITIVE)) { _, _ ->
                 listener.onDialogPositiveClick(this@PromptDialogFragment)
@@ -68,4 +68,50 @@ class PromptDialogFragment : DialogFragment() {
         private const val ARG_POSITIVE = "positive"
         private const val ARG_NEGATIVE = "negative"
     }
+}
+
+/**
+ * Shows a simple prompt dialog.
+ *
+ * @param messageId the resource id of the message to display.
+ * @param positiveTextId the resource id of the text to display in the positive button.
+ * @param negativeTextId the resource id of the text to display in the negative button.
+ * @param listener the listener to use.
+ */
+fun FragmentActivity.prompt(
+    @StringRes messageId: Int,
+    @StringRes positiveTextId: Int,
+    @StringRes negativeTextId: Int,
+    listener: (which: Int) -> Unit
+) {
+    val dialog = AlertDialog.Builder(this).run {
+        setMessage(messageId)
+        setPositiveButton(positiveTextId) { _, which -> listener(which) }
+        setNegativeButton(negativeTextId) { _, which -> listener(which) }
+        create()
+    }
+    dialog.show()
+}
+
+/**
+ * Shows a simple prompt dialog.
+ *
+ * @param message the message to display.
+ * @param positiveTextId the resource id of the text to display in the positive button.
+ * @param negativeTextId the resource id of the text to display in the negative button.
+ * @param listener the listener to use.
+ */
+fun FragmentActivity.prompt(
+    message: CharSequence,
+    @StringRes positiveTextId: Int,
+    @StringRes negativeTextId: Int,
+    listener: (which: Int) -> Unit
+) {
+    val dialog = AlertDialog.Builder(this).run {
+        setMessage(message)
+        setPositiveButton(positiveTextId) { _, which -> listener(which) }
+        setNegativeButton(negativeTextId) { _, which -> listener(which) }
+        create()
+    }
+    dialog.show()
 }

@@ -1,20 +1,28 @@
 package net.wuqs.ontime.db
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import net.wuqs.ontime.alarm.*
 import net.wuqs.ontime.feature.editalarm.binString
 import net.wuqs.ontime.feature.editalarm.hexString
+import net.wuqs.ontime.util.readBoolean
+import net.wuqs.ontime.util.writeBoolean
 import java.util.*
 
+/**
+ * @property activateDate the date when this Alarm is activated; for a past alarm, this represents
+ *     when this Alarm went off
+ * @property nextTime the exact time when this Alarm will go off next time; for a past alarm, this
+ *     represents when this Alarm was dismissed/completed
+ */
 @Entity(tableName = "alarms")
 class Alarm(
     @PrimaryKey var id: Long = INVALID_ID,
@@ -23,6 +31,7 @@ class Alarm(
     @ColumnInfo(name = Columns.TITLE) var title: String? = "",
     @ColumnInfo(name = Columns.RINGTONE_URI) var ringtoneUri: Uri? = null,
     @ColumnInfo(name = Columns.VIBRATE) var vibrate: Boolean = false,
+    @ColumnInfo(name = Columns.SILENCE_AFTER) var silenceAfter: Int = -1,
     @ColumnInfo(name = Columns.ENABLED) var isEnabled: Boolean = true,
     @ColumnInfo(name = Columns.REPEAT_TYPE) var repeatType: Int = 0,
     @ColumnInfo(name = Columns.REPEAT_CYCLE) var repeatCycle: Int = 0,
@@ -30,7 +39,9 @@ class Alarm(
     @ColumnInfo(name = Columns.ACTIVATE_DATE) var activateDate: Calendar? = Calendar.getInstance(),
     @ColumnInfo(name = Columns.NEXT_OCCURRENCE) var nextTime: Calendar? = null,
     @ColumnInfo(name = Columns.SNOOZED) var snoozed: Int = 0,
-    @ColumnInfo(name = Columns.NOTES) var notes: String = ""
+    @ColumnInfo(name = Columns.NOTES) var notes: String = "",
+    @ColumnInfo(name = Columns.HISTORICAL) var isHistorical: Boolean = false,
+    @ColumnInfo(name = Columns.PARENT_ALARM_ID) var parentAlarmId: Long? = null
 ) : Parcelable {
 
     object Columns {
@@ -40,6 +51,7 @@ class Alarm(
         const val TITLE = "title"
         const val RINGTONE_URI = "ringtone_uri"
         const val VIBRATE = "vibrate"
+        const val SILENCE_AFTER = "silence_after"
         const val ENABLED = "enabled"
         const val REPEAT_TYPE = "repeat_type"
         const val REPEAT_CYCLE = "repeat_cycle"
@@ -48,6 +60,8 @@ class Alarm(
         const val NEXT_OCCURRENCE = "next_occurrence"
         const val SNOOZED = "snoozed"
         const val NOTES = "notes"
+        const val HISTORICAL = "historical"
+        const val PARENT_ALARM_ID = "parent_alarm_id"
     }
 
     companion object {
@@ -70,30 +84,6 @@ class Alarm(
 
         const val INVALID_ID = 0L
 
-        /**
-         * Creates an [Alarm] with arguments from a [Bundle].
-         */
-        fun fromBundle(bundle: Bundle): Alarm {
-            return Alarm(
-                    id = bundle.getLong(Columns.ID),
-                    hour = bundle.getInt(Columns.HOUR),
-                    minute = bundle.getInt(Columns.MINUTE),
-                    title = bundle.getString(Columns.TITLE),
-                    ringtoneUri = bundle.getParcelable(Columns.RINGTONE_URI),
-                    vibrate = bundle.getBoolean(Columns.VIBRATE),
-                    isEnabled = bundle.getBoolean(Columns.ENABLED),
-                    repeatType = bundle.getInt(Columns.REPEAT_TYPE),
-                    repeatCycle = bundle.getInt(Columns.REPEAT_CYCLE),
-                    repeatIndex = bundle.getInt(Columns.REPEAT_INDEX),
-                    activateDate = bundle.getLong(Columns.ACTIVATE_DATE).toCalendar(),
-                    nextTime = bundle.getLong(Columns.NEXT_OCCURRENCE)
-                            .takeIf { it != -1L }
-                            .toCalendar(),
-                    snoozed = bundle.getInt(Columns.SNOOZED),
-                    notes = bundle.getString(Columns.NOTES)
-            )
-        }
-
         @Suppress("unused")
         @JvmField
         val CREATOR: Parcelable.Creator<Alarm> = object : Parcelable.Creator<Alarm> {
@@ -103,7 +93,7 @@ class Alarm(
     }
 
     init {
-        activateDate?.setHms(0)
+        if (!isHistorical) activateDate?.setHms(0)
     }
 
     // TODO: Move to AlarmUtil.kt
@@ -137,6 +127,7 @@ class Alarm(
             title = source.readString(),
             ringtoneUri = source.readParcelable(Uri::class.java.classLoader),
             vibrate = source.readInt().toBoolean(),
+            silenceAfter = source.readInt(),
             isEnabled = source.readInt().toBoolean(),
             repeatType = source.readInt(),
             repeatCycle = source.readInt(),
@@ -144,7 +135,9 @@ class Alarm(
             activateDate = source.readLong().toCalendar(),
             nextTime = source.readLong().takeIf { it != -1L }.toCalendar(),
             snoozed = source.readInt(),
-            notes = source.readString()
+            notes = source.readString()!!,
+            isHistorical = source.readBoolean(),
+            parentAlarmId = source.readLong().takeIf { it != INVALID_ID }
     )
 
     @Ignore
@@ -155,6 +148,7 @@ class Alarm(
             title = another.title,
             ringtoneUri = another.ringtoneUri,
             vibrate = another.vibrate,
+            silenceAfter = another.silenceAfter,
             isEnabled = another.isEnabled,
             repeatType = another.repeatType,
             repeatCycle = another.repeatCycle,
@@ -162,7 +156,9 @@ class Alarm(
             activateDate = another.activateDate!!.clone() as Calendar,
             nextTime = another.nextTime?.clone() as Calendar?,
             snoozed = another.snoozed,
-            notes = another.notes
+            notes = another.notes,
+            isHistorical = another.isHistorical,
+            parentAlarmId = another.parentAlarmId
     )
 
     override fun describeContents() = 0
@@ -174,6 +170,7 @@ class Alarm(
         writeString(title)
         writeParcelable(ringtoneUri, 0)
         writeInt(vibrate.toInt())
+        writeInt(silenceAfter)
         writeInt(isEnabled.toInt())
         writeInt(repeatType)
         writeInt(repeatCycle)
@@ -182,38 +179,21 @@ class Alarm(
         writeLong(nextTime.toLong() ?: -1L)
         writeInt(snoozed)
         writeString(notes)
+        writeBoolean(isHistorical)
+        writeLong(parentAlarmId ?: INVALID_ID)
     }
 
-    /**
-     * Creates a [Bundle] containing information about this [Alarm].
-     */
-    fun toBundle(): Bundle {
-        return Bundle().apply {
-            putLong(Columns.ID, id)
-            putInt(Columns.HOUR, hour)
-            putInt(Columns.MINUTE, minute)
-            putString(Columns.TITLE, title)
-            putParcelable(Columns.RINGTONE_URI, ringtoneUri)
-            putBoolean(Columns.VIBRATE, vibrate)
-            putBoolean(Columns.ENABLED, isEnabled)
-            putInt(Columns.REPEAT_TYPE, repeatType)
-            putInt(Columns.REPEAT_CYCLE, repeatCycle)
-            putInt(Columns.REPEAT_INDEX, repeatIndex)
-            putLong(Columns.ACTIVATE_DATE, activateDate.toLong()!!)
-            putLong(Columns.NEXT_OCCURRENCE, nextTime.toLong() ?: -1L)
-            putInt(Columns.SNOOZED, snoozed)
-            putString(Columns.NOTES, notes)
-        }
-    }
-
-    override fun toString(): String {
-        return "{id=$id, $hour:$minute, " +
+    override fun toString(): String = if (!isHistorical) {
+        "{id=$id, $hour:$minute, " +
                 "title=$title, isEnabled=$isEnabled, " +
-                "ringtone=$ringtoneUri, vibrate=$vibrate, " +
+                "ringtone=$ringtoneUri, vibrate=$vibrate, silenceAfter=$silenceAfter, " +
                 "repeatType=${repeatType.hexString}, repeatCycle=$repeatCycle, " +
                 "repeatIndex=${repeatIndex.binString}, " +
                 "activate=${activateDate?.time}, next=${nextTime?.time}, " +
                 "snoozed=$snoozed, notes=$notes}"
+    } else {
+        "{historical, id=$id, parent=$parentAlarmId, $hour:$minute, title=$title, " +
+                "activate=${activateDate?.time}, next=${nextTime?.time}, notes=$notes}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -228,6 +208,7 @@ class Alarm(
         if (title != other.title) return false
         if (ringtoneUri != other.ringtoneUri) return false
         if (vibrate != other.vibrate) return false
+        if (silenceAfter != other.silenceAfter) return false
         if (isEnabled != other.isEnabled) return false
         if (repeatType != other.repeatType) return false
         if (repeatCycle != other.repeatCycle) return false
@@ -236,6 +217,8 @@ class Alarm(
         if (nextTime != other.nextTime) return false
         if (snoozed != other.snoozed) return false
         if (notes != other.notes) return false
+        if (isHistorical != other.isHistorical) return false
+        if (parentAlarmId != other.parentAlarmId) return false
 
         return true
     }

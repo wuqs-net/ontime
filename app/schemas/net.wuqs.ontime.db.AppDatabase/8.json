@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "7cf1533e59193d4ca495be777a715c94",
+    "identityHash": "24f027c052640ff4d68693bfe116b460",
     "entities": [
       {
         "tableName": "alarms",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `hour` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `title` TEXT, `ringtone_uri` TEXT, `vibrate` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `repeat_type` INTEGER NOT NULL, `repeat_cycle` INTEGER NOT NULL, `repeat_index` INTEGER NOT NULL, `activate_date` INTEGER, `next_occurrence` INTEGER, `snoozed` INTEGER NOT NULL, `notes` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `hour` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `title` TEXT, `ringtone_uri` TEXT, `vibrate` INTEGER NOT NULL, `silence_after` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `repeat_type` INTEGER NOT NULL, `repeat_cycle` INTEGER NOT NULL, `repeat_index` INTEGER NOT NULL, `activate_date` INTEGER, `next_occurrence` INTEGER, `snoozed` INTEGER NOT NULL, `notes` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -41,6 +41,12 @@
           {
             "fieldPath": "vibrate",
             "columnName": "vibrate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "silenceAfter",
+            "columnName": "silence_after",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -105,7 +111,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7cf1533e59193d4ca495be777a715c94\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"24f027c052640ff4d68693bfe116b460\")"
     ]
   }
 }

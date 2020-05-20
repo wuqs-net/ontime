@@ -9,9 +9,9 @@ import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager.LayoutParams
 import kotlinx.android.synthetic.main.activity_alarm.*
@@ -58,6 +58,7 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
         btn_dismiss.setOnClickListener { dismissAlarm() }
         tv_alarm_title.text = alarm.title
         tv_alarm_notes.text = alarm.notes
+        if (alarm.isNonRepeat()) et_records.setText(alarm.notes)
 
         alarm.nextTime.let {
             if (it == null) {
@@ -108,7 +109,9 @@ class AlarmActivity : AppCompatActivity(), DelayOptionFragment.DelayOptionListen
     }
 
     private fun dismissAlarm() {
-        val intent = Intent(ACTION_ALARM_DISMISS)
+        val intent = Intent(ACTION_ALARM_DISMISS).apply {
+            putExtra("records", et_records.text.toString())
+        }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 

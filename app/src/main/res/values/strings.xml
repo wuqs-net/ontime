@@ -35,9 +35,9 @@
     <!--Backup & restore-->
     <string name="action_backup">Backup</string>
     <string name="action_restore">Restore</string>
-    <string name="msg_backup_successful">Backup successful</string>
+    <string name="msg_backup_successful">Backup completed</string>
     <string name="msg_backup_failed">Backup failed</string>
-    <string name="msg_restore_successful">Restore successful. Please restart the application</string>
+    <string name="msg_restore_successful">Restore completed</string>
     <string name="msg_restore_failed">Restore failed</string>
 
     <string name="option_non_repeat">Does not repeat</string>
@@ -75,6 +75,15 @@
     <string name="msg_vibrate">Vibrate</string>
     <string name="msg_ask_for_perm">Allow \"Storage\" in \"App permissions\" to use custom ringtone</string>
     <string name="msg_allow_ringtone_access">Click to allow access to custom ringtone</string>
+    <string name="msg_silence_after">Silence after</string>
+    <string name="msg_silence_after_never">Never</string>
+    <string-array name="msg_ringtone_durations">
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>15 minutes</item>
+        <item>Ringtone played once</item>
+        <item>Never</item>
+    </string-array>
 
     <string name="msg_default_alarm_title">OnTime Alarm</string>
     <string name="channel_name_alarm">Alarms</string>
@@ -86,6 +95,7 @@
     <string name="action_dismiss_alarm">Dismiss</string>
     <string name="action_delay_alarm">Snooze…</string>
     <string name="title_delay_alarm">Snooze</string>
+    <string name="hint_records">Records</string>
 
     <string name="msg_missed_alarm_next_time">%1$s &#8226; Next: %2$s</string>
     <string name="action_dismiss_all">Dismiss all</string>
@@ -173,6 +183,10 @@
     <string name="msg_months_for_repeat_single">Monthly on day %2$s</string>
     <string name="msg_years_for_repeat_single">Yearly on %2$s</string>
 
+    <plurals name="seconds_with_quan">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
     <plurals name="minutes_with_quan">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
@@ -190,4 +204,10 @@
         <item quantity="other">%d weeks</item>
     </plurals>
 
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_header_alarms">Alarms</string>
+    <string name="pref_key_snooze_lengths" translatable="false">snooze_lengths</string>
+    <string name="pref_title_snooze_lengths">Snooze lengths</string>
+
+    <string name="countdown">Countdown&#160;</string>
 </resources>

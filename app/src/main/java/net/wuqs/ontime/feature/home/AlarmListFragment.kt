@@ -1,13 +1,13 @@
 package net.wuqs.ontime.feature.home
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_alarm_list.*
 import kotlinx.android.synthetic.main.fragment_alarm_list.view.*
@@ -69,24 +69,26 @@ class AlarmListFragment : Fragment() {
         mListener = null
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.menu_alarm_list, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_alarm_list, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        item?.let {
-            if (it.groupId == R.id.group_filter) {
-                it.isChecked = true
-                alarmDataModel.dataState = when (item.itemId) {
-                    R.id.item_all_alarms -> AlarmDataModel.ALARMS_ALL
-                    R.id.item_today_alarms -> AlarmDataModel.ALARMS_TODAY
-                    R.id.item_daily_alarms -> AlarmDataModel.ALARMS_DAILY
-                    R.id.item_weekly_alarms -> AlarmDataModel.ALARMS_WEEKLY
-                    R.id.item_monthly_alarms -> AlarmDataModel.ALARMS_MONTHLY
-                    R.id.item_history -> AlarmDataModel.ALARMS_HISTORY
-                    else -> throw IllegalArgumentException("Illegal filter type")
-                }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.groupId == R.id.group_filter) {
+            item.isChecked = true
+            alarmDataModel.dataState = when (item.itemId) {
+                R.id.item_all_alarms -> AlarmDataModel.ALARMS_ALL
+                R.id.item_today_alarms -> AlarmDataModel.ALARMS_TODAY
+                R.id.item_daily_alarms -> AlarmDataModel.ALARMS_DAILY
+                R.id.item_weekly_alarms -> AlarmDataModel.ALARMS_WEEKLY
+                R.id.item_monthly_alarms -> AlarmDataModel.ALARMS_MONTHLY
+                R.id.item_history -> AlarmDataModel.ALARMS_HISTORY
+                else -> throw IllegalArgumentException("Illegal filter type")
             }
+            activity?.title = getString(when (item.itemId) {
+                R.id.item_history -> R.string.option_history
+                else -> R.string.app_name
+            })
         }
         return super.onOptionsItemSelected(item)
     }

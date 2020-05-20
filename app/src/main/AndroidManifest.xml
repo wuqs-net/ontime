@@ -6,7 +6,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -16,17 +17,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".feature.settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".feature.home.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.wuqs.ontime.feature.home.MainActivity" />
+        </activity>
+        <activity
             android:name=".feature.home.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".feature.currentalarm.AlarmActivity"
-            android:launchMode="singleTask"
             android:excludeFromRecents="true"
+            android:launchMode="singleTask"
             android:taskAffinity="" />
         <activity
             android:name=".feature.editalarm.EditAlarmActivity"
@@ -34,7 +44,7 @@
         <activity android:name=".feature.missedalarms.MissedAlarmsActivity" />
 
         <receiver
-            android:name="net.wuqs.ontime.alarm.AlarmStateManager"
+            android:name=".alarm.AlarmStateManager"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -49,6 +59,7 @@
             android:name=".feature.about.AboutActivity"
             android:label="@string/title_about"
             android:parentActivityName=".feature.home.MainActivity" />
+
         <service
             android:name=".alarm.AlarmService"
             android:enabled="true"

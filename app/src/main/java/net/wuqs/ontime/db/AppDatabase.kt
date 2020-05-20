@@ -1,20 +1,22 @@
 package net.wuqs.ontime.db
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
-import android.arch.persistence.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import androidx.room.migration.Migration
 import android.content.Context
 
-@Database(entities = [Alarm::class], version = 8)
+@Database(entities = [Alarm::class], version = AppDatabase.DB_VERSION)
 @TypeConverters(DataTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val alarmDao: AlarmDao
 
     companion object {
+
+        const val DB_VERSION = 10
 
         private var INSTANCE: AppDatabase? = null
 
@@ -89,6 +91,15 @@ abstract class AppDatabase : RoomDatabase() {
             execSQL("UPDATE alarms SET ringtone_uri = NULL WHERE ringtone_uri = 'null'")
         }
 
+        val MIGRATION_8_9 = newMigration(8, 9) {
+            execSQL("ALTER TABLE alarms ADD COLUMN ${Alarm.Columns.SILENCE_AFTER} INTEGER NOT NULL DEFAULT -1")
+        }
+
+        val MIGRATION_9_10 = newMigration(9, 10) {
+            execSQL("ALTER TABLE alarms ADD COLUMN ${Alarm.Columns.HISTORICAL} INTEGER NOT NULL DEFAULT 0")
+            execSQL("ALTER TABLE alarms ADD COLUMN ${Alarm.Columns.PARENT_ALARM_ID} INTEGER")
+        }
+
         fun getInstance(context: Context): AppDatabase? {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
@@ -101,7 +112,9 @@ abstract class AppDatabase : RoomDatabase() {
                                     MIGRATION_4_5,
                                     MIGRATION_5_6,
                                     MIGRATION_6_7,
-                                    MIGRATION_7_8
+                                    MIGRATION_7_8,
+                                    MIGRATION_8_9,
+                                    MIGRATION_9_10
                             )
                             .build()
                 }

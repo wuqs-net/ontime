@@ -7,7 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Binder
 import android.os.IBinder
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import net.wuqs.ontime.db.Alarm
 import net.wuqs.ontime.feature.currentalarm.AlarmActivity
 import net.wuqs.ontime.feature.currentalarm.AlarmRinger
@@ -31,12 +31,22 @@ class AlarmService : Service() {
 
     private var isBound = false
 
+    /** Current [Alarm] that the user interacts with */
     private var currentAlarm: Alarm? = null
 
+    /** The time when the current [Alarm] starts */
+    private var currentAlarmStart: Calendar? = null
+
+    /**
+     * List of [Alarm]s that haven't been processed
+     */
     private val pendingAlarms = arrayListOf<Alarm>()
 
     private lateinit var alarmUpdateHandler: AlarmUpdateHandler
 
+    /**
+     * Starts an [Alarm]. If there is a current Alarm, add the alarm to the queue.
+     */
     private fun startAlarm(alarm: Alarm) {
         logger.i("Alarm started: $alarm")
 
@@ -53,10 +63,10 @@ class AlarmService : Service() {
         }
 
         AlarmWakeLock.acquireCpuWakeLock(this)
+
         if (currentAlarm == null) {
-            alarm.nextTime = alarm.getNextOccurrence(alarm.nextTime!!).also {
-                if (it == null) alarm.isEnabled = false
-            }
+            currentAlarmStart = alarm.nextTime
+            alarm.nextTime = alarm.getNextOccurrence(alarm.nextTime!!)
             currentAlarm = alarm
 
             // Show notification.
@@ -72,8 +82,37 @@ class AlarmService : Service() {
         logger.i("Pending: ${pendingAlarms.joinToString()}")
     }
 
-    private fun dismissCurrentAlarm() {
+    private fun dismissCurrentAlarm(intent: Intent?) {
         currentAlarm!!.snoozed = 0
+
+        val updateAlarmTime = { alarm: Alarm ->
+            Calendar.getInstance().let {
+                alarm.hour = it[Calendar.HOUR_OF_DAY]
+                alarm.minute = it[Calendar.MINUTE]
+                alarm.nextTime = it
+            }
+        }
+
+        if (currentAlarm!!.isNonRepeat()) {
+            currentAlarm!!.apply {
+                isHistorical = true
+                activateDate = currentAlarmStart
+                updateAlarmTime(this)
+                notes = intent?.getStringExtra("records") ?: ""
+            }
+        } else {
+            val historicalAlarm = Alarm(currentAlarm!!).apply {
+                id = Alarm.INVALID_ID
+                updateAlarmTime(this)
+                repeatType = Alarm.NON_REPEAT
+                activateDate = currentAlarmStart
+                isHistorical = true
+                parentAlarmId = currentAlarm!!.id
+                notes = intent?.getStringExtra("records") ?: ""
+            }
+            alarmUpdateHandler.asyncAddAlarm(historicalAlarm)
+        }
+
         stopCurrentAlarm()
     }
 
@@ -81,6 +120,7 @@ class AlarmService : Service() {
         sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
         val snoozeIntent = Intent(this, AlarmActivity::class.java).apply {
             action = ACTION_ALARM_SHOW_SNOOZE_OPTIONS
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra(EXTRA_ALARM_INSTANCE, currentAlarm)
         }
         startActivity(snoozeIntent)
@@ -95,6 +135,9 @@ class AlarmService : Service() {
         stopCurrentAlarm()
     }
 
+    /**
+     * Stops the current [Alarm]. The Alarm can be dismissed, snoozed, or completed.
+     */
     private fun stopCurrentAlarm() {
         logger.i("Alarm stopped: $currentAlarm")
 
@@ -119,11 +162,11 @@ class AlarmService : Service() {
             when (intent.action) {
                 ACTION_ALARM_START -> {
                     val alarm = intent.getBundleExtra(EXTRA_ALARM_INSTANCE)
-                            .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)
+                            .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)!!
                     startAlarm(alarm)
                 }
                 ACTION_ALARM_DISMISS -> {
-                    dismissCurrentAlarm()
+                    dismissCurrentAlarm(intent)
                 }
                 ACTION_ALARM_SNOOZE -> {
                     val (quantity, unit) = intent.getIntArrayExtra(EXTRA_SNOOZE_INTERVAL)
@@ -147,20 +190,20 @@ class AlarmService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent == null) return Service.START_NOT_STICKY
+        if (intent == null) return START_NOT_STICKY
 
         logger.v("onStartCommand(): action=${intent.action}")
         when (intent.action) {
             ACTION_ALARM_START -> {
                 val alarm = intent.getBundleExtra(EXTRA_ALARM_INSTANCE)
-                        .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)
+                        .getParcelable<Alarm>(EXTRA_ALARM_INSTANCE)!!
                 startAlarm(alarm)
             }
-            ACTION_ALARM_DISMISS -> dismissCurrentAlarm()
+            ACTION_ALARM_DISMISS -> dismissCurrentAlarm(intent)
             ACTION_ALARM_SHOW_SNOOZE_OPTIONS -> showSnoozeOptions()
         }
 
-        return Service.START_NOT_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder {

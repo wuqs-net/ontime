@@ -8,8 +8,9 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import net.wuqs.ontime.db.Alarm
+import net.wuqs.ontime.util.AsyncHandler
 import net.wuqs.ontime.util.Logger
 import java.io.IOException
 
@@ -30,7 +31,7 @@ object AlarmRinger {
      * @param alarm for which to play the ringtone and vibrate
      */
     @JvmStatic
-    fun start(context: Context, alarm: Alarm) {
+    fun start(context: Context, alarm: Alarm): Int? {
         if (isStarted) stop(context)
 
         logger.v("start(), ringtone=${alarm.ringtoneUri}, vibrate=${alarm.vibrate}")
@@ -58,7 +59,16 @@ object AlarmRinger {
                 mp.setAudioStreamType(AudioManager.STREAM_ALARM)
             }
             mp.prepare()
-            mp.isLooping = true
+            if (alarm.silenceAfter == -2) {
+                AsyncHandler.postDelayed(mp.duration.toLong() + 200) {
+                    stop(context)
+                }
+            } else if (alarm.silenceAfter > 0) {
+                AsyncHandler.postDelayed(alarm.silenceAfter.toLong()) {
+                    stop(context)
+                }
+            }
+            mp.isLooping = alarm.silenceAfter != -2
             mp.start()
         }
 
@@ -70,6 +80,8 @@ object AlarmRinger {
                 else -> vibrateK(vibrator)
             }
         }
+        return mediaPlayer?.duration
+        // TODO: Null ringtone
     }
 
     /**
@@ -82,7 +94,7 @@ object AlarmRinger {
         if (isStarted) {
             logger.v("stop()")
             mediaPlayer?.run {
-                stop()
+                if (isPlaying) stop()
                 reset()
                 release()
                 logger.v("MediaPlayer is released")

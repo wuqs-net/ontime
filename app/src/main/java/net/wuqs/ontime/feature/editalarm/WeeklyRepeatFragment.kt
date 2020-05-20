@@ -1,7 +1,7 @@
 package net.wuqs.ontime.feature.editalarm
 
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_repeat_weekly.*
 import net.wuqs.ontime.R
